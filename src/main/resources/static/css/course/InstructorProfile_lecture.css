@@ -1,0 +1,427 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.InstructorProfile_wrap {
+  display: flex;
+  width: 100%;
+  height: 110%;
+  max-width: 1300px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.InstructorProfile_left {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  border-right: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* 프로필 시작 */
+.profile {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.profile_img img {
+  width: 100px;
+  border-radius: 50%;
+}
+
+.profile_img h3 {
+  margin: 10px 0 20px;
+}
+
+.profile_info {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.profile_info .title {
+  font-size: 14px;
+  color: #555;
+}
+.title_star {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile_info .value {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.profile_fav .fav_button {
+  width: 100%;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 16px;
+  border: 2px solid #00c471;
+  background-color: white;
+  color: #00c471;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile_fav .fav_button.active {
+  background-color: #00c471;
+  color: white;
+}
+
+
+.profile_site {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.profile_site img {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.profile_site a {
+  text-decoration: none;
+  color: black;
+  line-height: 2.2;
+}
+
+.profile_site a:hover {
+  text-decoration: underline;
+}
+/* 프로필 끝 */
+
+
+/* 소개 시작 */
+.introduction {
+  padding: 30px;
+  border-bottom: 1px solid #ccc;
+}
+
+.introduction h2 {
+  margin-bottom: 15px;
+}
+
+.introduction p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+/* 소개 끝 */
+
+
+/* 카테고리 시작 */
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  padding-left: 70px;
+}
+
+.menu {
+  font-size: 18px;
+  font-weight: 600;
+  color: gray;
+  text-decoration: none;
+  margin: 30px 0px 0px 0px;
+}
+
+.menu.active {
+  color: black;
+  font-weight: bold;
+}
+/* 카테고리 끝 */
+
+/* 강의리스트 시작 */
+
+
+.lectureWrap{
+    width: 70%;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.lecture-header-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.lecture-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: #000;
+}
+
+.total-count {
+  font-size: 18px;
+  color: #555;
+}
+
+.total-count .total-number {
+  color: #00c471;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.lecItem {
+  width: 240px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+
+.lecItem:hover {
+  transform: translateY(-5px);
+}
+
+
+.lecImg {
+  width: 100%;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid #eee;
+}
+
+
+
+.lecInfo {
+  padding: 12px;
+}
+
+.lecTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.lecContent {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.lecContent .regPrice {
+  text-decoration: line-through;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.regPrice {
+  text-decoration: line-through;
+  color: #999; /* 원래 가격은 흐리게 */
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+
+.lecContent{
+  font-weight: bold;
+  color: #333;
+}
+
+ .salePrice {
+  font-weight: bold;
+  color: #333;
+}
+
+.lecContent .discount {
+  color: #00c471;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.lecContent span {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.lecGrade {
+  display: inline-block;
+  font-size: 12px;
+  color: white;
+  background-color: #00c471;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+
+
+
+.lecture-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개씩 */
+  gap: 20px; /* 카드 사이 간격 */
+  justify-content: center; /* 그리드 전체를 가운데 정렬 */
+  margin-top: 30px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+
+/* 강의리스트 끝 */
+
+
+/* 페이징 시작 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 8px;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #000;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.page-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.page-btn.active {
+  background-color: #00c471;
+  color: #fff;
+  border-color: #00c471;
+}
+
+.page-btn.prev, .page-btn.next {
+  font-size: 14px;
+  padding: 0;
+}
+/* 페이징 끝 */
+
+
+
+
+
+/* 반응형 시작 */
+
+@media screen and (max-width: 1024px) {
+  .lecture-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .lecture-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .lecItem {
+    width: 100%;
+  }
+
+
+  .lecImg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+  }
+
+  .lecImg img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+
+  .InstructorProfile_wrap {
+    flex-direction: column;
+  }
+
+  .InstructorProfile_left,
+  .lectureWrap {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .InstructorProfile_left * {
+    font-size: clamp(10px, 3vw, 16px);
+  }
+
+
+   .category {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding-left: 0;
+      margin-top: 30px;
+      margin-bottom: 40px;
+   }
+
+  .menu {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  body {
+    font-size: 12px;
+  }
+
+  .lecItem img,
+  .lecture-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .profile_img img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* 반응형 끝 */
+

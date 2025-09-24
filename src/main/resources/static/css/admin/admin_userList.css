@@ -1,0 +1,115 @@
+        body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+
+        .UserList_wrap {
+          width: 1300px;
+          margin: 0 auto;
+        }
+
+        .UserList_manage {
+          border: 2px solid #ccc;
+          border-radius: 10px;
+          padding: 20px;
+        }
+
+        .UserList_manage h2 {
+          background-color: #E1EFE4;
+          height: 50px;
+          border-radius: 10px;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          font-size: 20px;
+        }
+
+        .filter_section {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 30px;
+          margin-top: 10px;
+        }
+
+        .filter_left {
+            margin-left : 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px; /* 간격을 좀 더 넓게 */
+        }
+
+        .filter_right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* 기존 유지 */
+        }
+
+        .search_bar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+
+        .section_label {
+          font-weight: bold;
+          font-size: 17px;
+          min-width: 80px;
+        }
+
+        .search_bar input[type="text"],
+        .search_bar input[type="date"] {
+          padding: 6px 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          width: 180px;
+        }
+
+        .button_wrap {
+          display: flex;
+          gap: 10px;
+          margin-left: auto; /* 오른쪽 정렬 */
+        }
+
+        .button_wrap button {
+          border: none;
+          background-color: #46B97C;
+          color: white;
+          padding: 7px 16px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: center;
+        }
+
+        .pagination {
+          margin-top: 20px;
+          text-align: center;
+        }
+
+        .pagination button {
+          margin: 0 3px;
+          padding: 5px 10px;
+          border: 1px solid #ccc;
+          background: white;
+          cursor: pointer;
+        }
+
+        .pagination .active {
+          background: #00b37e;
+          color: white;
+          font-weight: bold;
+        }

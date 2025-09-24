@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.AdminProviderMapper">
+
+    <resultMap id="AdminProviderRequestMap" type="com.example.lala.DTO.Response.AdminProviderRequest">
+        <result property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="legalName" column="legal_name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="activeType" column="active_type"/>
+        <result property="activeTypeName" column="active_type_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="userTypeName" column="user_type_name"/>
+        <result property="infoContent" column="info_content"/>
+        <result property="externalLink" column="external_link"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="approvalDate" column="approval_date"/>
+    </resultMap>
+
+    <!-- 지식제공자 요청 정보 조회 - 미승인 요청 우선, 없으면 가장 최근 요청 -->
+    <select id="findProviderRequest" parameterType="String" resultMap="AdminProviderRequestMap">
+        SELECT
+        u.user_id,
+        u.email,
+        pr.legal_name,
+        pr.nickname,
+        u.active_type,
+        at.activity_type_name AS active_type_name,
+        u.user_type,
+        ut.account_type_name AS user_type_name,
+        pr.info_content,
+        pr.external_link,
+        pr.request_date,
+        pr.approval_date
+        FROM promotion_request pr
+        INNER JOIN `user` u ON pr.information_provider_id = u.user_id
+        INNER JOIN user_type ut ON ut.no = u.user_type
+        INNER JOIN active_type at ON at.no = u.active_type
+        WHERE pr.information_provider_id = #{userId}
+        ORDER BY
+        CASE WHEN pr.approval_date IS NULL THEN 0 ELSE 1 END,  -- 미승인 요청을 먼저
+        pr.request_date DESC  -- 그 다음은 최신 순
+        LIMIT 1
+    </select>
+
+    <!-- 승인 일시 업데이트 - 조건 개선 -->
+    <update id="updateApprovalDate">
+        UPDATE promotion_request
+        SET approval_date = #{approvalDate}
+        WHERE information_provider_id = #{userId}
+        AND approval_date IS NULL
+    </update>
+
+    <!-- 지식제공자 요청 삭제 (거부 처리) - 조건 개선 -->
+    <delete id="deleteProviderRequest">
+        DELETE FROM promotion_request
+        WHERE information_provider_id = #{userId}
+        AND approval_date IS NULL
+    </delete>
+
+</mapper>

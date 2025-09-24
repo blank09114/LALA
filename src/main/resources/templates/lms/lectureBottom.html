@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="bottomContent">
+    <!-- <th:block th:replace="~{shared/header :: headerScript}"></th:block> -->
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <!-- 지식 제공자 코멘트 -->
+    <div class="commentWrap">
+        <p class="bottomContentTitle">🔊 지식 제공자의 한 마디</p>
+        <div class="commentContent"> 지식 제공자의 한 마디가 출력됨 </div>
+    </div>
+
+    <!-- 질문 -->
+    <div class="qnaWrap">
+        <!-- 질문 횟수 카운트 -->
+        <p class="bottomContentTitle">댓글 <span id="qnaCount">00</span></p>
+
+        <!-- 질문 작성 -->
+        <div class="questionWrite">
+            <textarea class="questionWriteInput" id="questionWrite" placeholder="이해가 가지 않는 점을 지식 제공자에게 질문해보세요."></textarea>
+            <button class="questionSubmit"> 등록 </button>
+        </div>
+
+        <!-- 질문 목록 -->
+        <div class="qnaList">
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</html>

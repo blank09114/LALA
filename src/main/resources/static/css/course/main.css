@@ -1,0 +1,485 @@
+a { all: unset; display: block; }
+
+/* 상단 메뉴 */
+.topMenu
+{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+/* 달력 */
+.calendar-box
+{
+    width: 73%;
+    height: auto;
+
+    position: relative;
+}
+
+/* 달력 헤더 */
+.calendar-header
+{
+    width: 100%;
+    height: 40px;
+    margin-bottom: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+}
+
+/* 버튼 */
+.slideBtn
+{
+    width: 30px;
+    height: 30px;
+    margin: 0 10px 0 10px;
+    border-radius: 50%;
+
+    border: 2px solid black;
+    background-color: transparent;
+
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+
+    cursor: pointer;
+}
+.slideBtn:hover
+{
+    border: 2px solid #00C471;
+    color: #00C471;
+}
+
+/* 달력 */
+.calendar { box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2); }
+.calRow
+{
+    width: 100%;
+    height: 300px;
+    box-sizing: border-box;
+
+    display: flex;
+
+    border-top: 4px solid #9BC9A2;
+    border-left: 1px solid #D8E4D8;
+    border-right: 1px solid #D8E4D8;
+}
+.cell
+{
+    width: 25%;
+    height: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #D8E4D8;
+}
+.day
+{
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+    padding-left: 5px;
+    border-bottom: 2px solid #D8E4D8;
+    box-sizing: border-box;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 40px;
+}
+.todo
+{
+    width: 100%;
+    height: 260px;
+    margin: 0;
+    padding: 5px 0 0 30px;
+    box-sizing: border-box;
+
+    font-size: 16px;
+}
+.calendar-box-small
+{
+    display: none;
+    position: relative;
+}
+
+/* 캘린더 이동 */
+.calBtn
+{
+    font-size: 16px;
+    font-weight: bold;
+
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    cursor: pointer;
+}
+a.calBtn:hover { color: #00C471; }
+
+
+
+/* 유저 정보 */
+.userInfo
+{
+    width: 25%;
+    height: 600px;
+    border-radius: 8px;
+    margin-top: 45px;
+
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    border: 1px solid #00C471;
+}
+.userInfo-container
+{
+    width: 100%;
+    padding-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* 프로필 */
+.porfileImg
+{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+
+    border: 1px solid #CCCCCC;
+    background-size: cover;
+    background-position: center;
+
+    cursor: pointer;
+}
+.porfileImg:hover { border: 1px solid #00C471; }
+.hi
+{
+    width: 100%;
+    height: 50px;
+
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 50px;
+}
+.name { color: #00C471; }
+
+/* 로그아웃 */
+.logOut
+{
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+
+    cursor: pointer;
+}
+.logOut:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+
+/* 최근 시청 강의 정보 */
+.recentLec
+{
+    width: 80%;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 12px;
+
+    background-color: #F0F0F0;
+
+    font-size: 16px;
+    line-height: 2;
+    text-align: left;
+
+    cursor: pointer;
+}
+.recentLec:hover { background-color: #F7F7F7; }
+.recentLecInto
+{
+    width: 100%;
+    height: 30px;
+
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+}
+.progressBar, .progressBar2
+{
+    width: 100%;
+    height: 20px;
+    border-radius: 4px;
+
+    background-color: #D9D9D9;
+}
+.progressBar2
+{
+    width: 50%;
+    background-color: #00C471;
+}
+
+
+
+/* 추천 강의 리스트 */
+.lecListHeader
+{
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 50px;
+}
+
+
+
+/* 추천 강의 리스트 */
+.lecListHeader
+{
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 50px;
+}
+
+
+
+/* 전체 보기 */
+.all
+{
+    display: block;
+
+    width: 150px;
+    height: 40px;
+    margin: 0 auto;
+    margin-top: 50px;
+    border-radius: 8px;
+
+    border: 2px solid #495057;
+
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    color: #495057;
+
+    cursor: pointer;
+}
+.all:hover
+{
+    border: 2px solid #00C471;
+    color: #00C471;
+}
+
+
+/* == 반응형 == */
+@media (max-width: 768px)
+{
+    /* 상단 메뉴 */
+    .topMenu { flex-direction: column; }
+
+    /* 유저 정보 */
+    .userInfo
+    {
+        width: 100%;
+        height: 250px;
+    }
+
+    /* 프로필 */
+    .porfileImg
+    {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    .hi
+    {
+        width: 100%;
+        height: 30px;
+
+        font-size: 16px;
+        line-height: 30px;
+    }
+
+    /* 로그아웃 */
+    .logOut
+    {
+        height: 30px;
+        border-radius: 4px;
+
+        font-size: 14px;
+    }
+
+    /* 최근 시청 강의 정보 */
+    .recentLec
+    {
+        width: 90%;
+        margin-top: 10px;
+
+        background-color: #F0F0F0;
+
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .recentLecInto
+    {
+        width: 100%;
+        height: 16px;
+
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 16px;
+    }
+    .progressBar, .progressBar2
+    {
+        width: 100%;
+        height: 16px;
+        border-radius: 4px;
+
+        background-color: #D9D9D9;
+    }
+    .progressBar2
+    {
+        width: 50%;
+        background-color: #00C471;
+    }
+
+
+
+    /* 달력 헤더 */
+    .calendar-box { display: none; }
+    .calendar-box-small
+    {
+        width: 100%;
+        margin-top: 10px;
+
+        display: block;
+    }
+    .calendar-header
+    {
+        height: 30px;
+
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    /* 버튼 */
+    .slideBtn
+    {
+        width: 20px;
+        height: 20px;
+        margin: 0 5px 0 5px;
+        border-radius: 50%;
+
+        border: 1px solid black;
+        background-color: transparent;
+
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+
+        cursor: pointer;
+    }
+    .slideBtn:hover { border: 1px solid #00C471; }
+
+    /* 달력 */
+    .calendarSmall
+    {
+        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
+
+        border: 1px solid #00C471;
+    }
+    .cellSmall
+    {
+        width: 100%;
+        height: auto;
+
+        border-bottom: 1px solid #00C471;
+
+        display: flex;
+    }
+    .daySmall, .daySmallGoal
+    {
+        width: 30%;
+        min-height: 30px;
+        height: auto;
+
+        background-color: #00C471;
+
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .daySmallGoal { width: 100%; }
+
+
+
+
+    /* 강의 리스트 */
+    .lecListHeader
+    {
+        height: 30px;
+        margin: 0;
+        margin-top: 10px;
+
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 30px;
+    }
+
+
+
+    /* 전체 보기 */
+    .all
+    {
+        display: block;
+
+        width: 100px;
+        height: 30px;
+        margin-top: 20px;
+
+        border: 1px solid #495057;
+
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 30px;
+    }
+    .all:hover { border: 1px solid #00C471; }
+}

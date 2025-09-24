@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{shared/header :: headerScript}"></th:block>
+<link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+<link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div th:fragment="sidebar(mypageUserData, currentMenu)">
+    <aside class="sidebar-menu">
+        <h2>Home</h2>
+        <ul>
+            <li><a th:href="@{/mypage/main}" th:classappend="${currentMenu == 'main'} ? 'active'">마이페이지</a></li>
+            <li><a th:href="@{/course/main}" th:classappend="${currentMenu == 'main'} ? 'active'">메인</a></li>
+        </ul>
+
+        <h2>내 정보</h2>
+        <ul>
+            <li><a th:href="@{/mypage/account}" th:classappend="${currentMenu == 'account'} ? 'active'">계정 관리</a></li>
+            <li><a th:href="@{/mypage/activity}" th:classappend="${currentMenu == 'activity'} ? 'active'">나의 활동</a></li>
+        </ul>
+
+        <h2>강의 정보</h2>
+        <ul>
+            <li><a th:href="@{/mypage/learning}" th:classappend="${#lists.contains({'learning','cart','cancel'}, currentMenu)} ? 'active'">학습 관리</a></li>
+            <li><a th:href="@{/mypage/likes}" th:classappend="${currentMenu == 'likes'} ? 'active'">좋아요</a></li>
+        </ul>
+
+        <h2>지식 제공자</h2>
+        <ul>
+            <!-- 일반 사용자 -->
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 0}">
+                <a th:href="@{/mypage/pro_req}" th:classappend="${currentMenu == 'pro_req'} ? 'active'">요청 하기</a>
+            </li>
+
+            <!-- 지식 제공자 -->
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 1}">
+                <a th:href="@{/mypage/pro_account}" th:classappend="${currentMenu == 'pro_account'} ? 'active'">프로필 관리</a>
+            </li>
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 1}">
+                <a th:href="@{/mypage/pro_learning}" th:classappend="${currentMenu == 'pro_learning'} ? 'active'">강의 관리</a>
+            </li>
+
+            <!-- 요청 중 -->
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 2}">
+                <span style="color: gray;">심사 중입니다.</span>
+            </li>
+
+            <!-- 관리자 -->
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_req}" th:classappend="${currentMenu == 'pro_req'} ? 'active'">요청 하기</a>
+            </li>
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_account}" th:classappend="${currentMenu == 'pro_account'} ? 'active'">프로필 관리</a>
+            </li>
+            <li th:if="${mypageUserData != null and mypageUserData.User != null and mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_learning}" th:classappend="${currentMenu == 'pro_learning'} ? 'active'">강의 관리</a>
+            </li>
+        </ul>
+    </aside>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

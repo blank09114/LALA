@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/users/calendar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="container">
+    <!--사이드 일정 확인 부분-->
+    <div class="side-panel">
+        <div>
+            <div class="date-display">
+                <div class="big-date" id="sideDay">27</div>
+                <div class="big-weekday" id="sideWeekday">THURSDAY</div>
+            </div>
+            <div class="daily">
+                <p><strong>오늘의 계획</strong></p>
+                <ul id="dailyList"></ul>
+                <p class="weekly">주간 계획</p>
+                <ul id="weeklyList"></ul>
+            </div>
+        </div>
+        <div class="create">
+            <input type="text" id="eventInput" placeholder="새로 등록하기">
+            <button id="saveEventBtn"><span class="plus-icon">+</span></button>
+        </div>
+    </div>
+<!--캘린더 부분-->
+    <div class="calendar">
+        <div class=" cal-header">
+            <span class="nav" id="prevYear">&lt;</span>
+            <span class="year" id="calendarYear">2025</span>
+            <span class="nav" id="nextYear">&gt;</span>
+        </div>
+        <div class="months">
+            <span>1</span><span>2</span><span>3</span><span>4</span>
+            <span>5</span><span>6</span><span>7</span><span>8</span>
+            <span>9</span><span>10</span><span>11</span><span>12</span>
+        </div>
+        <div class="weekdays">
+            <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span>
+            <span>THU</span><span>FRI</span><span>SAT</span><span>CHECK</span>
+        </div>
+        <div class="dates" id="datesContainer"></div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/users/calendar.js}" defer></script>
+</body>
+</html>

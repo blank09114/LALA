@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="lecList (lecList)">
+  <div class="lecList">
+    <div class="lecListRow" th:each="row : ${lecList}">
+      <div class="lecItem" th:attr="data-id=${lec.lectureId}" onclick="goToDetail(this)" th:each="lec : ${row}">
+        <div class="lecImg" th:style="'background-image: url(' + ${lec.thumbnail} + ')'"></div>
+        <div class="lecInfo">
+          <h2 class="lecTitle" th:text="${lec.title}">강의 이름</h2>
+          <div class="lecContent">
+            <span class="provider" th:text="${lec.nickname}">지식 제공자</span> <br>
+            <!-- 할인 중일 때: 정가 + 할인율 + 할인가 -->
+          <div th:if="${lec.discountRate > 0}">
+            <span class="regPrice" th:text="|₩${#numbers.formatInteger(lec.price, 3, 'COMMA')}|">₩100,000</span> <br>
+            <span class="salePrice">
+              <span style="color: red;" th:text="${lec.discountRate + '%'}">50%</span>
+              <span th:text="|₩${#numbers.formatInteger(lec.price * (100 - lec.discountRate) / 100, 3, 'COMMA')}|">₩50,000</span>
+            </span> <br>
+          </div>
+          <!-- 할인 없음: 할인가(=정가)만 출력 -->
+          <div th:if="${lec.discountRate == 0}">
+            <span class="salePrice" th:text="|₩${#numbers.formatInteger(lec.price, 3, 'COMMA')}|">₩100,000</span> <br>
+          </div>
+
+          <span
+              th:text="|★${lec.avgReviewRate} (${lec.reviewNum}) 👤${lec.studentNum}+|">
+              ★5.0 (27) 👤600+
+          </span><br>
+          </p>
+
+          <!-- 난이도 표시 -->
+          <div class="lecGrade" th:switch="${lec.difficulty}">
+            <span th:case="0">입문</span>
+            <span th:case="1">초급</span>
+            <span th:case="2">중급</span>
+            <span th:case="3">고급</span>
+            <span th:case="*">기타</span>
+          </div>
+
+          <!-- HOT/NEW 주석처리 -->
+          <!--
+          <div class="hotLec now" th:if="${lec.isHot}">HOT</div>
+          <div class="hotLec" th:if="${lec.isNew}">NEW</div>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

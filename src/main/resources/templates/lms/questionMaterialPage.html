@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>강의 퀴즈</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/materialPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/questionSolver.css}"/>
+    <script th:src="@{/js/lms/questionMaterialPage.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+    <!-- 로딩 스피너 -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>퀴즈를 불러오는 중...</p>
+    </div>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container" id="mainContainer" style="display: none;">
+        
+        <!-- 상단 네비게이션 -->
+        <nav class="material-nav">
+            <button class="nav-back" onclick="goBack()">
+                ← 강의 목차로 돌아가기
+            </button>
+            <div class="nav-info">
+                <span class="chapter-info" id="chapterInfo">1장. 챕터명</span>
+                <h1 class="material-title" id="materialTitle">퀴즈 제목</h1>
+            </div>
+        </nav>
+
+        <!-- 퀴즈 섹션 -->
+        <section class="quiz-section">
+            
+            <!-- 퀴즈 헤더 -->
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <h2 class="quiz-title" id="quizTitle">퀴즈 제목</h2>
+                    <div class="quiz-meta">
+                        <span class="question-count" id="questionCount">총 5문항</span>
+                        <span class="time-limit" id="timeLimit">제한시간: 20분</span>
+                        <span class="attempts" id="attempts">남은 시도: 3회</span>
+                    </div>
+                </div>
+                <div class="quiz-status" id="quizStatus">
+                    <span class="status-badge status-ready">시작 대기</span>
+                </div>
+            </div>
+
+            <!-- 퀴즈 설명 -->
+            <div class="quiz-description" id="quizDescription">
+                <p>이 퀴즈는 강의 내용에 대한 이해도를 확인하는 문제들로 구성되어 있습니다.</p>
+            </div>
+
+            <!-- 퀴즈 시작 화면 -->
+            <div class="quiz-start" id="quizStart">
+                <div class="start-content">
+                    <h3>📝 퀴즈를 시작하시겠습니까?</h3>
+                    <ul class="quiz-rules">
+                        <li>총 <span id="totalQuestions">5</span>문항입니다</li>
+                        <li>제한시간은 <span id="totalTime">20</span>분입니다</li>
+                        <li>한 번 제출하면 수정할 수 없습니다</li>
+                        <li>모든 문항을 풀어야 제출 가능합니다</li>
+                    </ul>
+                    <button class="start-btn" onclick="startQuiz()">퀴즈 시작</button>
+                </div>
+            </div>
+
+            <!-- 퀴즈 진행 화면 -->
+            <div class="quiz-progress" id="quizProgress" style="display: none;">
+                
+                <!-- 진행 상태 바 -->
+                <div class="progress-header">
+                    <div class="progress-info">
+                        <span class="current-question" id="currentQuestion">1</span> / 
+                        <span class="total-questions" id="totalQuestionsDisplay">5</span>
+                    </div>
+                    <div class="timer" id="timer">
+                        <span class="timer-icon">⏱️</span>
+                        <span class="timer-text" id="timerText">20:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+                </div>
+
+                <!-- 문제 영역 -->
+                <div class="question-container" id="questionContainer">
+                    <!-- 문제들이 동적으로 여기에 표시됩니다 -->
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="quiz-navigation">
+                    <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" disabled>이전 문제</button>
+                    <div class="question-indicators" id="questionIndicators">
+                        <!-- 문제 번호 표시 -->
+                    </div>
+                    <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">다음 문제</button>
+                </div>
+
+                <!-- 제출 버튼 -->
+                <div class="submit-section" id="submitSection" style="display: none;">
+                    <button class="submit-quiz-btn" onclick="submitQuiz()">퀴즈 제출</button>
+                </div>
+            </div>
+
+            <!-- 퀴즈 결과 화면 -->
+            <div class="quiz-result" id="quizResult" style="display: none;">
+                <div class="result-header">
+                    <h3>📊 퀴즈 결과</h3>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span class="score-number" id="scoreNumber">80</span>
+                            <span class="score-unit">점</span>
+                        </div>
+                        <div class="score-details">
+                            <p class="correct-count" id="correctCount">4 / 5 문제 정답</p>
+                            <p class="completion-time" id="completionTime">소요시간: 15분 30초</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문제별 결과 -->
+                <div class="question-results" id="questionResults">
+                    <!-- 문제별 정답/오답이 여기에 표시됩니다 -->
+                </div>
+
+                <!-- 결과 액션 -->
+                <div class="result-actions">
+                    <button class="review-btn" onclick="reviewQuiz()">오답 확인</button>
+                    <button class="retry-btn" onclick="retryQuiz()">다시 시도</button>
+                    <button class="continue-btn" onclick="continueToNext()">다음 강의로</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 하단 컨텐츠 -->
+        <div class="bottom-content">
+            
+            <!-- 좌측: 목차 메뉴 -->
+            <aside class="chapter-sidebar">
+                <h3>강의 목차</h3>
+                <div class="chapter-list" id="chapterList">
+                    <!-- 목차가 동적으로 여기에 추가됩니다 -->
+                </div>
+            </aside>
+
+            <!-- 우측: Q&A 섹션 -->
+            <section class="qna-section">
+                <div class="qna-header">
+                    <h3>질문 및 답변</h3>
+                    <span class="qna-count" id="qnaCount">0개의 질문</span>
+                </div>
+                
+                <!-- 질문 작성 -->
+                <div class="question-form">
+                    <textarea 
+                        id="questionInput" 
+                        placeholder="이 퀴즈에 대해 궁금한 점을 질문해보세요..."
+                        rows="3"
+                    ></textarea>
+                    <button class="submit-btn" onclick="submitQuestion()">질문 등록</button>
+                </div>
+                
+                <!-- 질문 목록 -->
+                <div class="questions-list" id="questionsList">
+                    <!-- 질문들이 동적으로 여기에 추가됩니다 -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 시간 초과 모달 -->
+    <div class="modal" id="timeUpModal" style="display: none;">
+        <div class="modal-content">
+            <h3>⏰ 시간 초과!</h3>
+            <p>제한시간이 초과되어 자동으로 제출됩니다.</p>
+            <button class="btn-confirm" onclick="autoSubmitQuiz()">확인</button>
+        </div>
+    </div>
+
+    <!-- 제출 확인 모달 -->
+    <div class="modal" id="submitConfirmModal" style="display: none;">
+        <div class="modal-content">
+            <h3>퀴즈 제출 확인</h3>
+            <p>정말로 퀴즈를 제출하시겠습니까?<br>제출 후에는 수정할 수 없습니다.</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" onclick="confirmSubmitQuiz()">제출</button>
+                <button class="btn-cancel-modal" onclick="closeSubmitModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림 토스트 -->
+    <div class="toast" id="toast" style="display: none;">
+        <span id="toastMessage"></span>
+    </div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

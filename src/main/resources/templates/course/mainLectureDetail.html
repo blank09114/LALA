@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title> 강의 상세 </title>
+  <th:block th:replace="~{shared/header :: headerScript}"></th:block><!---->
+  <link rel="stylesheet" th:href="@{/css/shared/header.css}"/><!---->
+  <link rel="stylesheet" th:href="@{/css/course/mainLectureDetail.css}" />
+  <link rel="stylesheet" th:href="@{/css/shared/footer.css}" /><!---->
+  <script th:src="@{/js/course/mainLectureDetail.js}"></script>
+  <script th:src="@{/js/cart/cartManager.js}"></script>
+</head>
+<body th:attr="data-lecture-id=${lectureId}, data-user-id=${userId}">
+<header th:replace="~{shared/header :: header}"></header><!---->
+<!-- 내브 -->
+<nav class="lectureInfo">
+  <div class="nav-container">
+    <!-- 설명 -->
+    <div class="leftMenu">
+      <!-- 강의 정보 -->
+      <div class="lecInfo">
+        <p class="cate"> @대분류 - @소분류, @대분류 - @소분류, @대분류 - @소분류 </p>
+        <h2 class="lecTitle"> @강의 제목 </h2>
+        <p class="lecContent"> @강의 소개글 소개글 소개글 소개글 소개글 소개글 소개글 소개글 </p>
+      </div>
+
+      <!-- 정보 -->
+      <p id="info"> ★5.0(27) 👤600+ 👤지식제공자 </p>
+    </div>
+
+    <!-- 썸네일 -->
+    <img class="thumbnail" src="@이미지 경로" alt="썸네일">
+  </div>
+</nav>
+
+<!-- 페이지 핸들러 -->
+<div class="pageHandlerWarp">
+  <ul class="pageHandler">
+    <li class="now" onclick="toScroll('introSection')"> 강의 소개 </li>
+    <li onclick="toScroll('contentSection')"> 목차 </li>
+    <li onclick="toScroll('reviewSection')"> 리뷰 </li>
+  </ul>
+</div>
+
+<!-- 섹션 -->
+<section>
+  <div class="section-container">
+    <!-- 소개글 -->
+    <div class="section-content" id="introSection" style="border-bottom: 1px solid #757575;">
+      <h2 class="section-header"> 강의 소개 </h2>
+      <div class="intro-content">
+        스마트 에디터로 작성한 소개글이 이곳에 불러와짐
+        <!-- 소개글 내용 불러오기 -->
+      </div>
+    </div>
+
+    <!-- 목차 -->
+    <div class="section-content" id="contentSection" style="border-bottom: 1px solid #757575;">
+      <h2 class="section-header"> 목차 </h2>
+      <button class="toggleBtn" onclick="toggleAll()"> ▼ 모두 펼치기 </button>
+      <div class="partList">
+        <!-- 목차 -->
+        <div class="part">
+          <!-- 목차 헤더 -->
+          <div class="partInfo">
+            <div class="partTitleWrap">
+              <h2 class="partTitle"> 1. 목차 제목 </h2>
+              <button class="partToggleBtn" onclick="toggle(this)"> ▼ </button>
+            </div>
+            <p class="partIntro"> 목차 설명 </p>
+          </div>
+
+          <!-- 강좌 리스트 -->
+          <div class="classList" style="display: none;">
+            <!-- 동영상 -->
+            <button class="class">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/video.png}" />
+                <p class="classTitle"> 강의 제목 </p>
+              </div>
+              <div class="wrap"></div>
+            </button>
+
+            <!-- 퀴즈 -->
+            <button class="class quiz">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/quiz.png}" />
+                <p class="classTitle"> 퀴즈 제목 </p>
+              </div>
+              <div class="wrap"></div>
+            </button>
+
+            <!-- 파일 -->
+            <button class="class file">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/file.png}" />
+                <p class="classTitle"> 파일 제목 </p>
+              </div>
+              <div class="wrap"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 목차 -->
+        <div class="part">
+          <!-- 목차 헤더 -->
+          <div class="partInfo">
+            <div class="partTitleWrap">
+              <h2 class="partTitle"> 2. 목차 제목 </h2>
+              <button class="partToggleBtn" onclick="toggle(this)"> ▼ </button>
+            </div>
+            <p class="partIntro"> 목차 설명 </p>
+          </div>
+
+          <!-- 강좌 리스트 -->
+          <div class="classList" style="display: none;">
+            <!-- 동영상 -->
+            <button class="class video">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/video.png}" />
+                <p class="classTitle"> 강의 제목 </p>
+              </div>
+              <div class="wrap">=
+              </div>
+            </button>
+
+            <!-- 퀴즈 -->
+            <button class="class quiz">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/quiz.png}" />
+                <p class="classTitle"> 퀴즈 제목 </p>
+              </div>
+              <div class="wrap"></div>
+            </button>
+
+            <!-- 파일 -->
+            <button class="class file">
+              <div class="wrap">
+                <img class="icon" th:src="@{/img/lms/file.png}" />
+                <p id="classTitle"> 파일 제목 </p>
+              </div>
+              <div class="wrap"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 리뷰 -->
+    <div class="section-content" id="reviewSection">
+      <!-- 헤더 -->
+      <h2 class="section-header"> 리뷰 </h2>
+      <select id="sort">
+        <option> 최신순 </option>
+        <option> 높은 평점순 </option>
+        <option> 낮은 평점순 </option>
+      </select>
+
+      <!-- 리뷰 정보 -->
+      <div class="reviewInfo">
+        <div id="ratingScore"></div>
+        <div id="ratingScoreImg"></div>
+        <div id="ratingCount"></div>
+      </div>
+
+      <!-- 리뷰 작성 -->
+      <div class="myReview">
+        <!-- 작성창 -->
+        <div class="reviewSubmit">
+          <h3 class="myReviewContentHeader">리뷰 작성</h3>
+
+          <!-- 별점 -->
+          <select id="ratingSelect">
+            <option value="0">별점 선택</option>
+            <option value="1">★ 1점</option>
+            <option value="2">★★ 2점</option>
+            <option value="3">★★★ 3점</option>
+            <option value="4">★★★★ 4점</option>
+            <option value="5">★★★★★ 5점</option>
+          </select>
+
+          <!-- 작성 -->
+          <textarea placeholder="리뷰를 작성해보세요!"></textarea>
+
+          <!-- 등록 -->
+          <button class="reviewSubmitBtn" onclick="reviewSubmit()"> 등록 </button>
+        </div>
+      </div>
+
+      <!-- 리뷰 목록 -->
+      <div class="reviewList"></div>
+
+      <!-- 더보기 -->
+      <button class="moreBtn" onclick="showMore()"> 더보기 </button>
+    </div>
+  </div>
+
+  <!-- 구매창 -->
+  <div class="sellBox">
+    <!-- 상단 -->
+    <div class="menu top">
+      <!-- 가격 정보 -->
+      <div class="priceWrap">
+        <p class="price"> ₩50,000 </p>
+        <p class="saleInfo">
+          <span style="color: red;">90%</span>
+          <span style="color: #858585; text-decoration: line-through;">₩500,000</span>
+        </p>
+      </div>
+
+      <!-- 장바구니 담기 -->
+      <button id="cartBtn" class="courseBtn" onclick="handleAddToCart()">
+        🛒 장바구니 담기
+      </button>
+
+      <!-- 스크랩 -->
+      <div class="scrap">
+        <button class="scrapBtn" onclick="toggleLike(this)" data-liked="false">♡</button>
+        <button class="scrapBtn" onclick="copyPageUrl()">🔗 공유</button>
+      </div>
+    </div>
+
+    <!-- 하단 -->
+    <div class="menu bottom">
+      <p class="item">
+        지식 제공자 <br>
+        커리큘럼 <br>
+        난이도
+      </p>
+      <p class="item content">
+        <a id="providerLink" href="#"><span id="providerName">-</span></a> <br>
+        <span id="lectureCount">-</span> <br>
+        <span id="lectureLevel">-</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 모달 -->
+<div id="toast" class="hidden">
+  <img th:src="@{/img/course/check.png}" alt="check" class="toastIcon" />
+  <span>모달 메시지</span>
+</div>
+
+<!-- 삭제 모달 -->
+<div id="modalOverlay" style="display: none;">
+  <!-- 삭제 확인 모달 -->
+  <div id="modal" class="hidden">
+    <p class="modalText">정말 삭제하시겠습니까?</p>
+    <div class="modalBtns">
+      <button class="modalBtn ok" onclick="deleteReview()">예</button>
+      <button class="modalBtn no" onclick="closeModal()">아니오</button>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<script th:inline="javascript">
+  let globalLectureReviews = [];
+
+  const lectureId = document.body.getAttribute("data-lecture-id");
+  const userId = document.body.getAttribute("data-user-id");
+  const currentMemberId = document.body.getAttribute("data-member-id");
+
+  localStorage.setItem("lectureId", lectureId);
+  localStorage.setItem("userId", userId);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // 찜 여부 확인
+      fetch(`/api/course/detail/data/${lectureId}`)
+        .then(res => res.json())
+        .then(data => {
+          const { lectureDetail, lectureChapter, lectureReviews } = data;
+          globalLectureReviews = lectureReviews;
+
+          renderLectureInfo(lectureDetail);
+          renderChapters(lectureChapter);
+          renderReviews(globalLectureReviews);
+          renderReviewSummary();
+
+          // ✅ 찜 여부 요청은 별도로 실행
+          fetch(`/api/course/isBookmarked/${lectureId}`)
+            .then(res => res.json())
+            .then(bookmarkData => {
+
+              console.log(bookmarkData);
+              const likeBtn = document.querySelector(".scrapBtn");
+              const liked = bookmarkData.message == "북마크를 해놓으셨습니다잇"?true:false;
+              likeBtn.setAttribute("data-liked", liked);
+              likeBtn.textContent = `${liked ? "♥️" : "♡"}`;
+            })
+            .catch(err => console.error("찜 여부 확인 실패:", err));
+        })
+        .catch(err => console.error("데이터 불러오기 실패:", err));
+
+    // 정렬 이벤트 리스너
+    document.getElementById("sort").addEventListener("change", (e) => {
+      const selected = e.target.value;
+      let sorted = [...globalLectureReviews];
+
+      if (selected === "높은 평점순") {
+        sorted.sort((a, b) => b.reviewRate - a.reviewRate);
+      } else if (selected === "낮은 평점순") {
+        sorted.sort((a, b) => a.reviewRate - b.reviewRate);
+      } else {
+        // 최신순: reviewId가 최신일수록 큰 값이라고 가정
+        sorted.sort((a, b) => b.reviewId - a.reviewId);
+      }
+
+      renderReviews(sorted);
+      renderReviewSummary();
+    });
+  });
+
+  let globalLectureDetail = null;
+
+  // 장바구니에 강의 추가
+  function handleAddToCart() {
+
+    const success = addLectureToCart(
+      globalLectureDetail.lectureId,
+      globalLectureDetail.title,
+      globalLectureDetail.nickname,
+      globalLectureDetail.price,
+      globalLectureDetail.discountRate || 0,
+      globalLectureDetail.thumbnail
+    );
+    if (!globalLectureDetail) {
+          alert('강의 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    if (success) {
+      updateCartButton();
+    }
+  }
+
+  // 장바구니 클릭 시 버튼 변경
+  function updateCartButton() {
+    const cartBtn = document.getElementById('cartBtn');
+    if (!cartBtn || !globalLectureDetail) return;
+
+    if (isLectureInCart(globalLectureDetail.lectureId)) {
+      cartBtn.innerHTML = '✅ 장바구니에 담김';
+      cartBtn.style.background = '#28a745';
+      cartBtn.disabled = true;
+      cartBtn.style.cursor = 'not-allowed';
+    } else {
+      cartBtn.innerHTML = '🛒 장바구니 담기';
+      cartBtn.style.background = '';
+      cartBtn.disabled = false;
+      cartBtn.style.cursor = 'pointer';
+    }
+  }
+
+  // 강의 정보 렌더링
+  function renderLectureInfo(lecture) {
+    globalLectureDetail = lecture;
+
+    document.querySelector(".lecTitle").textContent = lecture.title;
+    document.querySelector(".lecContent").textContent = lecture.outline;
+    document.querySelector(".intro-content").innerHTML = lecture.introduction;
+    document.querySelector(".thumbnail").src = lecture.thumbnail;
+    const originalPrice = Math.floor(lecture.price / (1 - lecture.discountRate / 100));
+
+    document.querySelector(".price").textContent = `₩${lecture.price.toLocaleString()}`;
+    document.querySelector(".saleInfo").innerHTML = `
+      <span style="color: red;">${lecture.discountRate}%</span>
+      <span style="color: #858585; text-decoration: line-through;">
+        ₩${originalPrice.toLocaleString()}
+      </span>
+    `;
+
+    document.querySelector(".cate").textContent = `${lecture.big} - ${lecture.small}`;
+    document.querySelector("#info").textContent = `★${lecture.avgReviewRate.toFixed(1)}(${lecture.reviewNum}) 👤${lecture.studentNum}+ 👤${lecture.nickname}`;
+
+    // 초기 sellBox는 닉네임만 반영
+    renderSellBox({
+      nickname: lecture.nickname,
+      providerId: lecture.providerId,
+      totalLectureCount: 0,
+      level: lecture.level
+    });
+
+    // 장바구니 버튼 상태 업데이트
+    setTimeout(() => updateCartButton(), 100);
+  }
+
+  // 챕터 렌더링
+  function renderChapters(chapters) {
+    const partList = document.querySelector(".partList");
+    partList.innerHTML = "";
+
+    let totalLectureCount = 0;
+
+    chapters.forEach((chapter, index) => {
+      const part = document.createElement("div");
+      part.className = "part";
+
+      part.innerHTML = `
+        <div class="partInfo">
+          <div class="partTitleWrap">
+            <h2 class="partTitle">${index + 1}. ${chapter.name}</h2>
+            <button class="partToggleBtn" onclick="toggle(this)">▼</button>
+          </div>
+          <p class="partIntro">${chapter.description || ""}</p>
+        </div>
+        <div class="classList" style="display: none;" data-chapter-id="${chapter.chapterId}"></div>
+      `;
+
+      partList.appendChild(part);
+
+      // 📌 classList 대상 요소 찾기
+      const classList = part.querySelector(".classList");
+
+      // 📌 서버에서 콘텐츠 불러오기
+      fetch(`/api/course/chapter-contents/${chapter.chapterId}`)
+        .then(res => res.json())
+        .then(data => {
+          const { videos = [], questions = [], addiFiles = [] } = data;
+
+          videos.forEach(video => {
+            totalLectureCount++;
+
+            classList.insertAdjacentHTML("beforeend", `
+              <button class="class video">
+                <div class="wrap">
+                  <img class="icon" src="/img/lms/video.png" />
+                  <p class="classTitle">${video.name}</p>
+                </div>
+                <div class="wrap"></div>
+              </button>
+            `);
+          });
+
+          questions.forEach(quiz => {
+            totalLectureCount++;
+
+            classList.insertAdjacentHTML("beforeend", `
+              <button class="class quiz">
+                <div class="wrap">
+                  <img class="icon" src="/img/lms/quiz.png" />
+                  <p class="classTitle">${quiz.question}</p>
+                </div>
+                <div class="wrap"></div>
+              </button>
+            `);
+          });
+
+          addiFiles.forEach(file => {
+            totalLectureCount++;
+
+            classList.insertAdjacentHTML("beforeend", `
+              <button class="class file">
+                <div class="wrap">
+                  <img class="icon" src="/img/lms/file.png" />
+                  <p class="classTitle">${file.name}</p>
+                </div>
+                <div class="wrap"></div>
+              </button>
+            `);
+          });
+
+        })
+        .catch(err => {
+          console.error("강좌 콘텐츠 로딩 실패:", err);
+        });
+    });
+
+    // 총 개수, 시간 반영
+    renderSellBox({
+      nickname: globalLectureDetail.nickname,
+      providerId: globalLectureDetail.providerId,
+      totalLectureCount,
+      level: globalLectureDetail.level
+    });
+
+    setTimeout(() => {
+      const totalCount = document.querySelectorAll(".class").length;
+      document.getElementById("lectureCount").textContent = `수업 ${totalCount}개`;
+    }, 500);
+  }
+
+  function renderSellBox({ nickname, providerId, totalLectureCount, level }) {
+    const providerLink = document.getElementById("providerLink");
+    const lectureCountEl = document.getElementById("lectureCount");
+    const levelEl = document.getElementById("lectureLevel");
+
+    providerLink.textContent = nickname || "-";
+    providerLink.href = `/course/IPdetail/${providerId}`;
+
+
+    lectureCountEl.textContent = `수업 ${totalLectureCount}개`;
+
+    // 난이도
+    const levelNum = Number(level);
+    levelEl.textContent = ["입문", "초급", "중급", "고급"][levelNum] || "입문";
+  }
+
+  function renderReviewSummary() {
+    const ratingScore = document.getElementById("ratingScore");       // 점수 (ex. 4.5)
+    const ratingScoreImg = document.getElementById("ratingScoreImg"); // 별점 (ex. ★★★★☆)
+    const ratingCount = document.getElementById("ratingCount");
+
+    const validReviews = globalLectureReviews.filter(r => {
+      const rate = parseFloat(r.reviewRate);
+      return !isNaN(rate);
+    });
+
+    if (!validReviews.length) {
+      ratingScore.textContent = "0.0";
+      ratingScoreImg.textContent = "☆☆☆☆☆";
+      ratingCount.textContent = "0개의 리뷰";
+
+      document.querySelector("#info").textContent =
+        `★0.0(0) 👤${globalLectureDetail.studentNum}+ 👤${globalLectureDetail.nickname}`;
+      return;
+    }
+
+    const avg = validReviews.reduce((acc, cur) => acc + parseFloat(cur.reviewRate), 0) / validReviews.length;
+    const rounded = Math.round(avg * 2) / 2;
+    const full = Math.floor(rounded);
+    const half = rounded % 1 === 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    const emojiStars = '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+
+    ratingScore.textContent = avg.toFixed(1);         // 숫자 점수
+    ratingScoreImg.textContent = emojiStars;          // 이모지 별점
+    ratingCount.textContent = `${validReviews.length}개의 리뷰`;
+
+    document.querySelector("#info").textContent =
+      `★${avg.toFixed(1)}(${validReviews.length}) 👤${globalLectureDetail.studentNum}+ 👤${globalLectureDetail.nickname}`;
+  }
+
+  function reviewSubmit() {
+    const lectureId = localStorage.getItem("lectureId");
+    const writerId = localStorage.getItem("userId");
+    const reviewRate = parseInt(document.getElementById("ratingSelect").value);
+    const content = document.querySelector(".reviewSubmit textarea").value.trim();
+
+    if (reviewRate === 0) {
+      alert("별점을 선택해주세요.");
+      return;
+    }
+
+    if (!content) {
+      alert("리뷰 내용을 작성해주세요.");
+      return;
+    }
+
+    const reviewData = { lectureId, writerId, reviewRate, content };
+
+    fetch("/api/course/regReview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reviewData)
+    })
+      .then(() => location.reload())
+      .catch(err => console.error("리뷰 등록 실패:", err));
+  }
+
+  function renderReviews(reviews) {
+    const section = document.getElementById("reviewSection");
+    const reviewInfo = document.querySelector(".reviewInfo");
+    const moreBtn = document.querySelector(".moreBtn");
+
+    document.querySelectorAll(".reviewList").forEach(el => el.remove());
+
+    if (!reviews || reviews.length === 0) {
+      reviewInfo.style.display = "none";
+      moreBtn.style.display = "none";
+
+      const empty = document.createElement("div");
+      empty.className = "reviewList";
+      empty.innerHTML = "<p>등록된 리뷰가 없습니다.</p>";
+      section.appendChild(empty);
+      return;
+    }
+
+    reviewInfo.style.display = "flex";
+    moreBtn.style.display = reviews.length > 5 ? "block" : "none";
+
+    const currentUserId = document.body.getAttribute("data-user-id");
+
+    let group = null;
+
+    reviews.forEach((review, idx) => {
+      if (idx % 5 === 0) {
+        group = document.createElement("div");
+        group.className = "reviewList";
+        group.style.display = idx === 0 ? "flex" : "none";
+        section.insertBefore(group, moreBtn);
+      }
+
+      const rounded = Math.round(review.reviewRate * 2) / 2;
+      const full = Math.floor(rounded);
+      const half = rounded % 1 === 0.5 ? 1 : 0;
+      const empty = 5 - full - half;
+      const emojiStars = '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+
+      const profileSrc = review.profilename?.trim()
+        ? review.profilename
+        : "/img/profileImg.png";
+
+      const isMine = String(review.writerId) === String(currentUserId);
+      const deleteBtn = isMine
+        ? `<div class="reviewBtns">
+            <button class="reviewBtn" onclick="editReview(this)">수정</button>
+            <button class="reviewBtn" onclick="openModal(this)">❌</button>
+          </div>`
+        : "";
+
+      const item = `
+        <div class="review" data-review-id="${review.reviewId}">
+          <div class="reviewTop">
+            <img class="profileImg" src="${profileSrc}" />
+            <div class="userInfo">
+              <p class="nickname">${review.nickname}</p>
+              <div class="scoreWrap">
+                <span class="emojiStar">${emojiStars}</span>
+                <span class="score">${review.reviewRate.toFixed(1)}</span>
+              </div>
+            </div>
+          </div>
+          <p class="reviewContent">${review.content}</p>
+          ${deleteBtn}
+        </div>
+      `;
+
+      group.insertAdjacentHTML("beforeend", item);
+    });
+  }
+
+  // 리뷰 수정 폼 오픈
+  function editReview(button) {
+    const reviewDiv = button.closest(".review");
+    const reviewId = reviewDiv.getAttribute("data-review-id");
+    const originalContent = reviewDiv.querySelector(".reviewContent").textContent.trim();
+    const originalScore = parseFloat(reviewDiv.querySelector(".score").textContent.trim());
+
+    // 기존 내용 숨기고, 수정 폼 추가 (DOM을 유지)
+    reviewDiv.querySelector(".reviewContent").style.display = "none";
+    const editBox = document.createElement("div");
+    editBox.className = "reviewEditWrap";
+    editBox.innerHTML = `
+      <textarea class="editContent">${originalContent}</textarea>
+      <select class="editRate">
+        <option value="1" ${originalScore === 1 ? "selected" : ""}>★ 1점</option>
+        <option value="2" ${originalScore === 2 ? "selected" : ""}>★ 2점</option>
+        <option value="3" ${originalScore === 3 ? "selected" : ""}>★ 3점</option>
+        <option value="4" ${originalScore === 4 ? "selected" : ""}>★ 4점</option>
+        <option value="5" ${originalScore === 5 ? "selected" : ""}>★ 5점</option>
+      </select>
+      <button class="editBtn" onclick="submitEdit('${reviewId}')">저장</button>
+      <button class="editBtn" onclick="cancelEdit()">취소</button>
+    `;
+    reviewDiv.appendChild(editBox);
+  }
+
+  function submitEdit(reviewId) {
+    const reviewDiv = document.querySelector(`.review[data-review-id="${reviewId}"]`);
+    const newContent = reviewDiv.querySelector(".editContent").value.trim();
+    const newRate = parseInt(reviewDiv.querySelector(".editRate").value);
+
+    if (!newRate || newRate < 1 || newRate > 5) {
+      alert("별점을 선택해주세요.");
+      return;
+    }
+
+    if (!newContent) {
+      alert("리뷰 내용을 입력해주세요.");
+      return;
+    }
+
+    const writerId = localStorage.getItem("userId");
+
+    const body = {
+      reviewId,
+      writerId,
+      reviewRate: newRate,
+      content: newContent
+    };
+
+    fetch("/api/course/regUpdate", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("수정 실패");
+        return res.json();
+      })
+      .then(() => location.reload())
+      .catch(err => {
+        console.error(err);
+        alert("수정에 실패했습니다.");
+      });
+  }
+
+  function cancelEdit() {
+    location.reload(); // 간단하게 페이지 리로드
+  }
+
+  // 리뷰 삭제
+  function deleteReview()
+  {
+      if (!reviewToDelete) return;
+
+      const reviewId = reviewToDelete.getAttribute("data-review-id");
+      if (!reviewId) {
+          alert("리뷰 ID를 찾을 수 없습니다.");
+          return;
+      }
+
+      fetch(`/api/course/delReview/${reviewId}`, {
+          method: "DELETE"
+      })
+      .then(res =>
+      {
+          if (!res.ok) throw new Error("삭제 실패");
+          return res.json();
+      })
+      .then(() =>
+      {
+          reviewToDelete.remove();
+          reviewToDelete = null;
+          closeModal();
+          showToast("리뷰가 삭제되었습니다.");
+      })
+      .catch(err =>
+      {
+          console.error(err);
+          alert("삭제에 실패했습니다. 본인이 작성한 리뷰만 삭제할 수 있습니다.");
+          closeModal();
+      });
+  }
+
+
+  // 좋아요
+  function toggleLike(button) {
+    const isLiked = button.getAttribute('data-liked') === 'true';
+    const number = parseInt(button.textContent.replace(/[^\d]/g, ''), 10);
+    const newNumber = isLiked ? number - 1 : number + 1;
+
+    const lectureId = globalLectureDetail?.lectureId;
+    const url = `/api/course/${isLiked ? 'delBookmark' : 'bookmarking'}/${lectureId}`;
+    const method = isLiked ? 'DELETE' : 'POST';
+
+    fetch(url, { method })
+      .then(res => {
+        if (!res.ok) throw new Error("찜 요청 실패");
+        return res.json();
+      })
+      .then(() => {
+        // 상태 반전
+        button.setAttribute('data-liked', String(!isLiked));
+        button.textContent = `${!isLiked ? '♥️' : '♡'}`;
+        showToast(!isLiked ? "찜한 강의 목록에 추가했어요" : "찜한 강의 목록에서 제거했어요");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("로그인이 필요하거나 문제가 발생했습니다.");
+      });
+  }
+
+  // 페이지 url 복사
+  const baseUrl = location.origin; // 현재 페이지 도메인
+  const currentLectureUrl = baseUrl + "/course/detail/" + lectureId;
+
+  function copyPageUrl() {
+    if (!currentLectureUrl) {
+      alert("URL 정보를 불러올 수 없습니다.");
+      return;
+    }
+
+    navigator.clipboard.writeText(currentLectureUrl)
+      .then(() => showToast("링크 복사 완료"))
+      .catch(() => alert("복사 실패"));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+        .error-message {
+       color: red;
+       font-size: 14px;
+       }
+
+
+       *{
+   font-weight: bold;
+}
+
+/* 1) 전체 컨테이너 (findId/findPw 와 동일한 여백) */
+.login-container {
+ max-width: 500px;
+ margin: 0 auto;
+ padding: 80px 16px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 2) 로고 */
+.logo {
+ width: 150px;
+ height: auto;
+ margin-bottom: 40px;
+}
+
+/* 3) 폼 전체 */
+.login-form {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ gap: 24px;
+}
+
+/* 4) 폼 그룹 (label + input) */
+.form-group {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ margin-bottom : 20px;
+}
+
+.form-group label {
+ font-size: 14px;
+ color: #666;
+}
+
+.form-group input {
+ height: 44px;
+ padding: 0 12px;
+ font-size: 14px;
+ border: 1px solid #ccc;
+ border-radius: 6px;
+ box-sizing: border-box;
+}
+
+/* 5) 비밀번호 입력 + 눈 아이콘 */
+.password-wrapper {
+ position: relative;
+}
+
+.password-wrapper input {
+ width: 100%;
+}
+
+.eye-btn {
+ position: absolute;
+ top: 50%;
+ right: 12px;
+ transform: translateY(-50%);
+ border: none;
+ background: none;
+ font-size: 18px;
+ cursor: pointer;
+ color: #888;
+ padding: 4px;
+}
+
+/* 6) 로그인 버튼 (findId/findPw 의 submit-btn과 동일) */
+.submit-btn {
+ height: 56px;
+ width: 100%;
+ background-color: #00B37E;
+ color: #fff;
+ font-size: 18px;
+ font-weight: bold;
+ border: none;
+ border-radius: 6px;
+ cursor: pointer;
+ transition: 0.2s;
+}
+
+.submit-btn:hover {
+ background-color: #00A86E;
+}
+
+/* 7) 옵션 섹션 */
+.options {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ font-size: 14px;
+ color: #666;
+}
+
+.options a {
+ color: #666;
+ text-decoration: none;
+}
+
+.options a:hover {
+ text-decoration: underline;
+}
+
+/* 8) 소셜 로그인 버튼 */
+.sns-btn {
+ height: 50px;
+ width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ font-size: 16px;
+ border-radius: 6px;
+ cursor: pointer;
+ border: 1px solid #ddd;
+}
+
+.sns-btn.kakao {
+ background-color: #FEE500;
+ border: none;
+ color: #191919;
+}
+
+.sns-btn.google {
+ background-color: #fff;
+ color: #666;
+}
+
+.sns-icon {
+ font-size: 20px;
+}
+
+/* 9) 회원가입 링크 */
+.signup {
+ text-align: center;
+ font-size: 14px;
+ color: #666;
+}
+
+.signup a {
+ color: #000;
+ font-weight: bold;
+ text-decoration: none;
+}
+
+.signup a:hover {
+ text-decoration: underline;
+}
+
+
+/* 반응형 시작 */
+
+/* 반응형 끝 */

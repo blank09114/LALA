@@ -1,0 +1,176 @@
+body {
+  font-family: 'Pretendard', sans-serif;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #ccc;
+  font-size: 15px;
+}
+
+.subtitle {
+  color: #00C471;
+  font-weight: bold;
+}
+
+label {
+  margin-top: 20px;
+  font-weight: bold;
+  display: block;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+textarea {
+  height: 100px;
+}
+
+.history-item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.history-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  word-break: break-word;
+}
+
+.file-upload-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+  gap: 10px;
+}
+
+.file-icon {
+  font-size: 20px;
+  color: #00C471;
+}
+
+.file-info {
+  flex-grow: 1;
+}
+
+.file-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #222;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #00C471;
+  margin-top: 2px;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #00C471;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.remove-file-btn:hover {
+  color: red;
+}
+
+.upload-btn {
+  background-color: #00C471;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s ease-in-out;
+  margin: 0 auto;
+}
+
+.upload-btn:hover {
+  background-color: #00a25f;
+}
+
+.remove-history-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  transition: color 0.2s ease-in-out;
+}
+
+.remove-history-btn:hover {
+  color: red;
+}
+
+.file-list {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+button[type="submit"] {
+  display: block;
+  width: 50%;
+  margin: 30px auto 0;
+  padding: 12px;
+  background-color: #00C471;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #00a25f;
+}
+
+input[type="file"] {
+  display: none;
+}

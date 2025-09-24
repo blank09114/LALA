@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title> 목차 생성 </title>
+  <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+  <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+  <link rel="stylesheet" th:href="@{/css/lms/partRegister.css}">
+  <script th:src="@{/js/lms/partRegister.js}"></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<!-- 폼-->
+<form onsubmit="return validatePartForm()">
+  <!-- 폼 헤더 -->
+  <div class="form-header">
+    <!-- 상단 -->
+    <div class="topHeader">
+      <div class="topLeftHeader">
+        <img class="pageIcon" th:src="@{/img/lms/books.png}">
+        <h1 class="pageTitle"> 목차 등록하기 </h1>
+      </div>
+      <button class="submit"> 등록 </button>
+    </div>
+    <p class="pageIntro"> 여러분의 지식을 공유해주세요! </p>
+  </div>
+
+  <!-- 목차 제목 -->
+  <div class="content">
+    <h2 class="title"> 목차 제목 </h2>
+    <input type="text" placeholder="목차 제목 입력">
+  </div>
+
+  <!-- 학습 목표 -->
+  <div class="content">
+    <h2 class="title"> 학습 목표 </h2>
+    <input type="text" placeholder="목차의 학습 목표 입력">
+  </div>
+
+  <!-- 목차 내용 -->
+  <div class="content">
+    <h2 class="title"> 콘텐츠 목록 </h2>
+    <div class="classList"> 아직 콘텐츠가 없습니다. </div>
+  </div>
+
+  <!-- 강좌 추가 -->
+  <div class="btnWrap"> <button type="button" class="classAdd"> 콘텐츠 추가 </button> </div>
+</form>
+
+<!-- 아이콘 샘플 -->
+<div style="display:none;" id="iconSamples">
+  <img id="iconVideo" th:src="@{/img/lms/video.png}">
+  <img id="iconQuiz" th:src="@{/img/lms/quiz.png}">
+  <img id="iconFile" th:src="@{/img/lms/file.png}">
+</div>
+
+<!-- 모달 -->
+<div class="overlay" style="display: none;">
+  <div class="modal">
+    <!-- 섹션 헤더 -->
+    <div class="modal-header">
+      <h1 class="modalTitle"> 콘텐츠 등록 </h1>
+      <div class="select">
+        <button class="selectBtn now"> 강좌 </button>
+        <button class="selectBtn"> 퀴즈 </button>
+        <button class="selectBtn"> 자료 </button>
+      </div>
+    </div>
+
+    <!-- 모달 섹션(강좌) -->
+    <div class="modal-section" id="video">
+      <!-- 제목 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 제목 </h2>
+        <input type="text" placeholder="강좌 제목 입력">
+      </div>
+
+      <!-- 파일 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 동영상 업로드 </h2>
+        <div class="file">
+          <div class="fileName"> mp4 파일 </div>
+          <button type="button" class="fileBtn" onclick="this.parentElement.querySelector('input[type=file]').click()">파일 업로드</button>
+          <input type="file" accept=".mp4" style="display: none;" onchange="updateFile(this)">
+        </div>
+      </div>
+
+      <!-- 코멘트 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 코멘트 </h2>
+        <input type="text" placeholder="학습자에게 한 마디">
+      </div>
+    </div>
+
+    <!-- 모달 섹션(퀴즈) -->
+    <div class="modal-section" id="quiz" style="display: none;">
+      <!-- 제목 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 제목 </h2>
+        <input type="text" placeholder="퀴즈 제목 입력">
+      </div>
+
+      <!-- 퀴즈 리스트 -->
+      <div class="modalSectionContent" style="display: flex; flex-direction: column; gap: 5px;">
+        <!-- 퀴즈 -->
+        <div class="quizContent">
+          <!-- 퀴즈 상단 메뉴 -->
+          <div class="quizHeader">
+            <select onchange="toggleQuizType(this)">
+              <option value="choice" selected>객관식</option>
+              <option value="answer">단답형</option>
+            </select>
+
+            <div class="quizBtnWarp">
+              <button type="button" class="btn" onclick="moveQuizUp(this)"> ↑ </button>
+              <button type="button" class="btn" onclick="moveQuizDown(this)"> ↓ </button>
+              <button type="button" class="btn" onclick="removeQuiz(this)"> × </button>
+            </div>
+          </div>
+
+          <!-- 퀴즈 내용 -->
+          <div class="quizSection">
+            <h3 class="quizTitle"> 퀴즈 내용 </h3>
+            <input type="text" placeholder="퀴즈 내용을 입력해주세요.">
+          </div>
+
+          <!-- 퀴즈 문항 -->
+          <div class="quizSection choiceSection">
+            <h3 class="quizTitle"> 선지 및 정답 </h3>
+            <div class="choiceList">
+              <label>
+                <input type="radio">
+                <input class="radio" type="text" placeholder="선지 내용을 입력하세요">
+              </label>
+              <label>
+                <input type="radio">
+                <input class="radio" type="text" placeholder="선지 내용을 입력하세요">
+              </label>
+              <div class="choiceAddBtnWarp"> <button class="choiceAdd" onclick="addChoice(this)"> 선지 추가 </button> </div>
+            </div>
+          </div>
+
+          <!-- 퀴즈 정답 -->
+          <div class="quizSection answerSection" style="display: none;">
+            <h3 class="quizTitle"> 정답 </h3>
+            <input type="text" placeholder="퀴즈 정답을 입력해주세요.">
+          </div>
+        </div>
+
+        <!-- 문항 추가 -->
+        <div class="quizAddBtnWarp"> <button class="quizAdd" onclick="addQuiz()"> 문항 추가 </button> </div>
+      </div>
+
+      <!-- 코멘트 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 코멘트 </h2>
+        <input type="text" placeholder="학습자에게 한 마디">
+      </div>
+    </div>
+
+    <!-- 모달 섹션(자료) -->
+    <div class="modal-section" id="file" style="display: none;">
+      <!-- 제목 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 제목 </h2>
+        <input type="text" placeholder="자료 제목 입력">
+      </div>
+
+      <!-- 파일 -->
+      <div class="modalSectionContent">
+        <h2 class="title"> 파일 업로드 </h2>
+        <div class="file">
+          <div class="fileName"> 파일 형식 제한 없음 </div>
+          <button type="button" class="fileBtn" onclick="this.parentElement.querySelector('input[type=file]').click()">파일 업로드</button>
+          <input type="file" style="display: none;" onchange="updateFile(this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="classSubmitBtnWrap"> <button class="classSubmit" onclick="addContent()"> 등록 </button> </div>
+  </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

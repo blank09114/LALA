@@ -1,0 +1,135 @@
+
+.admin_header {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  padding: 20px;
+  background-color: #fff;
+  box-sizing: border-box;
+  border-bottom: 3px solid #ccc;
+  margin-bottom: 30px;
+  width: 100%;
+  position: relative;
+  
+}
+
+
+.admin_header_left {
+  display: flex;
+  align-items: center;
+}
+
+.admin_header_logo {
+  display: block;
+  width: 80px;     
+  height: auto;
+}
+
+.admin_header_nav {
+  font-weight: bold;
+  font-size:20px;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px;
+}
+
+.admin_header_right{
+  display: flex;
+  margin-left: 30px;
+  /* border: 1px solid black; */
+
+
+}
+
+
+.admin_header_right_btn{
+  margin: 0px 20px;
+}
+
+
+.admin_header_right_btn a{
+   text-decoration: none;  /* 밑줄 제거 */
+   font-size: 16px;         /* 글자 크기 조금 키움 */
+   color: black;            /* 글자 색 검정색 */
+   font-weight: 500;
+}
+
+.admin_header_right_btn button{
+  border: none;
+  background-color: rgba(255,255,255,0.5);
+  font-weight: bold;
+  font-size:16px;
+}
+
+/* 관리자 나가기 */
+.admin_header_right1{
+  display: flex;
+  margin-left: 30px;
+  /* border: 1px solid black; */
+  position: absolute;
+  right: 0px;
+}
+
+.admin_header_right1_btn{
+  margin: 0px 20px;
+}
+.admin_header_right1_btn button{
+  border: none;
+  background-color: rgba(255,255,255,0.5);
+  font-weight: bold;
+  font-size:16px;
+}
+
+
+
+/* 반응형 시작 */
+@media (max-width: 768px) {
+  .admin_header {
+    padding: 10px;
+  }
+
+  .admin_header_logo {
+    width: 50px;
+  }
+
+  .admin_header_nav {
+    font-size: 16px; 
+    padding: 6px;
+  }
+
+  .admin_header_right {
+    margin-left: 10px;  
+    gap: 6px; 
+    flex-wrap: nowrap;
+   text-decoration: none;  /* 밑줄 제거 */
+        font-size: 16px;         /* 글자 크기 조금 키움 */
+        color: black;            /* 글자 색 검정색 */
+        font-weight: 500;
+  }
+
+  .admin_header_right_btn {
+    margin: 0 6px;
+  }
+
+  .admin_header_right_btn button {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+ .admin_header_right_btn a:hover {
+     color: #333;
+ }
+
+  .admin_header_right1 {
+    position: absolute;
+    right: 10px;
+  }
+
+  .admin_header_right1_btn button {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+}
+
+/* 반응형 끝 */

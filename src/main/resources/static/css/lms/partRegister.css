@@ -1,0 +1,491 @@
+form
+{
+    width: 1300px;
+    height: auto;
+    margin: 0 auto;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+
+
+/* 폼 헤더 */
+.form-header
+{
+    width: 100%;
+    height: 80px;
+}
+.topHeader
+{
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 상단 좌측 */
+.topLeftHeader
+{
+    width: auto;
+    height: 100%;
+
+    display: flex;
+    gap: 10px;
+}
+.pageIcon
+{
+    width: 50px;
+    height: 100%;
+}
+.pageTitle
+{
+    width: auto;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 36px;
+    line-height: 50px;
+    color: #5FAF6C;
+}
+
+/* 등록 버튼 */
+.submit
+{
+    width: 100px;
+    height: 40px;
+    border-radius: 4px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+
+    cursor: pointer;
+}
+.submit:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+
+/* 소개글 */
+.pageIntro
+{
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+    line-height: 30px;
+    color: #817A7A;
+}
+
+
+
+/* 목차 제목/학습 목표 */
+.content
+{
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+.title
+{
+    width: 100%;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 24px;
+    line-height: 40px;
+}
+input[type="text"], .fileName
+{
+    width: 95%;
+    height: 35px;
+    margin-top: 5px;
+    padding: 0 10px;
+    border-radius: 12px;
+
+    outline: none;
+    border: 1px solid #cccccc;
+    background-color: white;
+
+    font-size: 16px;
+    line-height: 35px;
+}
+input[type="text"]:hover, input[type="text"]:focus { border: 1px solid #00C471; }
+input[type="text"]:hover::placeholder, input[type="text"]:focus::placeholder { opacity: 0; }
+
+
+
+/* 강좌 리스트 */
+.classList
+{
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.class
+{
+    width: 100%;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+
+    display: flex;
+    justify-content: space-between;
+}
+.wrap
+{
+    width: auto;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.icon
+{
+    width: 30px;
+    height: 30px;
+}
+.classTitle
+{
+    width: auto;
+    height: 30px;
+
+    font-size: 20px;
+    line-height: 30px;
+}
+.btn
+{
+    width: 30px;
+    height: 30px;
+
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 20px;
+
+    cursor: pointer;
+}
+.editBtn { width: 50px; }
+.btn:hover { color: #00C471; }
+
+
+
+/* 버튼 */
+.btnWrap
+{
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+
+    display: flex;
+    justify-content: center;
+}
+.classAdd
+{
+    width: 200px;
+    height: 40px;
+    border-radius: 12px;
+
+    border: 1px solid #B2EDB8;
+    background-color: #B2EDB8;
+
+    font-size: 20px;
+    text-align: center;
+    line-height: 40px;
+
+    cursor: pointer;
+}
+.classAdd:hover { background-color: white; }
+
+
+
+/* 모달 */
+.overlay
+{
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+.modal
+{
+    width: 600px;
+    padding: 20px;
+    border-radius: 12px;
+
+    background: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* 모달 헤더 */
+.modal-header { width: 100%; }
+.modalTitle
+{
+    width: 100%;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 30px;
+    text-align: center;
+    line-height: 40px;
+}
+.select
+{
+    width: 100%;
+    height: 40px;
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.selectBtn
+{
+    width: 33.3%;
+    height: 30px;
+    border-radius: 8px;
+
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+.selectBtn:hover, .now
+{
+    background-color: rgba(62, 183, 38, 0.4);
+    color: #1EB173;
+}
+
+/* 모달 섹션 */
+.modal-section
+{
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.modalSectionContent { width: 100%; }
+
+/* 파일 업로드 */
+.file
+{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+}
+.fileName
+{
+    width: 500px;
+    color: #858585;
+}
+.fileBtn
+{
+    width: 100px;
+    height: 35px;
+    margin-top: 5px;
+    border-radius: 12px;
+
+    border: 1px solid #B6B6B6;
+    background-color: #F2F2F2;
+
+    font-size: 16px;
+    line-height: 35px;
+
+    cursor: pointer;
+}
+.fileBtn:hover { border: 1px solid #00C471; }
+
+/* 퀴즈 */
+.quizContent
+{
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+}
+
+/* 퀴즈 헤더 */
+.quizHeader
+{
+    width: 100%;
+    height: 40px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+select
+{
+    width: 100px;
+    height: 30px;
+    padding: 0 20px;
+    border-radius: 8px;
+
+    border: 1px solid #cccccc;
+    outline: none;
+
+    font-size: 16px;
+
+    appearance: none;
+
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%227%22%20viewBox%3D%220%200%2012%207%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%200l5%205%205-5%22%20stroke%3D%22%23333%22%20stroke-width%3D%222%22%20fill%3D%22none%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+
+    cursor: pointer;
+}
+select:hover, select:focus { border-color: #00C471; }
+
+/* 퀴즈 섹션 */
+.quizSection
+{
+    width: 100%;
+    height: auto;
+    margin-top: 5px;
+}
+.quizTitle
+{
+    width: 100%;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+}
+
+/* 선지 */
+.choiceList
+{
+    width: 100%;
+    height: auto;
+    margin-top: 5px;
+}
+label
+{
+    width: 100%;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+}
+.choiceList input.radio
+{
+    height: 20px;
+    margin-left: 10px;
+    border-radius: 0;
+
+    border: none;
+    border-bottom: 1px solid #cccccc;
+    background-color: white;
+}
+
+/* 선지/문항 추가 버튼 */
+.choiceAddBtnWarp, .quizAddBtnWarp
+{
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+}
+.choiceAdd, .quizAdd
+{
+    width: 80px;
+    height: 30px;
+    margin-top: 5px;
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+    background: none;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+
+    cursor: pointer;
+}
+.choiceAdd:hover, .quizAdd:hover { background-color: #f9f9f9; }
+
+/* 등록 버튼 */
+.classSubmitBtnWrap
+{
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+
+    display: flex;
+    justify-content: center;
+}
+.classSubmit
+{
+    width: 100px;
+    height: 30px;
+    border-radius: 4px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+
+    cursor: pointer;
+}
+.classSubmit:hover
+{
+    background-color: white;
+    color: #00C471;
+}

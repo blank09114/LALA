@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 퀴즈 </title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/lmsMenu.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/solvingQuestion.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <script th:src="@{/js/lms/lmsMenu.js}" defer></script>
+</head>
+<body th:data-material-id="${materialId}" th:data-user-id="${userId}">
+<header th:replace="~{shared/header :: header}"></header>
+<!-- 섹션 -->
+<section>
+    <h1 class="sectionHeader"> 1. 퀴즈 제목 </h1>
+
+    <div class="topContent">
+        <div class="viewer"></div>
+        <div th:replace="~{lms/lmsMenu::lmsMenu}"></div>
+    </div>
+
+    <div th:replace="~{lms/lectureBottom::bottomContent}"></div>
+</section>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script type="module">
+    import {
+        renderLectureTop,
+        fetchAndRenderQnaList,
+        submitQuestion,
+        renderLmsMenu
+    } from '/js/lms/lmsCommonsData.js';
+
+    const materialId = document.body.dataset.materialId;
+    const userId = document.body.dataset.userId;
+    let prevAnswer = null;
+
+    fetch(`/api/lms/submitInfo/${materialId}/${userId}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (data?.submitted) {
+                prevAnswer = data.answer?.trim();
+            }
+        })
+        .catch(err => console.warn("제출 이력 없음", err))
+        .finally(() => {
+            loadQuestion();
+        });
+
+    function loadQuestion() {
+        fetch(`/api/lms/myRecentLecture/chapters/materials/questionDetail/${materialId}`)
+            .then(res => res.json())
+            .then(data => {
+                renderLectureTop({ name: data.question });
+
+                const viewer = document.querySelector(".viewer");
+                viewer.innerHTML = "";
+
+                const quizItem = document.createElement("div");
+                quizItem.className = "quizItem";
+                quizItem.dataset.answer = data.answer?.trim() || "";
+                quizItem.dataset.type = data.type;
+
+                const header = document.createElement("h2");
+                header.className = "quizHeader";
+                header.textContent = data.question;
+                quizItem.appendChild(header);
+
+                if (data.type === "mul" && Array.isArray(data.choiceAnswer)) {
+                    data.choiceAnswer.forEach((opt, i) => {
+                        const label = document.createElement("label");
+                        const input = document.createElement("input");
+                        input.type = "radio";
+                        input.name = "quiz";
+                        input.value = opt;
+                        if (prevAnswer === opt) input.checked = true;
+                        if (prevAnswer) input.disabled = true;
+                        label.appendChild(input);
+                        label.append(` ${i + 1}. ${opt}`);
+                        quizItem.appendChild(label);
+                    });
+                } else {
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.placeholder = "정답을 입력해주세요.";
+                    if (prevAnswer) {
+                        input.value = prevAnswer;
+                        input.readOnly = true;
+                    }
+                    quizItem.appendChild(input);
+                }
+
+                viewer.appendChild(quizItem);
+
+                if (!prevAnswer) {
+                    const submitBtn = document.createElement("button");
+                    submitBtn.className = "submit";
+                    submitBtn.textContent = "제출";
+                    submitBtn.onclick = () => submitQuiz(quizItem);
+                    viewer.appendChild(submitBtn);
+                }
+
+                const scoreElem = document.createElement("p");
+                scoreElem.className = "score";
+                scoreElem.style.display = "none";
+                viewer.appendChild(scoreElem);
+
+                if (prevAnswer) {
+                    const isCorrect = prevAnswer === data.answer?.trim();
+                    const result = document.createElement("div");
+                    result.className = "quizResult";
+                    result.innerHTML = `<p class="answerText">정답: ${data.answer}</p>`;
+                    quizItem.appendChild(result);
+                    scoreElem.textContent = `점수: ${isCorrect ? 1 : 0}/1`;
+                    scoreElem.style.display = "block";
+                }
+
+                const commentElem = document.querySelector(".commentContent");
+                if (commentElem) {
+                    commentElem.textContent = data.comment || "지식 제공자의 한 마디가 없습니다.";
+                }
+
+                fetchAndRenderQnaList(materialId);
+            })
+            .catch(err => console.error("문제 로딩 실패", err));
+    }
+
+    // 신규 제출만 허용
+    function submitQuiz(quizItem) {
+        let submittedAnswer = "";
+
+        const radios = quizItem.querySelectorAll("input[type=radio]");
+        const textInput = quizItem.querySelector("input[type=text]");
+
+        if (radios.length > 0) {
+            radios.forEach(r => {
+                r.disabled = true;
+                if (r.checked) submittedAnswer = r.value.trim();
+            });
+        }
+
+        if (textInput) {
+            textInput.readOnly = true;
+            submittedAnswer = textInput.value.trim();
+        }
+
+        fetch("/api/lms/submit/question", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ materialId, answer: submittedAnswer })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("서버 오류");
+                console.log("제출 성공");
+                location.reload();
+            })
+            .catch(err => console.error("제출 실패", err));
+    }
+
+    // 질문 등록 버튼 바인딩
+    document.querySelector(".questionSubmit")?.addEventListener("click", () => {
+        submitQuestion({
+            inputSelector: "#questionWrite",
+            materialId,
+            onSuccess: () => fetchAndRenderQnaList(materialId)
+        });
+    });
+
+    document.querySelector("#submitBtn")?.addEventListener("click", () => {
+        submitQuestion({
+            inputSelector: "#questionWrite",
+            materialId,
+            onSuccess: () => fetchAndRenderQnaList(materialId)
+        });
+    });
+
+    renderLmsMenu();
+
+    fetch("/api/lms/myRecentLecture")
+        .then(res => res.json())
+        .then(data => {
+            const lecTitleElem = document.querySelector(".lecTitle");
+            if (lecTitleElem && data.lecture.title) {
+                lecTitleElem.textContent = truncate(data.lecture.title, 15);
+            }
+        })
+        .catch(err => console.error("강좌 제목 로딩 실패", err));
+
+    function truncate(text, maxLength) {
+        return (text && text.length > maxLength)
+            ? text.slice(0, maxLength) + "…"
+            : text;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>강의 영상</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/materialPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/videoPlayer.css}"/>
+    <script th:src="@{/js/lms/videoMaterialPage.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+    <!-- 로딩 스피너 -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>영상을 불러오는 중...</p>
+    </div>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container" id="mainContainer" style="display: none;">
+        
+        <!-- 상단 네비게이션 -->
+        <nav class="material-nav">
+            <button class="nav-back" onclick="goBack()">
+                ← 강의 목차로 돌아가기
+            </button>
+            <div class="nav-info">
+                <span class="chapter-info" id="chapterInfo">1장. 챕터명</span>
+                <h1 class="material-title" id="materialTitle">영상 제목</h1>
+            </div>
+        </nav>
+
+        <!-- 영상 플레이어 섹션 -->
+        <section class="video-section">
+            <div class="video-player">
+                <video id="videoPlayer" controls preload="metadata">
+                    <source id="videoSource" src="" type="video/mp4">
+                    브라우저가 비디오를 지원하지 않습니다.
+                </video>
+            </div>
+            
+            <!-- 영상 정보 -->
+            <div class="video-info">
+                <div class="video-meta">
+                    <span class="duration" id="videoDuration">재생시간: 로딩 중...</span>
+                    <span class="quality" id="videoQuality">화질: HD</span>
+                </div>
+                <div class="video-description" id="videoDescription">
+                    영상 설명이 여기에 표시됩니다.
+                </div>
+            </div>
+        </section>
+
+        <!-- 하단 컨텐츠 -->
+        <div class="bottom-content">
+            
+            <!-- 좌측: 목차 메뉴 -->
+            <aside class="chapter-sidebar">
+                <h3>강의 목차</h3>
+                <div class="chapter-list" id="chapterList">
+                    <!-- 목차가 동적으로 여기에 추가됩니다 -->
+                </div>
+            </aside>
+
+            <!-- 우측: Q&A 섹션 -->
+            <section class="qna-section">
+                <div class="qna-header">
+                    <h3>질문 및 답변</h3>
+                    <span class="qna-count" id="qnaCount">0개의 질문</span>
+                </div>
+                
+                <!-- 질문 작성 -->
+                <div class="question-form">
+                    <textarea 
+                        id="questionInput" 
+                        placeholder="이 영상에 대해 궁금한 점을 질문해보세요..."
+                        rows="3"
+                    ></textarea>
+                    <button class="submit-btn" onclick="submitQuestion()">질문 등록</button>
+                </div>
+                
+                <!-- 질문 목록 -->
+                <div class="questions-list" id="questionsList">
+                    <!-- 질문들이 동적으로 여기에 추가됩니다 -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 진도율 완료 알림 모달 -->
+    <div class="modal" id="progressModal" style="display: none;">
+        <div class="modal-content">
+            <h3>🎉 영상 시청 완료!</h3>
+            <p>이 영상을 끝까지 시청하셨습니다.<br>진도율이 업데이트되었습니다.</p>
+            <button class="btn-confirm" onclick="closeProgressModal()">확인</button>
+        </div>
+    </div>
+
+    <!-- 알림 토스트 -->
+    <div class="toast" id="toast" style="display: none;">
+        <span id="toastMessage"></span>
+    </div>
+    <footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

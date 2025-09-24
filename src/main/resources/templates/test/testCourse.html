@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 등록 및 삭제 테스트</title>
+</head>
+<body>
+<h1>리뷰 등록 테스트</h1>
+
+<form id="reviewForm">
+    <label for="lectureId">강의 ID:</label>
+    <input type="text" id="lectureId" name="lectureId" required><br><br>
+
+    <label for="writerId">작성자 ID:</label>
+    <input type="text" id="writerId" name="writerId" required><br><br>
+
+    <label for="reviewRate">평점 (1~5):</label>
+    <input type="number" id="reviewRate" name="reviewRate" min="1" max="5" required><br><br>
+
+    <label for="content">리뷰 내용:</label><br>
+    <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
+
+    <button type="submit">리뷰 등록</button>
+</form>
+
+<hr>
+
+<h1>리뷰 삭제 테스트</h1>
+<p><strong>주의:</strong> 본인이 작성한 리뷰만 삭제할 수 있습니다 (서버에서 로그인한 사용자 ID와 비교)</p>
+
+<form id="deleteForm">
+    <label for="reviewId">삭제할 리뷰 ID:</label>
+    <input type="text" id="reviewId" name="reviewId" required placeholder="예: R001, R002, R003"><br><br>
+
+    <button type="submit">리뷰 삭제</button>
+</form>
+
+<form id="bookmarkForm">
+    <label for="lectureId">북마크할 강의 ID:</label>
+    <input type="text" id="lectureIde" name="lectureId" required>
+    <br><br>
+    <button type="submit">북마크 등록</button>
+</form>
+
+<script>
+    // 리뷰 등록 처리
+    document.getElementById("reviewForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const reviewData = {
+            lectureId: document.getElementById("lectureId").value,
+            writerId: document.getElementById("writerId").value,
+            reviewRate: parseInt(document.getElementById("reviewRate").value),
+            content: document.getElementById("content").value
+        };
+
+        fetch("/api/course/regReview", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(reviewData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("리뷰 등록 실패");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || "리뷰 등록 성공!");
+            console.log("서버 응답:", data);
+        })
+        .catch(error => {
+            alert("에러: " + error.message);
+            console.error("에러 상세:", error);
+        });
+    });
+
+    // 리뷰 삭제 처리 (현재 API 구조에 맞게 수정)
+    document.getElementById("deleteForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const reviewId = document.getElementById("reviewId").value;
+
+        // 삭제 확인
+        if (!confirm(`정말로 리뷰 ID: ${reviewId}를 삭제하시겠습니까?\n\n본인이 작성한 리뷰만 삭제됩니다.`)) {
+            return;
+        }
+
+        console.log(`리뷰 삭제 요청: ${reviewId}`);
+
+        fetch(`/api/course/delReview/${reviewId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            console.log("응답 상태:", response.status);
+            console.log("응답 헤더:", response.headers);
+
+            if (!response.ok) {
+                // 에러 응답 처리
+                return response.text().then(text => {
+                    try {
+                        const json = JSON.parse(text);
+                        throw new Error(json.message || `삭제 실패 (${response.status})`);
+                    } catch (parseError) {
+                        // JSON 파싱 실패 시 원본 텍스트 사용
+                        throw new Error(`삭제 실패: ${text} 님이 작성한 리뷰만 삭제할 수 있아요`);
+                    }
+                });
+            }
+
+            // 성공 응답 처리
+            return response.json();
+        })
+        .then(data => {
+            console.log("서버 응답 데이터:", data);
+            alert(data.message || "리뷰 삭제 성공!");
+
+            // 폼 초기화
+            document.getElementById("deleteForm").reset();
+        })
+        .catch(error => {
+            console.error("삭제 에러 상세:", error);
+
+            // 사용자에게 친화적인 에러 메시지
+            let errorMessage = error.message;
+
+            if (error.message.includes("403")) {
+                errorMessage = "권한이 없습니다. 본인이 작성한 리뷰만 삭제할 수 있습니다.";
+            } else if (error.message.includes("404")) {
+                errorMessage = "리뷰를 찾을 수 없습니다. 리뷰 ID를 확인해주세요.";
+            } else if (error.message.includes("500")) {
+                errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+            }
+
+            alert("삭제 실패: " + errorMessage);
+        });
+    });
+</script>
+</body>
+</html>

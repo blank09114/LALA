@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lala.Mapper.PlannerMapper">
+    <select id="selectThisWeek" resultType="com.example.lala.DTO.Response.Planner" parameterType="String">
+        SELECT start_date                   as startDate,
+               end_date                     as endDate,
+               content,
+               IF(checked = 1, TRUE, FALSE) as completed
+        FROM planner
+        WHERE user_id = #{userId}
+          AND start_date = DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) - 1) DAY)
+          AND end_date = DATE_ADD(DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) - 1) DAY), INTERVAL 6 DAY)
+    </select>
+
+    <select id="selectUserPlanner" resultType="com.example.lala.DTO.Response.Planner" parameterType="map">
+        SELECT start_date                   AS startDate,
+               end_date                     AS endDate,
+               content                      AS content,
+               IF(checked = 1, TRUE, FALSE) AS completed
+        FROM planner
+        WHERE YEAR(start_date) = #{year}
+          AND MONTH(start_date) = #{month}
+          AND DAY(start_date) = #{day}
+          AND user_id = #{userId}
+    </select>
+
+    <!-- 주간별 플래너 조회 (일요일 시작 기준) - 수정 -->
+    <select id="selectUserPlannerByWeek" resultType="com.example.lala.DTO.Response.Planner" parameterType="map">
+        SELECT start_date                   AS startDate,
+               end_date                     AS endDate,
+               content                      AS content,
+               IF(checked = 1, TRUE, FALSE) AS completed
+        FROM planner
+        WHERE user_id = #{userId}
+          AND start_date = #{startDate}
+          AND end_date = #{endDate}
+    </select>
+
+    <!-- 주간 플래너 저장 -->
+    <insert id="insertUserPlanner" parameterType="map">
+        INSERT INTO planner (user_id, start_date, end_date, content, checked)
+        VALUES (#{userId}, #{startDate}, #{endDate}, #{content}, 0)
+    </insert>
+
+    <!-- 주간 플래너 수정 -->
+    <update id="updatePlannerByDateAndContent" parameterType="map">
+        UPDATE planner
+        SET content = #{newContent}
+        WHERE user_id = #{userId}
+          AND start_date = #{startDate}
+          AND end_date = #{endDate}
+          AND content = #{oldContent}
+    </update>
+
+    <!-- 주간 플래너 삭제 -->
+    <delete id="deletePlannerByDateAndContent" parameterType="map">
+        DELETE
+        FROM planner
+        WHERE user_id = #{userId}
+          AND start_date = #{startDate}
+          AND content = #{content}
+    </delete>
+
+    <!-- 월별 주간 플래너 조회 - 수정 -->
+    <select id="selectUserPlannerByMonth" resultType="com.example.lala.DTO.Response.Planner" parameterType="map">
+        SELECT start_date                   AS startDate,
+               end_date                     AS endDate,
+               content                      AS content,
+               IF(checked = 1, TRUE, FALSE) AS completed
+        FROM planner
+        WHERE user_id = #{userId}
+          AND YEAR(start_date) = #{year}
+          AND MONTH(start_date) = #{month}
+    </select>
+
+    <!-- 플래너 체크 상태 업데이트 -->
+    <update id="updatePlannerCheckedStatus" parameterType="map">
+        UPDATE planner
+        SET checked = #{completed}
+        WHERE user_id = #{userId}
+          AND start_date = #{startDate}
+          AND end_date = #{endDate}
+          AND content = #{content}
+    </update>
+
+    <select id="selectByUserIdAndWeek"
+            parameterType="map"
+            resultType="com.example.lala.DTO.Response.Planner">
+        SELECT start_date AS startDate,
+        end_date   AS endDate,
+        content
+        FROM planner
+        WHERE user_id = #{userId}
+        AND (
+        start_date BETWEEN #{startDate} AND DATE_ADD(#{startDate}, INTERVAL 6 DAY)
+        OR end_date BETWEEN #{startDate} AND DATE_ADD(#{startDate}, INTERVAL 6 DAY)
+        OR (start_date = #{startDate} AND end_date >= DATE_ADD(#{startDate}, INTERVAL 6 DAY))
+        )
+    </select>
+</mapper>

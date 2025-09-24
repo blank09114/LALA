@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 상세보기</title>
+  <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin/admin_userDetail.css}">
+  <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+<div class="UserDetails_wrap">
+  <!-- 회원정보, 정보검색 시작 -->
+  <div class="UserDetails_user">
+    <!-- 회원정보 -->
+    <div class="UserDetails_userInfo">
+      <div class="UserDetails_userInfo_title">
+        <h2>회원정보</h2>
+      </div>
+
+      <div class="UserDetails_userInfo_body">
+        <div class="UserDetails_userInfo_img">
+          <img src="/img/profile1.png" alt="회원 이미지">
+        </div>
+
+        <div class="UserDetails_userInfomation">
+          <div class="info-row"><span>이메일</span> <span id="email">로딩중...</span></div>
+          <div class="info-row"><span>닉네임</span> <span id="nickname">로딩중...</span></div>
+          <div class="info-row"><span>가입일</span> <span id="regDate">로딩중...</span></div>
+
+          <div class="info-row">
+            <span>회원유형</span>
+            <div class="input-group">
+              <select id="userTypeSelect">
+                <option value="0">일반회원</option>
+                <option value="1">지식제공자</option>
+                <option value="2">지식제공자 요청</option>
+                <option value="3">관리자</option>
+              </select>
+              <button class="change-btn" onclick="updateUserType()">변경</button>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span>활동유형</span>
+            <div class="input-group">
+              <select id="activityTypeSelect">
+                <option value="1">활동중</option>
+                <option value="2">활동정지</option>
+              </select>
+              <button class="change-btn" onclick="updateActivityType()">변경</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 정보검색 -->
+    <div class="UserDetails_userSearch">
+      <div class="UserDetails_userSearch_title">
+        <h2>정보 검색</h2>
+      </div>
+
+      <!-- 조회 및 기간 -->
+      <div class="UserDetails_userSearch_wr">
+        <div class="search_option">
+          <span class="section_label">• 조회</span>
+          <select id="filterSelect">
+            <option value="mine">작성한 글</option>
+            <option value="reportedToMe">신고당한 글</option>
+            <option value="reportedByMe">내가 신고한 글</option>
+          </select>
+        </div>
+
+        <div class="search_date">
+          <span class="section_label">• 기간</span>
+          <input type="date" name="startDate">
+          ~
+          <input type="date" name="endDate">
+        </div>
+      </div>
+
+      <!-- 검색창 -->
+      <form id="searchForm" class="UserDetails_userSearchbar">
+        <span class="section_label">• 검색</span>
+        <input type="text" name="contentTitle" placeholder="제목 검색">
+        <button type="submit">검색</button>
+      </form>
+    </div>
+  </div>
+  <!-- 회원정보, 정보검색 끝 -->
+
+  <!-- 커뮤니티 시작 -->
+  <div class="UserDetails_community">
+    <div class="UserDetails_community_title">
+      <h2>커뮤니티</h2>
+    </div>
+
+    <div class="UserDetails_community_grid">
+      <!-- 게시물 시작 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <div class="title-wrapper">
+            <span>게시글</span>
+          </div>
+          <a href="#" class="open-modal" data-type="posts">전체보기</a>
+        </div>
+        <div class="community-card-content" id="posts"></div>
+      </div>
+      <!-- 게시물 끝 -->
+
+      <!-- 댓글 시작 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <div class="title-wrapper">
+            <span>댓글</span>
+          </div>
+          <a href="#" class="open-modal" data-type="comments">전체보기</a>
+        </div>
+        <div class="community-card-content" id="comments"></div>
+      </div>
+      <!-- 댓글 끝 -->
+
+      <!-- 수강평 시작 -->
+      <div class="community-card" id="reviews-card">
+        <div class="community-card-header">
+          <div class="title-wrapper">
+            <!-- label 은 JS 가 바꿀 수 있게 id 부여 -->
+            <span id="reviews-label">수강평</span>
+          </div>
+          <!-- data-type=reviews → JS 가 상황에 맞게 lectureRequests 로 교체 -->
+          <a href="#" class="open-modal" id="reviews-anchor" data-type="reviews">전체보기</a>
+        </div>
+        <div class="community-card-content" id="reviews"></div>
+      </div>
+      <!-- 수강평 끝 -->
+
+      <!-- 대댓글 시작 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <div class="title-wrapper">
+            <span>대댓글</span>
+          </div>
+          <a href="#" class="open-modal" data-type="replies">전체보기</a>
+        </div>
+        <div class="community-card-content" id="replies"></div>
+      </div>
+      <!-- 대댓글 끝 -->
+    </div>
+  </div>
+  <!-- 커뮤니티 끝 -->
+
+
+<!--전체보기 모달창 시작-->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2 id="modal-title">모달 제목</h2>
+    <div class="modal-title-underline"></div>
+    <div id="modal-content-dynamic" class="modal-scrollable"></div>
+  </div>
+</div>
+
+  <footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!--전체보기 모달창 끝-->
+<script th:src="@{/js/admin/admin_userDetail.js}" defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <link rel="stylesheet" th:href="@{/css/users/main.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+    <!-- 왼쪽 사이드바 -->
+    <aside class="sidebar">
+        <div class="profile-box">
+            <div class="profile-img">
+                <img th:src="${User.profileName != null} ?
+                                ${User.profileName} :
+                                @{/img/profileImg.png}" alt="프로필"/>
+            </div>
+            <p class="name" th:text="${User.userNickname}">닉네임</p>
+            <p class="email" th:text="${User.emailAddress}">이메일</p>
+
+            <div class="tags">
+                <span class="tag" th:each="item : ${Interest}" th:text="${item.interestedName}">관심분야</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <h2>내 정보</h2>
+            <ul>
+                <li><a th:href="@{/mypage/account}">계정 관리</a></li>
+                <li><a th:href="@{/mypage/activity}">나의 활동</a></li>
+            </ul>
+            <h2>강의 정보</h2>
+            <ul>
+                <li><a th:href="@{/mypage/learning}">학습 관리</a></li>
+                <li><a th:href="@{/mypage/likes}">좋아요</a></li>
+            </ul>
+            <h2>지식 제공자</h2>
+            <ul>
+                <!-- 일반 사용자 (accountType == 0)-->
+                <li th:if="${User.accountType == 0}">
+                    <a th:href="@{/mypage/pro_req}">요청 하기</a>
+                </li>
+                <!-- 지식 제공자 (accountType == 1)-->
+                <li th:if="${User.accountType == 1}">
+                    <a th:href="@{/mypage/pro_account}">프로필 관리</a>
+                </li>
+                <li th:if="${User.accountType == 1}">
+                    <a th:href="@{/mypage/pro_learning}">강의 관리</a>
+                </li>
+                <!-- 지식 제공자 요청 중 (accountType == 2)-->
+                <li th:if="${User.accountType == 2}">
+                   심사 중입니다.
+                </li>
+                <!-- 관리자 (accountType == 3)-->
+                <li th:if="${User.accountType == 3}">
+                    <a th:href="@{/mypage/pro_req}">요청 하기</a>
+                </li>
+                <li th:if="${User.accountType == 3}">
+                    <a th:href="@{/mypage/pro_account}">프로필 관리</a>
+                </li>
+                <li th:if="${User.accountType == 3}">
+                    <a th:href="@{/mypage/pro_learning}">강의 관리</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 오른쪽 메인 -->
+    <main class="main">
+        <!-- 캘린더 -->
+        <section class="calendar">
+            <table>
+                <thead>
+                <tr id="weekdays-top"></tr>
+                </thead>
+                <tbody>
+                <tr id="tasks-top"></tr>
+                <tr id="weekdays-bottom"></tr>
+                <tr id="tasks-bottom"></tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- 하단 두 박스 -->
+        <section class="bottom-section">
+            <div class="box">
+                <h4>최근 학습 강의</h4>
+                <div class="lecture" th:if="${Lecture}">
+                    <img th:src="${Lecture.thumbnail}" alt="썸네일"/>
+                    <div class="lecture-info">
+                        <p class="title" th:text="${Lecture.title}">생활 코딩 자바 스크립트</p>
+                        <p class="teacher" th:text="${Lecture.provider}">지태임</p>
+                        <p class="time" th:text="${Lecture.last_update_date.substring(0, 10)}">1시간 전</p>
+                    </div>
+                </div>
+                <div class="lecture" th:unless="${Lecture}">
+                    <p>최근 학습 강의가 없습니다.</p>
+                </div>
+                <div class="more"><a th:href="@{/mypage/learning}">전체 보기 →</a></div>
+            </div>
+
+            <div class="box">
+                <h4>최근 커뮤니티</h4>
+                <ul class="community" th:each="comm : ${Community}">
+                    <li>
+                        <span class="commu-title" th:text="${comm.title}">게시글 제목</span>
+                        <span th:text="${comm.date.substring(0, 10)}">2025.05.26</span>
+                    </li>
+                </ul>
+                <div class="more"><a th:href="@{/mypage/activity}">전체 보기 →</a></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!-- 데이터 전달 -->
+<script th:inline="javascript">
+    window.calendarData = /*[[${Calendar}]]*/ [];
+    window.plannerData = /*[[${Planner}]]*/ [];
+</script>
+
+<!-- JavaScript 파일들 -->
+<script th:src="@{/js/users/main.js}"></script>
+<script th:src="@{/js/users/mypage.js}"></script>
+
+
+
+</body>
+</html>

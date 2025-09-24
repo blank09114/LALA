@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강의 생성</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.min.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lms/lectureCreator.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <script th:src="@{/js/lms/lectureCreator.js}"></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="container">
+    <div class="header">
+        <h1>강의 생성하기</h1>
+    </div>
+
+    <div class="content">
+        <div class="section">
+            <h2 class="section-title">기본 정보</h2>
+            <div class="form-group">
+                <label for="lectureName" class="form-label">강의 제목<span class="required">*</span></label>
+                <input type="text" id="lectureName" class="form-input" placeholder="강의 제목을 입력하세요">
+            </div>
+
+            <div class="form-group">
+                <label for="lectureOutline" class="form-label">강의 개요<span class="required">*</span></label>
+                <textarea id="lectureOutline" class="form-input form-textarea" placeholder="강의 개요를 입력하세요"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">강의 상세</label>
+                <div id="lectureIntroductionEditor" class="quill-container"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="thumbnailInput" class="form-label">썸네일 업로드<span class="required">*</span></label>
+                <input type="file" id="thumbnailInput" accept="image/*" class="form-input">
+                <img id="thumbnailPreview" src="#" alt="썸네일 미리보기" style="max-width: 200px; display: none; margin-top: 15px; border-radius: 8px;">
+            </div>
+
+            <div class="form-group">
+                <label for="lecturePrice" class="form-label">가격</label>
+                <input type="number" id="lecturePrice" class="form-input" value="0" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="discountRate" class="form-label">할인율</label>
+                <input type="number" id="discountRate" class="form-input" value="0" min="0" max="100">
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">강의 분류</h2>
+
+            <div class="category-section">
+                <div class="category-title">카테고리</div>
+                <p class="form-label">강의의 주제에 맞는 카테고리를 골라주세요.</p>
+                <div class="category-grid" id="mainCategoryGrid">
+                    <div class="category-item">
+                        <input type="radio" id="category1" name="categoryId" value="1" class="category-radio">
+                        <label for="category1" class="category-label" data-category-id="1" data-category-name="외국어">
+                            <span class="category-icon">🌐</span>
+                            <span class="category-text">외국어</span>
+                        </label>
+                    </div>
+                    <div class="category-item">
+                        <input type="radio" id="category2" name="categoryId" value="2" class="category-radio">
+                        <label for="category2" class="category-label" data-category-id="2" data-category-name="예술">
+                            <span class="category-icon">🎨</span>
+                            <span class="category-text">예술</span>
+                        </label>
+                    </div>
+                    <div class="category-item">
+                        <input type="radio" id="category3" name="categoryId" value="3" class="category-radio">
+                        <label for="category3" class="category-label" data-category-id="3" data-category-name="개발/IT">
+                            <span class="category-icon">💻</span>
+                            <span class="category-text">개발/IT</span>
+                        </label>
+                    </div>
+                    <div class="category-item">
+                        <input type="radio" id="category4" name="categoryId" value="4" class="category-radio">
+                        <label for="category4" class="category-label" data-category-id="4" data-category-name="운동">
+                            <span class="category-icon">🏋️</span>
+                            <span class="category-text">운동</span>
+                        </label>
+                    </div>
+                    <div class="category-item">
+                        <input type="radio" id="category5" name="categoryId" value="5" class="category-radio">
+                        <label for="category5" class="category-label" data-category-id="5" data-category-name="취미">
+                            <span class="category-icon">🧶</span>
+                            <span class="category-text">취미</span>
+                        </label>
+                    </div>
+                    <div class="category-item">
+                        <input type="radio" id="category6" name="categoryId" value="6" class="category-radio">
+                        <label for="category6" class="category-label" data-category-id="6" data-category-name="비즈니스">
+                            <span class="category-icon">📊</span>
+                            <span class="category-text">비즈니스</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="category-title" style="margin-top: 25px;">분야</div>
+                <div class="category-grid" id="interestedIdGrid">
+                </div>
+
+                <div class="category-title" style="margin-top: 25px;">선택된 항목</div>
+                <div id="selectedCategoriesContainer" class="selected-categories-container">
+                </div>
+            </div>
+
+            <div class="difficulty-section">
+                <div class="category-title">강의의 난이도</div>
+                <p class="form-label">강의에 맞는 난이도를 확인해주세요.</p>
+                <div class="difficulty-grid">
+                    <div class="difficulty-item">
+                        <input type="radio" id="difficulty0" name="difficulty" value="0" class="difficulty-radio difficulty-intro">
+                        <label for="difficulty0" class="difficulty-label">입문</label>
+                    </div>
+                    <div class="difficulty-item">
+                        <input type="radio" id="difficulty1" name="difficulty" value="1" class="difficulty-radio difficulty-beginner">
+                        <label for="difficulty1" class="difficulty-label">초급</label>
+                    </div>
+                    <div class="difficulty-item">
+                        <input type="radio" id="difficulty2" name="difficulty" value="2" class="difficulty-radio difficulty-intermediate">
+                        <label for="difficulty2" class="difficulty-label">중급</label>
+                    </div>
+                    <div class="difficulty-item">
+                        <input type="radio" id="difficulty3" name="difficulty" value="3" class="difficulty-radio difficulty-advanced">
+                        <label for="difficulty3" class="difficulty-label">고급</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="section">
+            <h2 class="section-title">목차</h2>
+            <button type="button" onclick="addChapter()" class="btn btn-primary">목차 추가</button>
+            <div id="chaptersList"></div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">강의 등록</h2>
+            <button type="button" onclick="submitLecture()" class="btn btn-success">강의 등록하기</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.min.js"></script>
+</body>
+</html>

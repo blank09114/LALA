@@ -1,0 +1,396 @@
+/* 전체 wrap */
+.wrap {
+  width: 100%;
+  max-width: 1300px;
+  min-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  font-family: 'Pretendard', sans-serif;
+  color: #000;
+  padding: 40px 0px;
+}
+
+/* 사이드바 */
+.sidebar-menu {
+  width: 20%;
+  min-width: 150px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+}
+
+.sidebar-menu h2 {
+  font-size: 20px;
+  margin: 10px;
+}
+
+.sidebar-menu ul {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  font-size: 15px;
+  color: #AAAAAA;
+  line-height: 25px;
+  cursor: pointer;
+}
+
+.sidebar-menu a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.sidebar-menu a.active {
+  color: #00c37d;
+  font-weight: bold;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  width: 950px;
+  margin: 0% 10%;
+}
+
+.main-content h2 {
+  font-size: 23px;
+  margin-bottom: 20px;
+}
+
+.menu ul {
+  display: flex;
+  gap: 50px;
+  font-size: 18px;
+  border-bottom: 1px solid #000;
+  padding-left: 2px;
+  padding-bottom: 10px;
+  list-style: none;
+}
+
+.menu li {
+  cursor: pointer;
+}
+
+.content h3 {
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+}
+
+/* 기본 정보 보기 */
+.info {
+  margin-left: 60px;
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+  background: #ffffff;
+  position: relative;
+
+}
+
+.profile {
+   width: 80px;
+   height: 80px;
+   background: url('/img/profileImg.png') no-repeat center center;
+   background-size: cover;
+   border-radius: 50%;
+   margin: 0 auto 15px;
+   background-color: #f0f0f0;
+   position : relative;
+ }
+
+.name {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.email {
+  font-size: 15px;
+  color: #333;
+}
+
+.edit-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  background: #00c37d;
+  border: none;
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.edit-btn a{
+  text-decoration: none;
+  color: inherit;
+}
+
+.edit-btn:hover{
+    background: #009153;
+}
+
+.info {
+  margin-left: 60px;
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+  background: #ffffff;
+}
+
+
+/* 기본 정보 - 수정 모드 */
+#info-edit {
+  text-align: left;
+  position: relative;
+}
+
+.profile-edit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background-color: #00c37d;
+}
+
+.label {
+  display: block;
+  width: 80%;
+  margin: 0 auto 5px auto;
+  font-size: 13px;
+  font-weight: 300;
+  text-align: left;
+}
+
+/* 이름 입력창 */
+.name-input {
+  display: flex;
+  width: 80%;
+  margin: 0 auto 20px auto;
+  padding: 10px 0px;
+  font-size: 18px;
+  border: none;
+  border-bottom: 1px solid #333;
+  font-weight: bold;
+  text-align: left;
+}
+
+/* 이메일 입력 + 버튼 감싸는 박스 */
+.email-edit {
+  width: 80%;
+  margin: 0 auto 20px auto;
+  border-bottom: 1px solid #333;
+}
+
+.email-input {
+  width: 80%;
+  font-size: 18px;
+  border: none;
+  background: transparent;
+  padding: 10px 0px;
+  font-weight: bold;
+  text-align: left;
+}
+
+/* 인증 버튼 */
+.verify-btn {
+  background: #00c37d;
+  color: white;
+  border: none;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* 인증코드 입력창 */
+.checkcode {
+  display: block;
+  width: 78%;
+  margin: 10px auto 60px auto;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: left;
+}
+
+/* 버튼 그룹 우측 정렬 */
+.button {
+     display: flex;
+     justify-content: flex-end;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.cancel-btn:hover{
+    background: #BDBDBD;
+}
+
+.save-btn:hover{
+    background: #009153;
+}
+
+
+/* 비밀번호 */
+.pwd {
+  margin-left: 60px;
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  position: relative;
+}
+
+.pwd .explan {
+  font-size: 13px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+}
+
+.password {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 0px 10px;
+}
+
+/* 비밀번호 변경 모달 */
+.pwd-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  width: 400px;
+  padding: 30px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.reset-pw {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #666;
+}
+
+.reset-pw a {
+  color: #00c37d;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.pw-check {
+  font-size: 12px;
+  color: #444;
+  margin-top: 6px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+
+
+.cancel-btn {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.save-btn {
+  background: #00c37d;
+  color: #fff;
+}
+
+/* 관심분야 */
+.inter {
+  margin-left: 60px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  position: relative;
+}
+
+.inter .explan {
+  font-size: 13px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+}
+
+.tags {
+  display: flex;
+  gap: 15px;
+  padding: 0px 10px;
+  margin: 15px 0px;
+}
+
+.tag {
+  background: #e7f9f3;
+  color: #00c37d;  font-size: 15px;
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-weight: 500;
+
+}

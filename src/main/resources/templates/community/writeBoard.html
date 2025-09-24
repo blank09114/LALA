@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 글 쓰기 </title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <style>
+        /* 폼 */
+        form
+        {
+            width: 1300px;
+            margin: 20px auto;
+            padding: 20px;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .formHeader
+        {
+            width: auto;
+            height: 50px;
+            margin: 0;
+            padding: 10px 0;
+
+            border-bottom: 1px solid #ccc;
+
+            font-size: 36px;
+            font-weight: bold;
+            line-height: 50px;
+        }
+
+
+
+        /* 글 작성 */
+        .content
+        {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 제목 */
+        .title
+        {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        select
+        {
+            width: 150px;
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+
+            outline: none;
+            border: 1px solid #ccc;
+
+            font-size: 16px;
+
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23858585' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+        select:hover, select:focus { border-color: #00C471; }
+        input[type="text"]
+        {
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+
+            font-size: 16px;
+            line-height: 30px;
+
+            outline: none;
+            border: 1px solid #ccc;
+
+            flex-grow: 1;
+        }
+
+        /* 내용 */
+        textarea
+        {
+            width: 99.5%;
+            min-height: 500px;
+            padding: 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+
+            outline: none;
+            border: 1px solid #ccc;
+        }
+        textarea:focus, input[type="text"]:focus { border-color: #00C471; }
+
+        /* 버튼 박스 */
+        .btns
+        {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn
+        {
+            width: 80px;
+            height: 30px;
+            border-radius: 4px;
+
+            font-size: 16px;
+            text-align: center;
+            line-height: 30px;
+
+            cursor: pointer;
+        }
+        .submit
+        {
+            border: 1px solid #00C471;
+            background-color: #00C471;
+            color: white;
+        }
+        .submit:hover
+        {
+            background-color: white;
+            color: #00C471;
+        }
+        .cancle
+        {
+            border: 1px solid #ccc;
+            background-color: white;
+        }
+        .cancle:hover { background-color: #f0f0f0; }
+    </style>
+    <script>
+        async function handleSubmit() {
+     const category = document.querySelector("#postTypeNum").value;
+     const title = document.querySelector("#title").value.trim();
+     const contentTextarea = document.querySelector("#smartEditor");
+
+     // 스마트에디터 동기화
+     oEditor[0].exec("UPDATE_CONTENTS_FIELD", []);
+
+
+
+    const content = contentTextarea.value.trim();
+
+     if (!title) {
+         alert("제목을 입력해주세요.");
+         return;
+     }
+
+     if (!content) {
+         alert("내용을 입력해주세요.");
+         return;
+     }
+
+     const postData = {
+         postTypeNum: category,
+         title: title,
+         content: content
+     };
+
+     try {
+         const response = await fetch("/api/community/board/post", {
+             method: "POST",
+             headers: {
+                 "Content-Type": "application/json"
+             },
+             body: JSON.stringify(postData)
+         });
+
+         const result = await response.text();
+         if (response.ok) {
+             alert("게시물이 성공적으로 등록되었습니다!");
+             window.location.href = "/auth/community/board";
+         } else {
+             alert("게시물 등록 실패: " + result);
+         }
+     } catch (error) {
+         console.error("오류 발생:", error);
+         alert("서버 오류로 게시물 등록에 실패했습니다.");
+     }
+ }
+    </script>
+    <!-- SmartEditor2 필수 JS -->
+    <script src="/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+</head>
+<body>
+
+<header th:replace="~{shared/header :: header}"></header>
+
+<form>
+    <!-- 폼 헤더 -->
+    <h1 class="formHeader"> 글쓰기 </h1>
+
+    <!-- 글쓰기 박스 -->
+    <div class="content">
+        <div class="title">
+            <select id="postTypeNum" name="postTypeNum">
+                <option value="1"> 공지 </option>
+                <option value="2"> 자유 </option>
+                <option value="3"> 스터디 모집 </option>
+                <option value="5"> 질문 답변 </option>
+            </select>
+            <input type="text" id="title" placeholder="제목">
+        </div>
+        <textarea name="introduce" id="smartEditor" rows="10" cols="100"></textarea>
+    </div>
+
+    <!-- 등록 -->
+    <div class="btns">
+        <button type="button" class="btn submit" onclick="handleSubmit()"> 등록 </button>
+        <button type="button" class="btn cancle" onclick="cancle()"> 취소 </button>
+    </div>
+</form>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!-- 스마트에디터 JS 로딩 -->
+<script src="/smarteditor/js/HuskyEZCreator.js"></script>
+
+<!-- 스마트에디터 초기화 -->
+<script type="text/javascript">
+    let oEditor = [];
+
+    nhn.husky.EZCreator.createInIFrame
+    ({
+        oAppRef: oEditor,
+        elPlaceHolder: "smartEditor", // textarea ID
+        sSkinURI: "/smarteditor/SmartEditor2Skin.html",
+        fCreator: "createSEditor2"
+    });
+
+
+
+
+</script>
+
+</body>
+</html>

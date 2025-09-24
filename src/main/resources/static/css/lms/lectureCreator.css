@@ -1,0 +1,534 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #6bbd7c 0%, #75b386 100%); /* Updated theme color */
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.content {
+    padding: 30px;
+}
+
+.section {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, #6bbd7c 0%, #75b386 100%); /* Updated theme color */
+    margin-right: 12px;
+    border-radius: 2px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.required {
+    color: #dc3545;
+    margin-left: 4px; /* Space out the asterisk */
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #75b386; /* Updated theme color */
+    box-shadow: 0 0 0 3px rgba(117, 179, 134, 0.1); /* Updated theme color */
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Quill 에디터 커스텀 스타일 */
+.quill-container {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    overflow: hidden; /* Ensure content stays within border-radius */
+}
+
+.quill-container:focus-within {
+    border-color: #75b386; /* Updated theme color */
+    box-shadow: 0 0 0 3px rgba(117, 179, 134, 0.1); /* Updated theme color */
+}
+
+.quill-container .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    border-radius: 6px 6px 0 0;
+    padding: 12px;
+}
+
+.quill-container .ql-container {
+    border: none;
+    min-height: 150px;
+    font-size: 14px;
+    border-radius: 0 0 6px 6px;
+}
+
+.quill-container .ql-editor {
+    padding: 16px;
+    min-height: 150px;
+}
+
+.quill-container .ql-editor.ql-blank::before {
+    color: #6c757d;
+    font-style: normal;
+}
+
+/* 카테고리 선택 스타일 */
+.category-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.category-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.category-item {
+    position: relative;
+}
+
+.category-radio {
+    display: none; /* Hide the actual radio/checkbox input */
+}
+
+.category-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-height: 80px;
+    justify-content: center;
+}
+
+.category-label:hover {
+    border-color: #75b386; /* Updated theme color */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(117, 179, 134, 0.15); /* Updated theme color */
+}
+
+.category-radio:checked + .category-label {
+    border-color: #75b386; /* Updated theme color */
+    background: linear-gradient(135deg, #6bbd7c 0%, #75b386 100%); /* Updated theme color */
+    color: white;
+}
+
+/* Specific style for checked interested labels (when background is not gradient) */
+.category-item .category-radio:checked + .category-label .category-text {
+    color: white; /* Ensure text is white when background changes */
+}
+
+
+.category-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.category-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057; /* Default color */
+    transition: color 0.3s ease; /* Smooth transition for text color */
+}
+
+.category-radio:checked + .category-label .category-text {
+    color: white; /* Text color when checked */
+}
+
+/* 난이도 선택 스타일 */
+.difficulty-section {
+    margin-top: 20px;
+}
+
+.difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Changed to 4 columns for 0-3 difficulty */
+    gap: 12px;
+}
+
+.difficulty-item {
+    position: relative;
+}
+
+.difficulty-radio {
+    display: none;
+}
+
+.difficulty-label {
+    display: block;
+    padding: 15px;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: 500;
+    color: #495057; /* Default text color */
+}
+
+.difficulty-label:hover {
+    border-color: #75b386; /* Adjusted hover color */
+    transform: translateY(-1px);
+}
+
+/* Individual difficulty checked states (Updated colors for 0-3) */
+.difficulty-intro:checked + .difficulty-label {
+    background: #a2e0ae; /* Lighter green for Intro */
+    border-color: #a2e0ae;
+    color: #333; /* Darker text for contrast */
+}
+
+.difficulty-beginner:checked + .difficulty-label {
+    background: #75b386; /* Green for Beginner */
+    border-color: #75b386;
+    color: white;
+}
+
+.difficulty-intermediate:checked + .difficulty-label {
+    background: #28a745; /* Darker green for Intermediate */
+    border-color: #28a745;
+    color: white;
+}
+
+.difficulty-advanced:checked + .difficulty-label {
+    background: #1e7e34; /* Even darker green for Advanced */
+    border-color: #1e7e34;
+    color: white;
+}
+
+/* 선택된 항목 표시 스타일 */
+.selected-categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px; /* Ensure some height even when empty */
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.selected-categories-container.no-selection-message {
+    font-style: italic;
+    color: #999;
+}
+
+
+.selected-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0ffe5; /* Light green for selected tags */
+    color: #4a805a; /* Darker green text for selected tags */
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #c2ffd1; /* Lighter green border for selected tags */
+}
+
+.remove-tag-btn {
+    background: none;
+    border: none;
+    color: #4a805a; /* Darker green for remove button */
+    font-size: 14px;
+    margin-left: 8px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.remove-tag-btn:hover {
+    opacity: 1;
+}
+
+/* 버튼 스타일 */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6bbd7c 0%, #75b386 100%); /* Updated theme color */
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(117, 179, 134, 0.3); /* Updated theme color */
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-info { /* Used for small action buttons */
+    background: #17a2b8;
+    color: white;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 6px;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+
+/* 목차 및 자료 스타일 */
+.chapter-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.chapter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.chapter-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.material-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px; /* Adjust margin-bottom from previous, now margin-top for current */
+    margin-left: 20px;
+}
+
+.material-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.material-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+/* 결과 표시 */
+.result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    display: none; /* Hidden by default, shown by JS */
+    font-size: 14px;
+}
+
+.result.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.result.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px; /* Adjusted padding */
+    font-size: 16px; /* Slightly larger text */
+    color: #75b386; /* Updated theme color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading::after {
+    content: '';
+    width: 25px; /* Smaller spinner */
+    height: 25px;
+    border: 3px solid rgba(117, 179, 134, 0.2); /* Lighter border for spinner background */
+    border-top: 3px solid #75b386; /* Updated theme color */
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjust for smaller screens */
+    }
+
+    .difficulty-grid {
+        grid-template-columns: 1fr; /* Changed to 1 column for smaller screens for all 4 options */
+    }
+
+    .quill-container .ql-toolbar {
+        padding: 8px;
+    }
+
+    .quill-container .ql-editor {
+        padding: 12px;
+        min-height: 120px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    .btn-info {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+/* 템플릿 버튼 스타일 (not used in this specific scenario, but kept for completeness if needed) */
+.template-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}

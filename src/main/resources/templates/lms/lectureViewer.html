@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title> LMS 홈 </title>
+  <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+
+  <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+  <link rel="stylesheet" th:href="@{/css/lms/lectureViewer.css}"/>
+  <script th:src="@{/js/lms/lectureViewer.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<!-- 내브 -->
+<nav>
+  <div class="nav-container">
+    <!-- 설명 -->
+    <div class="leftMenu">
+      <!-- 강의 정보 -->
+      <div class="lecInfo">
+        <p class="cate"> @대분류 - @소분류, @대분류 - @소분류, @대분류 - @소분류 </p>
+        <h2 class="lecTitle"> @강의 제목 </h2>
+        <p class="lecContent"> @강의 소개글 소개글 소개글 소개글 소개글 소개글 소개글 소개글 </p>
+      </div>
+
+      <!-- 사용자 메뉴 -->
+      <div class="userMenu">
+        <p style="margin-bottom: 10px;"> ★5.0(27) 👤600+ 👤지식제공자 </p>
+
+        <!-- 수강 취소 -->
+        <div class="user"> <button class="cancelBtn" onclick="showModal()"> 수강 취소 </button> </div>
+
+        <!-- 진도율 -->
+        <div class="user" style="display: none;">
+          <div class="progress">
+            <div class="rate" style="width: 30%;"> 진도율: 30% </div>
+          </div>
+        </div>
+
+        <!-- 강의 등록 -->
+        <div class="prov" style="display: none;">
+          <button class="provBtn" onclick="submit()"> 강의 등록 </button>
+          <button class="provBtn gray" style="display: none;"> 등록 심사 중 </button>
+          여러분의 지식을 공유해주세요!
+        </div>
+
+        <!-- 강의 수정 -->
+        <div class="prov" style="display: none;">
+          <button class="provBtn"> 강의 수정 </button>
+          더 나은 강의를 만들어주세요!
+        </div>
+      </div>
+    </div>
+
+    <!-- 썸네일 -->
+    <img class="thumbnail" src="@이미지 경로" alt="썸네일">
+  </div>
+</nav>
+
+<!-- 섹션 -->
+<section class="index-some">
+  <!-- 섹션 헤더 -->
+  <div class="section-header">
+    <h2 class="sectionTitle"> 강의 목차 </h2>
+    <p class="full"> 전체 n개(n시간 n분)</p>
+    <button class="toggleBtn" onclick="toggleAll()"> ▼ 모두 펼치기 </button>
+  </div>
+
+  <!-- 목차 리스트 -->
+  <div class="partList">
+    <!-- 목차 -->
+    <div class="part">
+      <!-- 목차 헤더 -->
+      <div class="partInfo">
+        <div class="partTitleWrap">
+          <h2 class="partTitle"> 1. 목차 제목 </h2>
+          <button class="partToggleBtn" onclick="toggle(this)"> ▼ </button>
+        </div>
+        <p class="partIntro"> 목차 설명 </p>
+      </div>
+
+      <!-- 강좌 리스트 -->
+      <div class="classList" style="display: none;">
+        <!-- 동영상 -->
+        <button class="class">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/video.png}">
+            <p id="classTitle"> 강의 제목 </p>
+          </div>
+          <div class="wrap">
+            <p> 미시청 </p>
+            <p> 10:00 </p>
+          </div>
+        </button>
+
+        <!-- 퀴즈 -->
+        <button class="class">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/quiz.png}">
+            <p> 퀴즈 제목 </p>
+          </div>
+          <div class="wrap"> <p> 미제출 </p> </div>
+        </button>
+
+        <!-- 파일 -->
+        <button class="class" id="file">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/file.png}">
+            <p> 파일 제목 </p>
+          </div>
+          <div class="wrap"> <p> 다운로드 미완료 </p> </div>
+        </button>
+
+        <button class="classEdit"> 목차 수정 </button>
+      </div>
+    </div>
+
+    <!-- 목차 -->
+    <div class="part">
+      <!-- 목차 헤더 -->
+      <div class="partInfo">
+        <div class="partTitleWrap">
+          <h2 class="partTitle"> 2. 목차 제목 </h2>
+          <button class="partToggleBtn" onclick="toggle(this)"> ▼ </button>
+        </div>
+        <p class="partIntro"> 목차 설명 </p>
+      </div>
+
+      <!-- 강좌 리스트 -->
+      <div class="classList" style="display: none;">
+        <!-- 동영상 -->
+        <button class="class">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/video.png}">
+            <p> 강의 제목 </p>
+          </div>
+          <div class="wrap">
+            <p> 미시청 </p>
+            <p class="time"> 10:00 </p>
+          </div>
+        </button>
+
+        <!-- 퀴즈 -->
+        <button class="class">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/quiz.png}">
+            <p> 퀴즈 제목 </p>
+          </div>
+          <div class="wrap"> <p> 미제출 </p> </div>
+        </button>
+
+        <!-- 파일 -->
+        <button class="class">
+          <div class="wrap">
+            <img class="icon" th:src="@{/img/lms/file.png}">
+            <p> 파일 제목 </p>
+          </div>
+          <div class="wrap"> <p> 다운로드 미완료 </p> </div>
+        </button>
+
+        <button class="classEdit"> 목차 수정 </button>
+      </div>
+    </div>
+
+    <button class="classAdd"> 목차 추가 </button>
+  </div>
+</section>
+
+<!-- 섹션(목차 없음) -->
+<section class="index-none" style="display:none;">
+  <p class="index-none-text">생성된 목차가 없습니다.</p>
+  <button class="partAdd"> 목차 추가 </button>
+</section>
+
+<!-- 모달  -->
+<div class="modal" style="display:none;">
+  <div class="modalContent">
+    <p class="modalText"> 수강을 취소하시겠습니까? </p>
+    <div class="modalBtns">
+      <button class="modalBtn" onclick="confirm()"> 확인 </button>
+      <button class="modalBtn gray" onclick="closeModal()"> 취소 </button>
+    </div>
+  </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

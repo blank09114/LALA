@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.CommunityPostMapper">
+
+    <resultMap id="CommunityAll" type="com.example.lala.DTO.Response.CommunityView">
+        <result property="postId" column="postId"/>
+        <result property="postType" column="postType"/>
+        <result property="postTypeName" column="postTypeName"/>
+        <result property="postTitle" column="postTitle"/>
+        <result property="postContent" column="postContent"/>
+        <result property="deleteReason" column="deleteReason"/>
+        <result property="writerNickname" column="writerNickname"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="writeDate" column="writeDate"/>
+        <result property="postView" column="postView"/>
+        <result property="postLikeNum" column="postLikeNum"/>
+        <result property="postCommNum" column="postCommNum"/>
+    </resultMap>
+
+    <!-- 게시물 삭제 (현재 테이블 구조 활용) -->
+    <update id="deletePost">
+        UPDATE post
+        SET delete_check = 1,
+        delete_reason = #{deleteReason}
+        WHERE post_id = #{postId}
+    </update>
+
+    <!-- 게시글 목록 조회 (삭제된 게시물 처리) -->
+    <select id="findCommunityAll" resultMap="CommunityAll">
+        SELECT p.post_id as postId,
+        CASE
+        WHEN p.delete_check = 1 THEN '삭제된 게시물'
+        WHEN pt.name = '공지' THEN '공지'
+        WHEN pt.name = '자유' THEN '자유'
+        WHEN pt.name = '스터디(모집중)' THEN '모집중'
+        WHEN pt.name = '스터디(모집완료)' THEN '모집완료'
+        WHEN pt.name = '질문답변(미해결)' THEN '미해결'
+        WHEN pt.name = '질문답변(해결)' THEN '해결'
+        ELSE pt.name
+        END as postType,
+        CASE
+        WHEN p.delete_check = 1 THEN '[삭제된 게시물]'
+        ELSE p.title
+        END as postTitle,
+        CASE
+        WHEN p.delete_check = 1 THEN CONCAT('삭제 사유: ', COALESCE(p.delete_reason, '사유 없음'))
+        ELSE CAST(p.content AS CHAR)
+        END as postContent,
+        CASE
+        WHEN p.delete_check = 1 THEN COALESCE(p.delete_reason, '사유 없음')
+        ELSE NULL
+        END as deleteReason,
+        u.nickname as writerNickname,
+        p.write_date as writeDate,
+        p.view as postView,
+        p.like_num as postLikeNum,
+        (SELECT COUNT(*) FROM comment c WHERE c.post_id = p.post_id AND c.recomment_check = 0 AND c.delete_check = 0) as postCommNum
+        FROM post p
+        JOIN post_type pt ON p.post_type = pt.no
+        JOIN user u ON p.writer_id = u.user_id
+        WHERE 1=1
+        -- 일반 사용자에게는 삭제된 게시물 숨김
+        AND (p.delete_check = 0 OR p.delete_check IS NULL)
+        <if test="postType != null and postType.size() > 0">
+            AND p.post_type IN
+            <foreach collection="postType" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            AND CAST(p.content AS CHAR) LIKE CONCAT('%', #{content}, '%')
+        </if>
+        <if test="writer != null and writer != ''">
+            AND u.nickname LIKE CONCAT('%', #{writer}, '%')
+        </if>
+        <choose>
+            <when test="orderBy == 'latest'">
+                ORDER BY p.write_date DESC
+            </when>
+            <when test="orderBy == 'popular'">
+                ORDER BY p.view DESC
+            </when>
+            <when test="orderBy == 'likes'">
+                ORDER BY p.like_num DESC
+            </when>
+            <when test="orderBy == 'comments'">
+                ORDER BY postCommNum DESC
+            </when>
+            <otherwise>
+                ORDER BY p.write_date DESC
+            </otherwise>
+        </choose>
+        LIMIT #{pageStart}, #{pageSize}
+    </select>
+
+    <!-- ✅ 누락된 countCommunityAll 쿼리 추가 -->
+    <select id="countCommunityAll" resultType="int">
+        SELECT COUNT(*)
+        FROM post p
+        JOIN post_type pt ON p.post_type = pt.no
+        JOIN user u ON p.writer_id = u.user_id
+        WHERE 1=1
+        -- 일반 사용자에게는 삭제된 게시물 숨김
+        AND (p.delete_check = 0 OR p.delete_check IS NULL)
+        <if test="postType != null and postType.size() > 0">
+            AND p.post_type IN
+            <foreach collection="postType" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            AND p.content LIKE CONCAT('%', #{content}, '%')
+        </if>
+        <if test="writer != null and writer != ''">
+            AND u.nickname LIKE CONCAT('%', #{writer}, '%')
+        </if>
+    </select>
+
+    <!-- 게시글 상세 조회 (삭제된 게시물도 볼 수 있도록) -->
+
+    <select id="findPostDetail" resultMap="CommunityAll" parameterType="String">
+        SELECT p.post_id as postId,
+        CASE
+        WHEN p.delete_check = 1 THEN '삭제된 게시물'
+        WHEN pt.name = '공지' THEN '공지'
+        WHEN pt.name = '자유' THEN '자유'
+        WHEN pt.name = '스터디(모집중)' THEN '모집중'
+        WHEN pt.name = '스터디(모집완료)' THEN '모집완료'
+        WHEN pt.name = '질문답변(미해결)' THEN '미해결'
+        WHEN pt.name = '질문답변(해결)' THEN '해결'
+        ELSE pt.name
+        END as postType,
+        pt.name as postTypeName,
+        u.nickname as writerNickname,
+        p.writer_id,
+        CASE
+        WHEN p.delete_check = 1 THEN '[삭제된 게시물]'
+        ELSE p.title
+        END as postTitle,
+        CASE
+        WHEN p.delete_check = 1 THEN CONCAT('이 게시물은 삭제되었습니다.\n\n삭제 사유: ', COALESCE(p.delete_reason, '사유 없음'))
+        ELSE CAST(p.content AS CHAR)
+        END as postContent,
+        CASE
+        WHEN p.delete_check = 1 THEN COALESCE(p.delete_reason, '사유 없음')
+        ELSE NULL
+        END as deleteReason,
+        p.write_date as writeDate,
+        p.view as postView,
+        p.like_num as postLikeNum,
+        (SELECT COUNT(*) FROM comment c WHERE c.post_id = p.post_id AND c.recomment_check = 0 AND c.delete_check = 0) as postCommNum
+        FROM post p
+        JOIN post_type pt ON p.post_type = pt.no
+        JOIN user u ON p.writer_id = u.user_id
+        WHERE p.post_id = #{postId}
+    </select>
+
+    <!-- 관리자용 삭제된 게시물 조회 쿼리 (선택사항) -->
+    <select id="findDeletedPosts" resultMap="CommunityAll">
+        SELECT p.post_id as postId,
+        p.title as postTitle,
+        p.content as postContent,
+        p.delete_reason as deleteReason,
+        u.nickname as writerNickname,
+        p.write_date as writeDate
+        FROM post p
+        JOIN user u ON p.writer_id = u.user_id
+        WHERE p.delete_check = 1
+        ORDER BY p.write_date DESC
+    </select>
+
+    <!-- ✅ 추가로 필요한 쿼리들 -->
+
+    <!-- 게시글 존재 여부 확인 -->
+    <select id="existsPostId" parameterType="String" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM post WHERE post_id = #{postId}
+    </select>
+
+    <!-- 좋아요 수 증가 -->
+    <update id="incrementLikeCount" parameterType="String">
+        UPDATE post SET like_num = COALESCE(like_num, 0) + 1 WHERE post_id = #{postId}
+    </update>
+
+    <!-- 좋아요 수 감소 -->
+    <update id="decrementLikeCount" parameterType="String">
+        UPDATE post SET like_num = COALESCE(like_num, 1) - 1 WHERE post_id = #{postId}
+    </update>
+
+    <!-- 현재 좋아요 수 조회 -->
+    <select id="getCurrentLikeCount" parameterType="String" resultType="int">
+        SELECT COALESCE(like_num, 0) FROM post WHERE post_id = #{postId}
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="incrementViewCount" parameterType="String">
+        UPDATE post SET view = COALESCE(view, 0) + 1 WHERE post_id = #{postId}
+    </update>
+
+    <!-- 게시물 타입 상태 변경 -->
+    <update id="updatePostType">
+        UPDATE post SET post_type = #{newPostType} WHERE post_id = #{postId}
+    </update>
+
+    <!-- 게시물 타입 조회 -->
+    <select id="getCurrentPostType" parameterType="String" resultType="int">
+        SELECT post_type FROM post WHERE post_id = #{postId}
+    </select>
+
+    <!-- 게시물 작성자 확인 -->
+    <select id="isPostOwner" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM post WHERE post_id = #{postId} AND writer_id = #{userId}
+    </select>
+
+    <!-- 게시물 신고 수 증가 -->
+    <update id="incrementReportCount" parameterType="String">
+        UPDATE post SET report = COALESCE(report, 0) + 1 WHERE post_id = #{postId}
+    </update>
+
+    <!-- 현재 신고 수 조회 -->
+    <select id="getReportCount" parameterType="String" resultType="int">
+        SELECT COALESCE(report, 0) FROM post WHERE post_id = #{postId}
+    </select>
+
+    <!-- 게시물 등록 -->
+    <insert id="addPostUser" parameterType="com.example.lala.DTO.Request.CommunityPostRequest">
+        INSERT INTO post (title, content, writer_id, post_type, write_date)
+        VALUES (#{title}, #{content}, #{writerId}, #{postTypeNum}, NOW())
+    </insert>
+
+</mapper>

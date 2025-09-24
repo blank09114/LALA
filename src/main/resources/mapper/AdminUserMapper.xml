@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lala.Mapper.AdminUserMapper">
+
+    <resultMap id="UserResultMap" type="com.example.lala.DTO.UserDTO">
+        <result property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="userNickname" column="nickname"/>
+        <result property="membershipRegistrationDate" column="registration_date"/>
+        <result property="activityTypeName" column="activityTypeName"/>
+        <result property="accountTypeName" column="accountTypeName"/>
+    </resultMap>
+
+    <select id="findUsersByFilters" resultMap="UserResultMap">
+        SELECT
+        u.user_id,
+        u.email,
+        u.nickname,
+        u.registration_date,
+        u.active_type,
+        u.user_type,
+        ut.account_type_name AS accountTypeName,
+        at.activity_type_name AS activityTypeName
+        FROM user u
+        LEFT JOIN user_type ut ON u.user_type = ut.no
+        LEFT JOIN active_type at ON u.active_type = at.no
+        WHERE 1=1
+        <if test="userTypes != null and userTypes.size() > 0">
+            AND u.user_type IN
+            <foreach collection="userTypes" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+
+        <if test="activeTypes != null and activeTypes.size() > 0">
+            AND u.active_type IN
+            <foreach collection="activeTypes" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND u.registration_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND u.registration_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+
+        ORDER BY u.registration_date DESC
+        limit #{pageStart}, #{pageSize}
+    </select>
+
+
+    <!-- 페이징을 위한 전체 카운트가 필요함으로 따로 만들어서 전체 수를 알 수 있도록 해야함-->
+    <select id="countUsersByFilters" resultType="int">
+        SELECT count(*)
+        FROM user u
+        LEFT JOIN user_type ut ON u.user_type = ut.no
+        LEFT JOIN active_type at ON u.active_type = at.no
+        WHERE 1=1
+        <if test="userTypes != null and userTypes.size() > 0">
+            AND u.user_type IN
+            <foreach collection="userTypes" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+
+        <if test="activeTypes != null and activeTypes.size() > 0">
+            AND u.active_type IN
+            <foreach collection="activeTypes" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND u.registration_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND u.registration_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+    </select>
+
+</mapper>

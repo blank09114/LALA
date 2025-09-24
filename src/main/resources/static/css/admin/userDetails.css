@@ -1,0 +1,354 @@
+.UserDetails_wrap {
+  font-family: 'Arial', sans-serif;
+  margin: 0 auto;
+  width: 1300px;
+  /* display: flex; */
+}
+
+
+.UserDetails_user {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; 
+  gap: 20px;
+  margin-top: 40px;
+}
+
+
+.UserDetails_userInfo {
+  border: 2px solid #ccc;
+  border-radius: 15px;
+  padding: 20px;
+  width: 700px;
+  background: #fff;
+  flex: 1;
+  height: 260px;
+  box-sizing: border-box;
+}
+
+
+.UserDetails_userInfo_title h2 {
+  font-size: 24px;
+  font-weight: bold;
+  border-bottom: 4px solid purple;
+  padding-bottom: 10px;
+  margin-top: 100px;
+}
+
+
+.UserDetails_userInfo_body {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  height: calc(100% - 70px);
+}
+
+
+.UserDetails_userInfo_img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+}
+
+
+.UserDetails_userInfo_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.UserDetails_userInfomation {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px 0px;
+  gap: 10px;
+}
+
+.info-row span:first-child {
+  font-weight: bold;
+  width: 130px;
+}
+
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group input[type="text"] {
+  border: 1px solid #888;
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 13px;
+  max-width: 120px;
+}
+
+.change-btn {
+  background-color: #46B97C;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;                
+  align-items: center;          
+  justify-content: center;      
+  height: 25px;                 
+  min-width: 50px;
+}
+
+
+
+.UserDetails_userSearch {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #fff;
+  box-sizing: border-box;
+  flex: 2;
+  max-width: 750px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.UserDetails_userSearch_title h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #cc3d00;
+  padding-bottom: 10px;
+}
+
+.UserDetails_userInfo_title h2,
+.UserDetails_userSearch_title h2 {
+  height: 40px;              
+  line-height: 40px;         
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #ccc;  
+  margin: 0 0 15px 0;        
+  padding: 0 10px;           
+  box-sizing: border-box;
+}
+
+
+
+.UserDetails_userSearch_wr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.search_option,
+.search_date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section_label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+
+.UserDetails_userSearchbar {
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.UserDetails_userSearchbar input[type="text"] {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+}
+
+.UserDetails_userSearchbar button {
+  background-color: #46B97C;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+/* 커뮤니티 시작 */
+.UserDetails_community {
+  margin-top: 40px;
+}
+
+.UserDetails_community_title h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+
+.UserDetails_community_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+
+.community-card {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+  
+}
+
+
+.community-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  flex-wrap: wrap;
+}
+.title-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.open-modal {
+  margin-left: auto;
+}
+
+.community-card-header a {
+  font-size: 13px;
+  color: #555;
+  text-decoration: none;
+}
+
+.community-card-content {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 200px;
+}
+
+.report-block {
+  padding: 16px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.report-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.report-left,
+.report-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-divider {
+  width: 1px;
+  background-color: #ccc;
+  visibility: hidden; /* 공간은 차지하되 보이지 않음 */
+}
+
+
+/* 커뮤니티 끝 */
+
+/* 모달창 시작 */
+
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+
+.modal-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 800px;
+  height: 500px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.modal-content h2{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.close-btn {
+  position: absolute;
+  right: 15px; top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-title-underline {
+  width: 100%;
+  height: 2px;
+  background-color: #ccc; 
+  margin: 10px 0 20px 0;
+}
+
+
+.modal-scrollable {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+
+/* 모달창 끝 */

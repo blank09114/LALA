@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lala.Mapper.ProviderBookmarkMapper">
+    <select id="checkProviderBookmark" resultType="boolean">
+        select count(*) > 0
+        from information_provider_bookmark
+        where user_id = #{userId} and information_provider_id = #{providerId}
+    </select>
+
+
+    <delete id="removeProviderBookmark">
+        delete from information_provider_bookmark
+        where user_id = #{userId} and information_provider_id = #{providerId}
+    </delete>
+
+
+    <insert id="addProviderBookmark">
+        insert into information_provider_bookmark (user_id, information_provider_id)
+        values (#{userId}, #{providerId})
+    </insert>
+
+</mapper>

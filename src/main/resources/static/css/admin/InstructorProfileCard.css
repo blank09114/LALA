@@ -1,0 +1,45 @@
+/* 레이아웃 */
+.container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  width: 1300px;
+  margin: 40px auto;
+}
+
+/* ───────── 좌측 카드 ───────── */
+.left-card {
+  width: 250px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.profile-img {
+  width: 50%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.left-card button {
+  margin-left: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+
+/* ───────── 우측 영역 ───────── */
+.right-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.box {
+  height: 100px;                    /* 원하는 높이로 조절 */
+  margin-top: 10px;
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fafafa;
+}

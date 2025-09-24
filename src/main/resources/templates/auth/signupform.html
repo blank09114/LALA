@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/auth/signupform.css">
+
+</head>
+<body>
+<div class="signup-container">
+  <h1 class="signup-title">회원가입</h1>
+
+  <!--    <form class="signup-form">-->
+  <form class="signup-form" action="/auth/signup" method="post" th:object="${user}">
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <!-- 이메일 -->
+<!--    <div class="form-group">-->
+<!--      <label for="email">이메일</label>-->
+<!--      &lt;!&ndash;      <input id="email" type="email" placeholder="이메일을 입력하세요" required>&ndash;&gt;-->
+<!--      <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required />-->
+<!--      <button type="button" id="check-email-button" class="light-button">중복확인</button>-->
+<!--      <span id="emailCheckMessage" class="error"></span>-->
+<!--      <button type="button" id="send-code-button" class="light-button" style="display : none;">인증코드 발송</button>-->
+<!--    </div>-->
+
+    <div class="form-group">
+      <label th:for="email">이메일</label>
+      <input type="email" th:field="*{email}" id="email" placeholder="이메일을 입력하세요" required />
+      <button type="button" id="check-email-button" class="light-button">중복확인</button>
+      <span id="emailCheckMessage" class="error"></span>
+      <button type="button" id="send-code-button" class="light-button" style="display: none;">인증코드 발송</button>
+    </div>
+
+
+
+    <!-- 인증코드 -->
+    <div  id="verifyCodeSection" class="form-group code-group">
+      <label for="verificationCode">인증 코드</label>
+      <div class="code-wrapper">
+        <!--            <input id="code" type="text" placeholder="인증코드 입력하세요" required>-->
+        <input type="text" id="verificationCode" name="verificationCode" placeholder="인증코드 입력하세요" required/>
+        <!--            <button type="button" class="send-btn">인증코드 발송</button>-->
+        <button type="button" id="verify-code-button" class="light-button">이메일 인증</button>
+        <span id="verificationMessage" class="error"></span>
+      </div>
+    </div>
+    
+
+    <!-- 닉네임 -->
+    <div class="form-group">
+      <label th:for="userNickname">닉네임</label>
+      <input type="text" id="userNickname" th:field="*{userNickname}" placeholder="닉네임을 입력하세요" required/>
+    </div>
+
+
+    <!-- 비밀번호 -->
+    <div class="form-group">
+      <label th:for="userPassword">비밀번호</label>
+      <div class="password-wrapper">
+        <input type="password" id="password" th:field="*{userPassword}" placeholder="비밀번호를 입력하세요" required/>
+        <button type="button" class="eye-btn" aria-label="비밀번호 보이기">
+          <img src="/img/eye.png" alt="눈 아이콘">
+        </button>
+      </div>
+      <div class="pw-rules">
+        <div id="rule-1"><span>✔︎</span>영문·숫자·특수문자 중 2가지 이상 포함</div>
+        <div id="rule-2"><span>✔︎</span>8자 이상 32자 이하 입력 (공백 제외)</div>
+      </div>
+    </div>
+
+    <!-- 비밀번호 확인 -->
+    <div class="form-group">
+      <label th:for="passwordConfirmation">비밀번호 확인</label>
+      <div class="password-wrapper">
+        <input type="password" id="passwordConfirmation" th:field="*{passwordConfirmation}" placeholder="비밀번호를 다시 입력하세요" required/>
+        <button type="button" class="eye-btn" aria-label="비밀번호 보이기">
+          <img src="/img/eye.png" alt="눈 아이콘">
+        </button>
+      </div>
+      <div id="passwordMatchMessage" class="message"></div>
+    </div>
+
+
+
+    <!-- 회원가입 버튼 -->
+    <button type="submit" id="signup-button" class="submit-btn">회원가입</button>
+
+    <!-- 간편 회원가입 -->
+    <div class="divider"><span>간편 회원가입</span></div>
+    <div class="sns-section">
+      <button type="button" class="sns-btn kakao">
+        <a th:href="@{/oauth2/authorization/kakao}">  <img src="/img/kakao.png" alt="카카오톡 로고"> </a>
+      </button>
+      <button type="button" class="sns-btn google">
+        <a th:href="@{/oauth2/authorization/google}">   <img src="/img/google.png" alt="구글 로고"> </a>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script src="/js/auth/signupform.js"></script>
+
+</body>
+
+</html>

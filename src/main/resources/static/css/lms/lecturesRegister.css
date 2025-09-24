@@ -1,0 +1,345 @@
+form
+{
+    width: 1300px;
+    margin: 0 auto;
+}
+
+/* 페이지 헤더 */
+.pageHeader
+{
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    gap: 20px;
+
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 50px;
+    color: #5FAF6C;
+}
+.pageHeader img
+{
+    width: 50px;
+    height: 50px;
+}
+.pageSubHeader
+{
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+    
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+    color: #817A7A;
+}
+
+
+
+/* 정보 섹션 공통 서식 */
+.contentWrap
+{
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 12px;
+
+    border: 1px solid #9C9A9A;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
+}
+.contentWrap:hover { border: 1px solid #00C471; }
+.contentHeader
+{
+    width: 100%;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+
+    border-bottom: 1px solid #9C9A9A;
+
+    font-size: 30px;
+    line-height: 50px;
+}
+.content, .multi-content-box
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+.title, .subTitle
+{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.title
+{
+    height: 30px;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+.subTitle
+{
+    height: 20px;
+
+    font-size: 16px;
+    line-height: 20px;
+    color: #858585;
+}
+input[type="text"], .fileName
+{
+    width: 90%;
+    height: 35px;
+    margin-top: 5px;
+    padding: 0 10px;
+    border-radius: 12px;
+    
+    outline: none;
+    border: 1px solid #cccccc !important;
+    background-color: white !important;
+
+    font-size: 16px;
+    line-height: 35px;
+}
+input[type="text"]:hover, input[type="text"]:focus { border: 1px solid #00C471 !important; }
+
+
+
+
+/* 섬네일 업로드 */
+.file
+{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+}
+#fileName
+{
+    width: 500px;
+    color: #858585;
+}
+.fileBtn
+{
+    width: 100px;
+    height: 35px;
+    margin-top: 5px;
+    border-radius: 12px;
+
+    border: 1px solid #B6B6B6;
+    background-color: #F2F2F2;
+
+    font-size: 16px;
+    line-height: 35px;
+
+    cursor: pointer;
+}
+.fileBtn:hover { border: 1px solid #00C471; }
+
+
+
+/* 카테고리 */
+.cate
+{
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+
+    display: flex;
+    gap: 10px;
+}
+
+/* 대분류 */
+.majorCateList
+{
+    width: 20%;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.majorCate
+{
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+.majorCate:hover, .majorCate.activeCate 
+{
+    background-color: rgba(0, 196, 113, 0.1);
+    color: #00C471;
+}
+
+
+/* 소분류 */
+.subCateList
+{
+    width: 80%;
+    height: 100%;
+}
+.subCate
+{
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    list-style: none;
+}
+.subCate li, .selectedCate
+{
+    width: 98%;
+    height: 40px;
+    padding-left: 10px;
+    border-radius: 12px;
+
+    position: relative;
+
+    border: 1px dotted #858585;
+    
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    line-height: 40px;
+
+    cursor: pointer;
+}
+.state
+{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+
+    border: 1px solid #858585;
+
+    font-size: 14px;
+    text-align: center;
+    line-height: 20px;
+    color: #858585;
+}
+.subCate li:hover, .selectedCate { border: 1px solid #00C471; }
+.subCate li:hover .state, .selectedCate .state
+{
+    border: 1px solid #00C471;
+    background-color: #00C471;
+    color: white;
+}
+.subCate li.selected { border: 1px solid #00C471; }
+.subCate li.selected .state
+{
+    border: 1px solid #00C471;
+    background-color: #00C471;
+    color: white;
+}
+
+
+
+/* 선택된 항목 */
+.selectedCateList
+{
+    width: 100%;
+    height: 50px;
+
+    font-size: 16px;
+    line-height: 50px;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+}
+.selectedCate { width: 33%; }
+
+/* 난이도 */
+select
+{
+    width: 50%;
+    height: 35px;
+    margin-top: 5px;
+    padding: 0 10px;
+    border-radius: 12px;
+
+    outline: none;
+    border: 1px solid #858585;
+    background-color: white;
+
+    font-size: 16px;
+    line-height: 35px;
+
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23858585' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+select:hover, select:focus { border: 1px solid #00C471; }
+
+
+
+/* 할인 */
+.multi-content-box
+{
+    display: flex;
+    gap: 10px;
+}
+.multi-content { width: 50%; }
+
+
+
+/* 등록 버튼 */
+.btnBox
+{
+    width: 100%;
+    height: auto;
+    margin: 30px 0;
+    padding: 0;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submitBtn
+{
+    width: 200px;
+    height: 40px;
+    border-radius: 12px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 40px;
+    color: white;
+
+    cursor: pointer;
+}
+.submitBtn:hover
+{
+    background-color: white;
+    color: #00C471;
+}

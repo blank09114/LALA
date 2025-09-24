@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 - 회원 목록</title>
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin_userList.css}">
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+<div class="UserList_wrap">
+    <div class="UserList_manage">
+        <h2>회원 목록 관리</h2>
+        <form id="searchUserForm">
+            <div class="filter_section">
+                <div class="filter_left">
+                    <div class="search_bar">
+                        <span class="section_label">회원 유형</span>
+                        <label><input type="checkbox" name="userTypes" value="0"> 일반회원</label>
+                        <label><input type="checkbox" name="userTypes" value="1"> 지식제공자</label>
+                        <label><input type="checkbox" name="userTypes" value="2"> 요청중</label>
+                        <label><input type="checkbox" name="userTypes" value="3"> 관리자</label>
+                    </div>
+                    <div class="search_bar">
+                        <span class="section_label">활동 유형</span>
+                        <label><input type="checkbox" name="activeTypes" value="1"> 활동중</label>
+                        <label><input type="checkbox" name="activeTypes" value="2"> 활동정지</label>
+                    </div>
+                </div>
+
+                <div class="filter_right">
+                    <div class="search_bar">
+                        <span class="section_label">가입일</span>
+                        <input type="date" name="startDate"> ~
+                        <input type="date" name="endDate">
+                    </div>
+                    <div class="search_bar">
+                        <span class="section_label">닉네임</span>
+                        <input type="text" name="nickname" placeholder="닉네임 검색">
+                        <div class="button_wrap">
+                            <button type="submit">검색</button>
+                            <button type="button" id="resetBtn">전체 조회</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="UserList_result">
+        <table>
+            <thead>
+            <tr>
+                <th>닉네임</th>
+                <th>이메일</th>
+                <th>회원유형</th>
+                <th>가입일</th>
+                <th>상태</th>
+                <th>상세</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+            <!-- JS로 사용자 목록 렌더링 -->
+            </tbody>
+        </table>
+        <div class="pagination"></div>
+    </div>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<script th:src="@{/js/admin/admin_userList.js}" defer></script>
+</body>
+</html>

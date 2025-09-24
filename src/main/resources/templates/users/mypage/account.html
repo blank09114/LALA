@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>계정 관리</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/account.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+    <!--사이드 메뉴바-->
+    <aside class="sidebar-menu">
+        <h2>Home</h2>
+        <ul>
+            <li><a th:href="@{/mypage/main}">마이페이지</a></li>
+            <li><a th:href="@{/course/main}">메인</a></li>
+        </ul>
+        <h2>내 정보</h2>
+        <ul>
+            <li><a class="active" th:href="@{/mypage/account}">계정 관리</a></li>
+            <li><a th:href="@{/mypage/activity}">나의 활동</a></li>
+        </ul>
+        <h2>강의 정보</h2>
+        <ul>
+            <li><a th:href="@{/mypage/learning}">학습 관리</a></li>
+            <li><a th:href="@{/mypage/likes}">좋아요</a></li>
+        </ul>
+        <h2>지식 제공자</h2>
+        <ul>
+            <!-- 일반 사용자 (accountType == 0)-->
+            <li th:if="${mypageUserData.User.accountType == 0}">
+                <a th:href="@{/mypage/pro_req}">요청 하기</a>
+            </li>
+            <!-- 지식 제공자 (accountType == 1)-->
+            <li th:if="${mypageUserData.User.accountType == 1}">
+                <a th:href="@{/mypage/pro_account}">프로필 관리</a>
+            </li>
+            <li th:if="${mypageUserData.User.accountType == 1}">
+                <a th:href="@{/mypage/pro_learning}">강의 관리</a>
+            </li>
+            <!-- 지식 제공자 요청 중 (accountType == 2)-->
+            <li th:if="${mypageUserData.User.accountType == 2}">
+                심사 중입니다.
+            </li>
+            <!-- 관리자 (accountType == 3)-->
+            <li th:if="${mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_req}">요청 하기</a>
+            </li>
+            <li th:if="${mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_account}">프로필 관리</a>
+            </li>
+            <li th:if="${mypageUserData.User.accountType == 3}">
+                <a th:href="@{/mypage/pro_learning}">강의 관리</a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h2>계정 관리</h2>
+
+        <div class="menu">
+            <ul>
+                <li>기본 정보</li>
+                <li>비밀 번호</li>
+                <li>관심 분야</li>
+            </ul>
+        </div>
+
+        <!-- 기본 정보 섹션 -->
+        <section class="content">
+            <h3>기본 정보</h3>
+
+            <!-- 기본 정보 보기 모드 -->
+            <div class="info" id="info-view">
+            <!-- 사용자 정보가 있는 경우에만 표시 -->
+            <div th:if="${mypageUserData.User != null}">
+                <!-- 기존 사용자 정보 표시 코드 -->
+                <div class="profile" id="profile-image"
+                     th:style="'background-image: url(' +
+                               (${mypageUserData.User.profileName != null} ?
+                                ${mypageUserData.User.profileName} :
+                                '/img/profileImg.png') + ');'"></div>
+                <p class="name" th:text="${mypageUserData.User.userNickname}">랄라</p>
+                <p class="email" th:text="${mypageUserData.User.emailAddress}">mail@email.com</p>
+            </div>
+
+            <!-- 사용자 정보가 없는 경우 -->
+            <div th:if="${mypageUserData.User == null}">
+                <p>사용자 정보를 불러올 수 없습니다.</p>
+            </div>
+                <button class="edit-btn" onclick="toggleEdit(true)">수정</button>
+            </div>
+
+            <!-- 기본 정보 수정 모드 -->
+            <div class="info" id="info-edit" style="display: none;">
+                <div class="profile-edit">
+                    <div class="profile" id="edit-profile-image"
+                         th:style="'background-image: url(' +
+                                   (${mypageUserData.User.profileName != null} ?
+                                    ${mypageUserData.User.profileName} :
+                                    '/img/profileImg.png') + ');'">
+                        <input type="file" id="profile-file-input" accept="image/*" style="display: none;" onchange="handleProfileImageUpload(event)">
+                        <button class="edit-icon" onclick="document.getElementById('profile-file-input').click()"><i class="fa-solid fa-image"></i></button>
+                    </div>
+                </div>
+
+                <form id="nicknameForm">
+                    <label class="label">닉네임</label>
+                    <input type="text" class="name-input" id="nickname"
+                           th:placeholder="${mypageUserData.User.userNickname}"
+                           required>
+                </form>
+
+                <div class="button">
+                    <button class="cancel-btn" onclick="toggleEdit(false)">취소</button>
+                    <button type="submit" class="save-btn" id="uploadBtn" onclick="saveBasicInfo()">저장</button>
+                </div>
+            </div>
+
+            <!-- 비밀번호 섹션 -->
+            <h3>비밀 번호</h3>
+            <div class="pwd">
+                <p class="explan"
+                   th:text="${mypageUserData.User.passwordUpdate}">
+                    최근 업데이트 : 2025.04.23</p>
+                <p class="password">비밀번호<br>***************</p>
+                <button class="edit-btn" onclick="openModal()">변경</button>
+            </div>
+
+            <!-- 비밀번호 변경 모달 -->
+            <div class="pwd-modal" id="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3>비밀번호 변경</h3>
+                    <hr>
+                    <label>현재 비밀번호</label>
+                    <input type="password" class="modal-input" placeholder="현재 비밀번호">
+
+                    <p class="reset-pw">
+                        비밀번호를 잊으셨나요? <a href="/auth/findpasswordform">비밀번호 재설정</a>
+                    </p>
+
+                    <label>새 비밀번호</label>
+                    <input type="password" class="modal-input" placeholder="새 비밀번호">
+
+                    <div class="check-pw">
+                        <p>✔ 영문 / 숫자 / 특수문자 중, 2가지 이상 포함</p>
+                        <p>✔ 8자 이상 32자 이하 입력 (공백 제외)</p>
+                    </div>
+
+                    <label>비밀번호 확인</label>
+                    <input type="password" class="modal-input" placeholder="비밀번호 확인">
+
+                    <div class="modal-buttons">
+                        <button class="cancel-btn" onclick="closeModal()">취소</button>
+                        <button class="save-btn">저장</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 관심 분야 섹션 -->
+            <h3>관심 분야</h3>
+            <div class="inter">
+                <p class="explan">최대 5개 선택 가능</p>
+                <div class="tags">
+                    <th:block th:if="${mypageUserData.Interest != null and !mypageUserData.Interest.isEmpty()}">
+                        <span class="tag" th:each="interest : ${mypageUserData.Interest}"
+                              th:text="${interest.interestedName}">관심분야</span>
+                    </th:block>
+                    <th:block th:if="${mypageUserData.Interest == null or mypageUserData.Interest.isEmpty()}">
+                       <span class="tag" th:each="interest : ${mypageUserData.Interest}"
+                             th:text="${interest.interestedName}">관심분야</span>
+                        <span class="tag">운동</span>
+                        <span class="tag">과학</span>
+                        <span class="tag">과학</span>
+                        <span class="tag">과학</span>
+                    </th:block>
+                </div>
+                <button class="edit-btn"><a href="/auth/categoryAll?fromMyPage=true">수정</a></button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- 이미지 크롭 모달 -->
+<div class="crop-modal" id="crop-modal" style="display: none;">
+    <div class="modal-content-crop">
+        <div class="modal-header">
+            <h3>프로필 사진 편집</h3>
+            <button class="close-btn" onclick="closeCropModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="crop-container">
+                <img id="crop-image" alt="크롭할 이미지">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closeCropModal()">취소</button>
+            <button class="save-btn" onclick="applyCropPreview()">적용</button>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<!-- Cropper.js 스크립트 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+<script>
+    // 전역 변수로 현재 데이터 저장
+    let currentData = {};
+    let cropper = null;
+    let selectedFile = null;
+    let previewImageBlob = null; // 미리보기 이미지 blob 저장
+    let hasImageChanged = false; // 이미지 변경 여부 확인
+
+    // 페이지 로드 시 사용자 데이터 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        // 서버에서 받은 사용자 데이터로 currentData 초기화
+        currentData = {
+            profileURL: document.getElementById('profile-image').style.backgroundImage.match(/url\("?([^"]*)"?\)/)?.[1] || null,
+            nickname: document.querySelector('.name').textContent
+        };
+    });
+
+    /**
+     * 캐시 무효화를 위한 이미지 URL 생성 함수
+     * @param {string} imageUrl - 원본 이미지 URL
+     * @returns {string} - 캐시 무효화 처리된 이미지 URL
+     */
+    function getCacheBustedImageUrl(imageUrl) {
+        if (!imageUrl) return null;
+
+        // blob: URL이나 data: URL인 경우 그대로 반환
+        if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+            return imageUrl;
+        }
+
+        // 기본 이미지인 경우 그대로 반환
+        if (imageUrl.includes('/img/profileImg.png')) {
+            return imageUrl;
+        }
+
+        // 외부 이미지 URL에 타임스탬프 추가
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        return `${imageUrl}${separator}t=${Date.now()}`;
+    }
+
+    /**
+     * 캐시 무효화를 위한 이미지 URL 생성 함수
+     * @param {string} imageUrl - 원본 이미지 URL
+     * @returns {string} - 캐시 무효화 처리된 이미지 URL
+     */
+    function getCacheBustedImageUrl(imageUrl) {
+        if (!imageUrl) return null;
+
+        // blob: URL이나 data: URL인 경우 그대로 반환
+        if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+            return imageUrl;
+        }
+
+        // 기본 이미지인 경우 그대로 반환
+        if (imageUrl.includes('/img/profileImg.png')) {
+            return imageUrl;
+        }
+
+        // 외부 이미지 URL에 타임스탬프 추가
+        const separator = imageUrl.includes('?') ? '&' : '?';
+        return `${imageUrl}${separator}t=${Date.now()}`;
+    }
+
+    /**
+     * 기본 정보 편집 모드 토글 함수
+     *
+     * @param {boolean} isEdit - true면 편집 모드, false면 보기 모드로 전환
+     *
+     * 기능:
+     * - 보기 모드와 편집 모드 간 UI 전환
+     * - 편집 모드 진입 시 현재 닉네임을 입력 필드에 설정
+     * - 편집 모드 취소 시 상태 초기화 (크롭된 이미지, 파일 입력 등)
+     */
+    function toggleEdit(isEdit) {
+        const viewMode = document.getElementById('info-view');
+        const editMode = document.getElementById('info-edit');
+
+        if (isEdit) {
+            // 편집 모드로 전환
+            viewMode.style.display = 'none';
+            editMode.style.display = 'block';
+
+            // 현재 닉네임을 입력 필드에 설정
+            const currentName = document.querySelector('.name').textContent;
+            document.getElementById('nickname').value = currentName;
+        } else {
+            // 보기 모드로 전환 및 상태 초기화
+            viewMode.style.display = 'block';
+            editMode.style.display = 'none';
+
+            // 이미지 관련 상태 초기화
+            removeImagePreview();
+        }
+    }
+
+    // 프로필 이미지 업로드 처리
+    function handleProfileImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // 파일 타입 검증
+        if (!file.type.startsWith('image/')) {
+            alert('이미지 파일만 업로드할 수 있습니다.');
+            return;
+        }
+
+        // 파일 크기 검증 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB를 초과할 수 없습니다.');
+            return;
+        }
+
+        selectedFile = file;
+
+        // 파일을 읽어서 크롭 모달에 표시
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const cropImage = document.getElementById('crop-image');
+            cropImage.src = e.target.result;
+            openCropModal();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // 크롭 모달 열기
+    function openCropModal() {
+        const modal = document.getElementById('crop-modal');
+        const cropImage = document.getElementById('crop-image');
+
+        modal.style.display = 'flex';
+
+        // 이미지가 로드된 후 Cropper 초기화
+        cropImage.onload = function() {
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(cropImage, {
+                aspectRatio: 1, // 정사각형 비율
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                responsive: true,
+                cropBoxResizable: true,
+                cropBoxMovable: true,
+                minCropBoxWidth: 100,
+                minCropBoxHeight: 100,
+                ready: function() {
+                    // 크롭 영역을 중앙에 배치
+                    this.cropper.crop();
+                }
+            });
+        };
+    }
+
+    // 크롭 모달 닫기
+    function closeCropModal() {
+        const modal = document.getElementById('crop-modal');
+        modal.style.display = 'none';
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+        // 파일 input 초기화
+        document.getElementById('profile-file-input').value = '';
+    }
+
+    // 크롭 적용 (미리보기만) - 알림창 제거
+    function applyCropPreview() {
+        if (!cropper) return;
+
+        try {
+            // 크롭된 이미지를 Canvas로 변환
+            const canvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+
+            // Canvas를 Blob으로 변환
+            canvas.toBlob(function(blob) {
+                if (!blob) {
+                    alert('이미지 처리에 실패했습니다.');
+                    return;
+                }
+
+                // 미리보기 이미지 저장
+                previewImageBlob = blob;
+                hasImageChanged = true;
+
+                // 이전 blob URL이 있다면 메모리 해제
+                const editProfileImage = document.getElementById('edit-profile-image');
+                const currentBgImage = editProfileImage.style.backgroundImage;
+                if (currentBgImage && currentBgImage.includes('blob:')) {
+                    const urlMatch = currentBgImage.match(/url\("?(.*?)"?\)/);
+                    if (urlMatch && urlMatch[1].startsWith('blob:')) {
+                        URL.revokeObjectURL(urlMatch[1]);
+                    }
+                }
+
+                // 미리보기 이미지 표시
+                const imageUrl = URL.createObjectURL(blob);
+                editProfileImage.style.backgroundImage = `url('${imageUrl}')`;
+
+                // 크롭 모달 닫기
+                closeCropModal();
+
+            }, 'image/jpeg', 0.9);
+        } catch (error) {
+            console.error('이미지 처리 실패:', error);
+            alert('이미지 처리에 실패했습니다.');
+        }
+    }
+
+    // 이미지 미리보기 제거
+    function removeImagePreview() {
+        // 이전 blob URL 메모리 해제
+        const editProfileImage = document.getElementById('edit-profile-image');
+        const currentBgImage = editProfileImage.style.backgroundImage;
+        if (currentBgImage && currentBgImage.includes('blob:')) {
+            const urlMatch = currentBgImage.match(/url\("?(.*?)"?\)/);
+            if (urlMatch && urlMatch[1].startsWith('blob:')) {
+                URL.revokeObjectURL(urlMatch[1]);
+            }
+        }
+
+        previewImageBlob = null;
+        hasImageChanged = false;
+
+        // 원래 이미지로 되돌리기 (캐시 무효화 적용)
+        if (currentData.profileURL) {
+            const cacheBustedUrl = getCacheBustedImageUrl(currentData.profileURL);
+            editProfileImage.style.backgroundImage = `url('${cacheBustedUrl}')`;
+        } else {
+            editProfileImage.style.backgroundImage = 'url("/img/profileImg.png")';
+        }
+
+        // 파일 input 초기화
+        document.getElementById('profile-file-input').value = '';
+    }
+
+    // 기본 정보 저장 (닉네임 + 프로필 이미지)
+    async function saveBasicInfo() {
+        const nickname = document.getElementById('nickname').value.trim();
+
+        if (!nickname) {
+            alert('닉네임을 입력해주세요.');
+            return;
+        }
+
+        try {
+            // 프로필 이미지가 변경되었다면 먼저 업로드
+            if (hasImageChanged && previewImageBlob) {
+                await uploadProfileImage();
+            }
+
+            // 닉네임 저장
+            await saveNickname(nickname);
+
+            alert('기본 정보가 성공적으로 저장되었습니다.');
+
+            // 편집 모드 종료
+            toggleEdit(false);
+
+            // 미리보기 상태 초기화
+            previewImageBlob = null;
+            hasImageChanged = false;
+
+            // 페이지 새로고침
+            window.location.reload();
+
+        } catch (error) {
+            console.error('기본 정보 저장 실패:', error);
+            alert('기본 정보 저장에 실패했습니다: ' + error.message);
+        }
+    }
+
+    // 프로필 이미지 업로드
+    async function uploadProfileImage() {
+        if (!previewImageBlob) {
+            throw new Error('업로드할 이미지가 없습니다.');
+        }
+
+        // FormData 생성
+        const formData = new FormData();
+        formData.append('file', previewImageBlob, 'profile.jpg');
+
+        const response = await fetch('/users/mypage/profile-image', {
+            method: 'POST',
+            body: formData,
+            // 캐시 방지 헤더 추가
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('이미지 업로드에 실패했습니다.');
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            // 새로운 이미지 URL로 업데이트 (캐시 무효화 적용)
+            currentData.profileURL = result.imageUrl;
+            console.log('프로필 이미지 업로드 성공:', result.imageUrl);
+        } else {
+            throw new Error(result.message || '이미지 업로드에 실패했습니다.');
+        }
+    }
+
+    // 닉네임 저장
+    async function saveNickname(nickname) {
+        const response = await fetch('/users/mypage/nickname', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            },
+            body: JSON.stringify({ nickname: nickname })
+        });
+
+        if (!response.ok) {
+            throw new Error('닉네임 업데이트에 실패했습니다.');
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            currentData.nickname = nickname;
+            console.log('닉네임 저장 성공:', nickname);
+        } else {
+            throw new Error(result.message || '닉네임 업데이트에 실패했습니다.');
+        }
+    }
+
+    // 비밀번호 모달
+    function openModal() {
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    // 비밀번호 변경 저장 버튼 이벤트 등록
+    document.querySelector('.pwd-modal .save-btn').addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const currentPassword = document.querySelector('.pwd-modal input[placeholder="현재 비밀번호"]').value;
+        const newPassword = document.querySelector('.pwd-modal input[placeholder="새 비밀번호"]').value;
+        const confirmPassword = document.querySelector('.pwd-modal input[placeholder="비밀번호 확인"]').value;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            alert('모든 필드를 입력해주세요.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('새 비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if (newPassword.length < 8 || newPassword.length > 32) {
+            alert('비밀번호는 8자 이상 32자 이하로 입력해주세요.');
+            return;
+        }
+
+        if (currentPassword === newPassword) {
+            alert('새 비밀번호는 현재 비밀번호와 달라야 합니다.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/users/mypage/password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentPassword: currentPassword,
+                    password: newPassword
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                alert('비밀번호가 변경되었습니다.');
+                closeModal();
+                document.querySelectorAll('.pwd-modal input').forEach(input => input.value = '');
+            } else {
+                alert(result.message || '비밀번호 변경에 실패했습니다.');
+            }
+        } catch (error) {
+            alert('네트워크 오류가 발생했습니다.');
+            console.error('비밀번호 변경 오류:', error);
+        }
+    });
+</script>
+
+<style>
+    /* 기존 CSS에 추가되는 크롭 모달 스타일 */
+    .crop-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .crop-modal .modal-content-crop {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .crop-modal .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .crop-modal .modal-header h3 {
+        margin: 0;
+        color: #333;
+    }
+
+    .crop-modal .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .crop-modal .close-btn:hover {
+        color: #333;
+    }
+
+    .crop-modal .modal-body {
+        margin-bottom: 20px;
+    }
+
+    .crop-modal .crop-container {
+        max-width: 100%;
+    }
+
+    .crop-modal .crop-container img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .crop-modal .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .crop-modal .cancel-btn,
+    .crop-modal .save-btn {
+        padding: 5px 15px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .crop-modal .cancel-btn {
+        background: #e0e0e0;
+        color: #666;
+    }
+
+    .crop-modal .cancel-btn:hover {
+        background: #BDBDBD;
+    }
+
+    .crop-modal .save-btn {
+        background: #00c37d;
+        color: white;
+    }
+
+    .crop-modal .save-btn:hover {
+        background: #009153;
+    }
+
+
+
+</style>
+</body>
+</html>

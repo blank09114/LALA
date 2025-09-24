@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lala.Mapper.InformationProviderMapper">
+
+    <!-- 지식제공자 상세정보 -->
+    <select id="IPsInfo" resultType="com.example.lala.DTO.Course.IPInfo" parameterType="String">
+        SELECT u.nickname,
+        u.profilename,
+        ip.info_content AS infoContent,
+        ip.external_link,
+        statistics.reviewNum,
+        statistics.studentNum,
+        statistics.reviewAvg
+        FROM user AS u
+        JOIN information_provider AS ip
+        ON u.user_id = ip.information_provider_id
+        JOIN (SELECT u.nickname,
+        COUNT(r.review_id) AS reviewNum,
+        SUM(l.student_num) AS studentNum,
+        AVG(r.review_rate) AS reviewAvg
+        FROM user AS u
+        JOIN information_provider AS ip
+        ON u.user_id = ip.information_provider_id
+        JOIN lecture AS l
+        ON u.user_id = l.uploader_id
+        JOIN review AS r
+        ON r.lecture_id = l.lecture_id
+        GROUP BY u.user_id) AS statistics
+        ON u.nickname = statistics.nickname
+        WHERE u.user_id = #{userId};
+    </select>
+
+    <select id="ipInfoSummaries" resultType="com.example.lala.DTO.Course.IpInfoSummary">
+        SELECT
+        ip.information_provider_id AS providerId,
+        u.nickname,
+        u.profileName
+        FROM user AS u
+        JOIN information_provider AS ip
+        ON u.user_id = ip.information_provider_id
+    </select>
+
+
+    <!-- 지식제공자의 강의들 -->
+    <select id="ipLectures" resultType="com.example.lala.DTO.Course.LectureSummary" parameterType="String">
+        SELECT l.lecture_id                                                      lectureId,
+        l.thumbnail                                                       thumbnail,
+        l.name                                                            title,
+        u.nickname                                                        nickname,
+        l.introduction                                                    introduction,
+        l.price                                                           price,
+        l.discount_rate                                                   discountRate,
+        COALESCE(COUNT(r.review_id), 0)                                   reviewNum,
+        COALESCE(SUM(r.review_rate), 0)                                   totalReviewRate,
+        COALESCE(SUM(r.review_rate), 0) / COALESCE(COUNT(r.review_id), 0) avgReviewRate,
+        COUNT(lb.user_id)                                                 bookmarkNum,
+        l.difficulty                                                      difficulty
+        FROM lecture l
+        left JOIN lecture_bookmark lb
+        ON lb.lecture_id = l.lecture_id
+        JOIN user u
+        ON l.uploader_id = u.user_id
+        LEFT JOIN review r
+        ON r.lecture_id = l.lecture_id
+        JOIN information_provider AS ip
+        ON u.user_id = ip.information_provider_id
+        WHERE l.uploader_id = #{userId}
+        GROUP BY l.lecture_id;
+    </select>
+
+    <!-- 기존 selectUserLikes 쿼리 유지 -->
+    <select id="selectUserLikes" resultType="com.example.lala.DTO.Response.LikeProvider" parameterType="String">
+        SELECT ip.information_provider_id    as providerId,
+        u.profilename                 as profileName,
+        u.nickname                    as nickname,
+        ip.info_content               as infoContent,
+        COALESCE(r.avg_rating, 0.0)   as avgReviewRate,
+        COALESCE(r.review_count, 0)   as reviewNum,
+        COALESCE(b.bookmark_count, 0) as bookmarkNum,
+        COALESCE(l.lecture_count, 0)  as lectureNum
+        FROM information_provider ip
+        INNER JOIN information_provider_bookmark pb ON ip.information_provider_id = pb.information_provider_id
+        LEFT JOIN user u ON ip.information_provider_id = u.user_id
+        LEFT JOIN (SELECT ip.information_provider_id,
+        COUNT(*)                                  as review_count,
+        AVG(CAST(r.review_rate AS DECIMAL(3, 2))) as avg_rating
+        FROM information_provider ip
+        LEFT JOIN lecture l ON ip.information_provider_id = l.uploader_id
+        LEFT JOIN review r ON l.lecture_id = r.lecture_id
+        GROUP BY ip.information_provider_id) r
+        ON ip.information_provider_id = r.information_provider_id
+        LEFT JOIN (SELECT information_provider_id,
+        COUNT(*) as bookmark_count
+        FROM information_provider_bookmark
+        GROUP BY information_provider_id) b
+        ON ip.information_provider_id = b.information_provider_id
+        LEFT JOIN (SELECT ip.information_provider_id,
+        COUNT(l.lecture_id) as lecture_count
+        FROM information_provider ip
+        LEFT JOIN lecture l ON ip.information_provider_id = l.uploader_id
+        GROUP BY ip.information_provider_id) l
+        ON ip.information_provider_id = l.information_provider_id
+        WHERE pb.user_id = #{userId}
+    </select>
+
+    <!-- 페이지네이션을 지원하는 새로운 쿼리 -->
+    <select id="selectUserLikesWithPagination" resultType="com.example.lala.DTO.Response.LikeProvider"
+            parameterType="map">
+        SELECT
+        ip.information_provider_id as providerId,
+        u.profilename as profileName,
+        u.nickname as nickname,
+        ip.info_content as infoContent,
+        COALESCE(r.avg_rating, 0.0) as avgReviewRate,
+        COALESCE(r.review_count, 0) as reviewNum,
+        COALESCE(b.bookmark_count, 0) as bookmarkNum,
+        COALESCE(l.lecture_count, 0) as lectureNum
+        FROM information_provider ip
+        INNER JOIN information_provider_bookmark pb ON ip.information_provider_id = pb.information_provider_id
+        LEFT JOIN user u ON ip.information_provider_id = u.user_id
+        LEFT JOIN (
+        SELECT
+        ip.information_provider_id,
+        COUNT(*) as review_count,
+        AVG(CAST(r.review_rate AS DECIMAL(3,2))) as avg_rating
+        FROM information_provider ip
+        LEFT JOIN lecture l ON ip.information_provider_id = l.uploader_id
+        LEFT JOIN review r ON l.lecture_id = r.lecture_id
+        GROUP BY ip.information_provider_id
+        ) r ON ip.information_provider_id = r.information_provider_id
+        LEFT JOIN (
+        SELECT
+        information_provider_id,
+        COUNT(*) as bookmark_count
+        FROM information_provider_bookmark
+        GROUP BY information_provider_id
+        ) b ON ip.information_provider_id = b.information_provider_id
+        LEFT JOIN (
+        SELECT
+        ip.information_provider_id,
+        COUNT(l.lecture_id) as lecture_count
+        FROM information_provider ip
+        LEFT JOIN lecture l ON ip.information_provider_id = l.uploader_id
+        GROUP BY ip.information_provider_id
+        ) l ON ip.information_provider_id = l.information_provider_id
+        WHERE pb.user_id = #{userId}
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="selectInformationProvider" parameterType="String"
+            resultType="com.example.lala.DTO.Response.InformationProvider">
+        SELECT u.user_id        as userID,
+        u.profilename    as profileURL,
+        u.nickname       as nickname,
+        ip.external_link as externalLink,
+        ip.info_content  as infoContent
+        FROM information_provider ip
+        JOIN user u
+        ON ip.information_provider_id = u.user_id
+        where ip.information_provider_id = #{userId};
+    </select>
+
+    <update id="updateExternalLink" parameterType="String">
+        UPDATE information_provider
+        SET external_link = #{link}
+        WHERE information_provider_id = #{userId}
+    </update>
+
+    <update id="updateIntroduction" parameterType="String">
+        UPDATE information_provider
+        SET info_content = #{introduction}
+        WHERE information_provider_id = #{userId}
+    </update>
+
+    <insert id="insertProReq" parameterType="map">
+        INSERT INTO promotion_request (information_provider_id, legal_name, nickname, info_content, external_link,
+        approval_date)
+        VALUES (#{userId}, #{name}, #{nickname}, #{intro}, #{externallink}, null)
+    </insert>
+
+    <insert id="insertProReqHistory" parameterType="map">
+        INSERT INTO supporting_material (user_id, career, fileURL)
+        VALUES (#{promotionRequestId}, #{text}, #{fileUrl})
+    </insert>
+
+    <select id="selectProReqHistory" parameterType="String" resultType="map">
+        SELECT user_id as userId, career as text, fileURL as fileUrl
+        FROM supporting_material
+        WHERE user_id = #{userId}
+        ORDER BY id ASC
+    </select>
+</mapper>

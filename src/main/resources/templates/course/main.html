@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 메인 </title>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/lecList.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}" />
+</head>
+<body th:data-user-id="${userId}">
+    <header th:replace="~{shared/header :: header}"></header>
+
+    <section>
+        <!-- 상단 메뉴 -->
+        <div class="topMenu">
+            <!-- 캘린더 -->
+            <div class="calendar-box">
+                <!-- 헤더 -->
+                <div class="calendar-header"> <span class="range"> yyyy.mm.dd. ~ yyyy.mm.dd. </span> </div>
+
+                <!-- 달력 -->
+                <div class="calendar">
+                    <!-- 1행 -->
+                    <div class="calRow">
+                        <div class="cell"><div class="day sun">SUN(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day mon">MON(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day tue">TUE(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day wed">WED(mm/dd)</div><ul class="todo"></ul></div>
+                    </div>
+
+                    <!-- 2행 -->
+                    <div class="calRow">
+                        <div class="cell"><div class="day sun">THU(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day mon">FRI(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day tue">SAT(mm/dd)</div><ul class="todo"></ul></div>
+                        <div class="cell"><div class="day wed">주간 목표(mm/dd ~ mm/dd)</div><ul class="todo goal"></ul></div>
+                    </div>
+
+                    <!-- 캘린더 이동 -->
+                    <a class="calBtn" th:href="@{/mypage/calendar}"> 캘린더 보기 → </a>
+                </div>
+            </div>
+
+            <!-- 사용자 정보 -->
+            <div class="userInfo">
+                <div class="userInfo-container">
+                    <!-- 프로필 -->
+                    <a class="porfileImg"
+                         th:href="@{/mypage/main}"
+                         th:if="${user.profileName != null}"
+                         th:style="'background-image: url(' + '\'' + ${user.profileName} + '\'' + ')'">
+                    </a>
+                    <a class="porfileImg"
+                         th:href="@{/mypage/main}"
+                         th:if="${user.profileName == null}"
+                         style="background-image: url('/img/profileImg.png')">
+                    </a>
+                    <div class="hi"> <span class="name" th:text="${user.userNickname}">닉네임</span> 님 환영합니다! </div>
+
+                    <!-- 로그아웃 -->
+                    <button class="logOut" onclick="logOut()"> 로그아웃 </button>
+
+                    <!-- 최근 시청 강의 -->
+                    <div class="recentLec" style="display: none;" onclick="goToLmsPlayer(this)">
+                        <span class="recentLecInto"> 최근 시청 강의 </span> <br>
+                        <span id="recentLecTitle"></span>
+                        <div class="progressBar">
+                            <div class="progressBar2" style="width: 0%;"></div>
+                        </div>
+                        <span id="recentLecProgress"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 강의 추천 -->
+        <div class="lecListHeader"> <span class="name" th:text="${user.userNickname}">닉네임</span> 님을 위한 맞춤 강의 </div>
+        <!-- 강의 리스트 출력 영역 -->
+        <div th:replace="shared/lecList :: lecList(${lecList})"></div>
+
+        <a class="all" th:href="@{/course/mainLectureList}"> 전체 보기 </a>
+    </section>
+
+    <footer th:replace="~{shared/footer :: footer}"></footer>
+
+    <script th:src="@{/js/shared/header.js}" defer></script>
+    <script th:src="@{/js/course/main.js}" defer></script>
+    <script>
+        function goToLmsPlayer(element) {
+            window.location.href = "/lms/main";
+        }
+
+        function goToDetail(element)
+        {
+          const id = element.getAttribute("data-id");
+          if (!id) return;
+          window.location.href = "/course/detail/" + id;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.CommunityMapper">
+    
+    <!-- 기존 selectLastComm 쿼리 유지 -->
+    <select id="selectLastComm" resultType="com.example.lala.DTO.Response.CommunityPost" parameterType="String">
+        SELECT p.post_id                        AS postId,
+               p.post_type                      AS postType,
+               p.title                          AS title,
+               p.content                        AS content,
+               p.write_date                     AS `date`,
+               u.nickname                       AS nickname,
+               p.like_num                       AS `likeCount`,
+               p.`view`                         AS `viewCount`,
+               COALESCE(COUNT(c.comment_id), 0) AS `commentCount`,
+               (p.delete_check = 1)             AS deleted
+        FROM lala.post p
+                 JOIN lala.user u ON u.user_id = p.writer_id
+                 LEFT JOIN lala.comment c ON p.post_id = c.post_id
+        WHERE p.writer_id = #{userId}
+           OR c.writer_id = #{userId}
+        GROUP BY p.post_id, p.post_type, p.title, p.content, p.write_date,
+                 u.nickname, p.like_num, p.`view`, p.delete_check
+        ORDER BY p.write_date DESC
+        LIMIT 3
+    </select>
+
+    <!-- 페이지네이션이 적용된 내 커뮤니티 조회 -->
+    <select id="selectMyComm" resultType="com.example.lala.DTO.Response.MyCommunity" parameterType="map">
+        WITH user_content AS (
+        SELECT p.post_id,
+        p.post_type,
+        p.title,
+        p.content,
+        p.write_date,
+        p.writer_id,
+        p.like_num,
+        p.`view`,
+        p.delete_check,
+        p.delete_reason,
+        TRUE as contentCheck,
+        FALSE as recomment
+        FROM post p
+        WHERE p.writer_id = #{userId}
+
+        UNION ALL
+
+        SELECT p.post_id,
+        p.post_type,
+        p.title,
+        c.content,
+        p.write_date,
+        p.writer_id,
+        p.like_num,
+        p.`view`,
+        p.delete_check,
+        p.delete_reason,
+        FALSE as contentCheck,
+        (c.recomment_check = 1) as recomment
+        FROM post p
+        JOIN comment c ON p.post_id = c.post_id
+        WHERE c.writer_id = #{userId}
+        ),
+        comment_counts AS (
+        SELECT post_id, COUNT(*) as comment_count
+        FROM comment
+        GROUP BY post_id
+        )
+        SELECT uc.post_id AS postId,
+        uc.post_type AS postType,
+        uc.title AS title,
+        uc.recomment AS recomment,
+        uc.contentCheck AS contentCheck,
+        uc.content AS content,
+        uc.write_date AS `date`,
+        u.nickname AS nickname,
+        uc.like_num AS `like`,
+        uc.`view` AS `view`,
+        COALESCE(cc.comment_count, 0) AS `comment`,
+        (uc.delete_check = 1) AS deleted,
+        uc.delete_reason AS deleteReason
+        FROM user_content uc
+        JOIN user u ON uc.writer_id = u.user_id
+        LEFT JOIN comment_counts cc ON uc.post_id = cc.post_id
+        WHERE uc.post_type IN
+        <foreach collection="postType" item="type" open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+        AND uc.contentCheck = #{contentCheck}
+        AND (uc.delete_check = 1) = #{deleted}
+        ORDER BY uc.write_date DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 내 커뮤니티 총 개수 조회 -->
+    <select id="countMyComm" resultType="long" parameterType="map">
+        WITH user_content AS (
+        SELECT p.post_id,
+        p.post_type,
+        p.delete_check
+        FROM post p
+        WHERE p.writer_id = #{userId}
+
+        UNION ALL
+
+        SELECT p.post_id,
+        p.post_type,
+        p.delete_check
+        FROM post p
+        JOIN comment c ON p.post_id = c.post_id
+        WHERE c.writer_id = #{userId}
+        )
+        SELECT COUNT(DISTINCT uc.post_id)
+        FROM user_content uc
+        WHERE uc.post_type IN
+        <foreach collection="postType" item="type" open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+        AND (uc.delete_check = 1) = #{deleted}
+    </select>
+
+    <!-- 페이지네이션이 적용된 신고한 게시물/댓글 조회 -->
+    <select id="selectReportedComm" resultType="com.example.lala.DTO.Response.MyCommunity" parameterType="map">
+        SELECT
+        comm.postId,
+        comm.postType,
+        comm.title,
+        COALESCE(comm.recomment, FALSE) AS recomment,
+        COALESCE(comm.contentCheck, TRUE) AS contentCheck,
+        comm.content,
+        comm.date,
+        comm.nickname,
+        COALESCE(comm.like, 0) AS `like`,
+        COALESCE(comm.view, 0) AS `view`,
+        COALESCE(comm.comment, 0) AS `comment`,
+        COALESCE(comm.deleted, FALSE) AS deleted,
+        comm.deleteReason
+        FROM (
+        SELECT
+        p.post_id AS postId,
+        p.post_type AS postType,
+        p.title AS title,
+        CASE WHEN cm.recomment_check = 1 THEN TRUE ELSE FALSE END AS recomment,
+        CASE WHEN cm.content IS NULL THEN TRUE ELSE FALSE END AS contentCheck,
+        COALESCE(cm.content, p.content) AS content,
+        DATE_FORMAT(p.write_date, '%Y-%m-%d %H:%i:%s') AS date,
+        u.nickname AS nickname,
+        COALESCE(p.like_num, 0) AS `like`,
+        COALESCE(p.`view`, 0) AS `view`,
+        COALESCE(cn.comment_count, 0) AS `comment`,
+        CASE WHEN p.delete_check = 1 THEN TRUE ELSE FALSE END AS deleted,
+        p.delete_reason AS deleteReason
+        FROM post p
+        LEFT JOIN (
+        SELECT
+        post_id,
+        content,
+        recomment_check,
+        writer_id
+        FROM comment
+        WHERE post_id IN (
+        SELECT post_id
+        FROM post_report
+        WHERE report_user_id = #{userId}
+        )
+        OR comment_id IN (
+        SELECT comment_id
+        FROM comment_report
+        WHERE report_user_id = #{userId}
+        )
+        ) AS cm ON p.post_id = cm.post_id
+        JOIN user u ON p.writer_id = u.user_id
+        LEFT JOIN (
+        SELECT
+        p.post_id,
+        COUNT(c.comment_id) AS comment_count
+        FROM post p
+        LEFT JOIN comment c ON c.post_id = p.post_id
+        GROUP BY p.post_id
+        ) AS cn ON cn.post_id = p.post_id
+        WHERE (p.post_id IN (
+        SELECT post_id FROM post_report WHERE report_user_id = #{userId}
+        ) OR p.post_id IN (
+        SELECT DISTINCT c.post_id
+        FROM comment c
+        JOIN comment_report cr ON c.comment_id = cr.comment_id
+        WHERE cr.report_user_id = #{userId}
+        ))
+        ORDER BY p.write_date DESC
+        ) AS comm
+        WHERE comm.postType IN
+        <foreach collection="postType" item="type" open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+        AND comm.deleted = FALSE
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 신고한 게시물 총 개수 조회 -->
+    <select id="countReportedComm" resultType="long" parameterType="map">
+        SELECT COUNT(DISTINCT p.post_id)
+        FROM post p
+        WHERE (p.post_id IN (
+        SELECT post_id FROM post_report WHERE report_user_id = #{userId}
+        ) OR p.post_id IN (
+        SELECT DISTINCT c.post_id
+        FROM comment c
+        JOIN comment_report cr ON c.comment_id = cr.comment_id
+        WHERE cr.report_user_id = #{userId}
+        ))
+        AND p.post_type IN
+        <foreach collection="postType" item="type" open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+        AND p.delete_check = 0
+    </select>
+</mapper>

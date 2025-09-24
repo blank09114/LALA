@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/css/auth/loginform.css">
+
+</head>
+<body>
+<div class="login-container"> <!-- css-->
+    <!-- 로고 -->
+    <img th:src="@{/img/LALA_log.png}" alt="LALA 로고" class="logo" />
+
+    <div th:if="error">
+        <p id="valid" style="color : red;"><a th:text="${exception}"></a></p>
+    </div>
+
+    <!-- 로그인 폼 -->
+    <div class="login-form"> <!-- css-->
+        <!-- 아이디 -->
+        <form action="/login" method="post">
+            <div class="form-group"> <!-- css-->
+                <!--                    <label for="login-id">아이디</label>-->
+                <!--                    <input id="login-id" type="text" placeholder="아이디를 입력하세요">-->
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email"
+                       th:value="${rememberedEmail}" placeholder="이메일을 입력해 주세요" />
+            </div>
+
+            <!-- 비밀번호 -->
+            <div class="form-group password-group">
+                <label for="login-pw">비밀번호</label>
+                <div class="password-wrapper"> <!-- css-->
+                    <!--                        <input id="login-pw" type="password" placeholder="비밀번호를 입력하세요">-->
+                    <input id="login-pw" type="password" name="password" placeholder="비밀번호" />
+                    <!-- 눈 아이콘(토글) -->
+                    <button type="button" class="eye-btn" aria-label="비밀번호 보기">
+                        <img src="/img/eye.png" alt="눈 이미지">
+                    </button>
+                </div>
+            </div>
+
+            <!-- 로그인 버튼 -->
+            <button type="submit" class="submit-btn">로그인</button>
+        </form>
+
+
+        <!-- 옵션: 아이디 저장 / 찾기 -->
+        <div class="options"> <!-- css-->
+            <!--                    <label><input type="checkbox"> 아이디 저장</label>-->
+            <label>
+                <input type="checkbox" name="rememberEmail"
+                       th:checked="${rememberedEmail != null}" />
+                아이디 기억하기
+            </label>
+            <!--                    <a href="findId.html">아이디/비밀번호 찾기</a>-->
+            <a href="/auth/findpasswordform">비밀번호 찾기</a>
+        </div>
+
+        <!-- 소셜 로그인 -->
+        <button class="sns-btn kakao"> <!-- css-->
+            <a th:href="@{/oauth2/authorization/kakao}"><span class="sns-icon"><img src="/img/kakao.png" alt="카카오톡 이미지"></span></a>
+            카카오로 로그인
+        </button>
+        <button class="sns-btn google"> <!-- css-->
+            <a th:href="@{/oauth2/authorization/google}"><span class="sns-icon"><img src="/img/google.png" alt="구글 이미지"></span></a>
+            구글로 로그인
+        </button>
+
+        <!-- 회원가입 링크 -->
+        <div class="signup"> <!-- css-->
+            <!--                    아직 회원가입을 하지 않으셨나요? <a href="signup.html">회원가입</a>-->
+            아직 회원가입을 하지 않으셨나요? <a href="/auth/signup">회원가입</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="/js/auth/loginform.js"></script>
+</body>
+
+
+</html>

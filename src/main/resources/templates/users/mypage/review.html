@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 리뷰</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/review.css}" />
+    <link rel="stylesheet" th:href="@{/css/users/activity.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+
+    <!-- 사이드 메뉴바 -->
+    <aside class="sidebar-menu">
+        <h2>Home</h2>
+        <ul>
+            <li><a href="mypage.html">마이페이지</a></li>
+            <li><a href="mypage.html">메인</a></li>
+        </ul>
+        <h2>내 정보</h2>
+        <ul>
+            <li><a href="mypageAccount.html">계정 관리</a></li>
+            <li><a href="mypageActive.html">나의 활동</a></li>
+        </ul>
+        <h2>강의 정보</h2>
+        <ul>
+            <li><a href="mypageLecture.html">학습 관리</a></li>
+            <li><a href="mypageLike.html">좋아요</a></li>
+        </ul>
+        <h2>지식 제공자</h2>
+        <ul>
+            <li>강사 신청</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h2>나의 활동</h2>
+        <div class="menu">
+            <ul>
+                <li>자유</li>
+                <li>스터디</li>
+                <li>질문&답변</li>
+                <li class="active">수강평</li>
+            </ul>
+        </div>
+
+        <!-- 로딩 상태 표시 -->
+        <div id="loading" style="display: none; text-align: center; padding: 20px;">
+            <p>리뷰를 불러오는 중...</p>
+        </div>
+
+        <!-- 리뷰 카드 목록 -->
+        <div id="review" class="review">
+            <div class="review-list" id="reviewList">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </div>
+
+        <!-- 리뷰가 없을 때 표시 -->
+        <div id="noReviews" style="display: none; text-align: center; padding: 50px;">
+            <p>작성한 리뷰가 없습니다.</p>
+        </div>
+
+        <!-- 모달 수정창 -->
+        <div id="review-modal" class="edit-modal" style="display:none;">
+            <div class="modal-content">
+                <div class="stars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <p class="modal-text">별점을 선택해주세요.</p>
+                <textarea id="review-text" placeholder="수강 후기를 작성해주세요."></textarea>
+                <div class="modal-actions">
+                    <button class="cancel" onclick="closeModal()">취소</button>
+                    <button class="save" onclick="saveReview()">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+            <button>&lt;</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>&gt;</button>
+        </div>
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script>
+let selectedReviewId = null;
+let selectedStars = 0;
+
+// 페이지 로드 시 리뷰 데이터 가져오기
+document.addEventListener('DOMContentLoaded', function() {
+    loadReviews();
+    initializeModal();
+});
+
+// 리뷰 데이터 로드
+async function loadReviews() {
+    const loading = document.getElementById('loading');
+    const reviewList = document.getElementById('reviewList');
+    const noReviews = document.getElementById('noReviews');
+    
+    try {
+        loading.style.display = 'block';
+        
+        const response = await fetch('/users/mypage/reviews', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const reviews = await response.json();
+        
+        loading.style.display = 'none';
+        
+        if (reviews && reviews.length > 0) {
+            renderReviews(reviews);
+            noReviews.style.display = 'none';
+        } else {
+            reviewList.innerHTML = '';
+            noReviews.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('리뷰 로드 실패:', error);
+        loading.style.display = 'none';
+        reviewList.innerHTML = '<div style="text-align: center; padding: 20px;"><p>리뷰를 불러오는데 실패했습니다.</p></div>';
+    }
+}
+
+// 리뷰 목록 렌더링
+function renderReviews(reviews) {
+    const reviewList = document.getElementById('reviewList');
+    
+    const reviewsHtml = reviews.map(review => {
+        const stars = generateStars(review.rate);
+        const thumbnail = review.thumbnail || '/images/default-thumbnail.png';
+        const formattedDate = formatDate(review.writeDate);
+        
+        return `
+            <div class="review-card" data-review-id="${review.reviewId}">
+                <img src="${thumbnail}" alt="강의 썸네일" />
+                <div class="review-info">
+                    <p class="rating">${stars}</p>
+                    <p class="title">${escapeHtml(review.lectureTitle)}</p>
+                    <span class="review_date">${formattedDate}</span><br>
+                    <p class="desc">${escapeHtml(review.content)}</p>
+                </div>
+                <div class="btn" onclick="openModal(this)">수정</div>
+            </div>
+        `;
+    }).join('');
+    
+    reviewList.innerHTML = reviewsHtml;
+}
+
+// 별점 생성 (rate는 10점 만점)
+function generateStars(rate) {
+    const starCount = Math.round(rate / 2); // 5점 만점으로 변환
+    let stars = '';
+    
+    for (let i = 1; i <= 5; i++) {
+        if (i <= starCount) {
+            stars += '<span>★</span>';
+        } else {
+            stars += '<span>☆</span>';
+        }
+    }
+    
+    return stars;
+}
+
+// 날짜 포맷팅
+function formatDate(dateString) {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+// HTML 이스케이프
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// 모달 초기화
+function initializeModal() {
+    // 별점 클릭 이벤트
+    document.querySelectorAll(".star").forEach(star => {
+        star.addEventListener("click", function () {
+            selectedStars = parseInt(this.getAttribute("data-value"));
+            highlightStars(selectedStars);
+        });
+    });
+}
+
+// 모달 열기
+function openModal(el) {
+    const card = el.closest(".review-card");
+    selectedReviewId = card.getAttribute("data-review-id");
+    const content = card.querySelector(".desc").innerText.trim();
+    
+    // 현재 별점 계산 (★ 개수 세기)
+    const ratingElement = card.querySelector(".rating");
+    const filledStars = ratingElement.querySelectorAll('span').length;
+    const currentStars = Array.from(ratingElement.querySelectorAll('span')).filter(span => 
+        span.textContent === '★'
+    ).length;
+    
+    document.getElementById("review-text").value = content;
+    selectedStars = currentStars;
+    highlightStars(selectedStars);
+    
+    document.getElementById("review-modal").style.display = "flex";
+}
+
+function highlightStars(count) {
+    document.querySelectorAll(".star").forEach(star => {
+        star.style.color = parseInt(star.getAttribute("data-value")) <= count ? "#f1c40f" : "#ccc";
+    });
+}
+
+// 모달 닫기
+function closeModal() {
+    document.getElementById("review-modal").style.display = "none";
+    selectedReviewId = null;
+    selectedStars = 0;
+}
+
+// 저장
+async function saveReview() {
+    const content = document.getElementById("review-text").value.trim();
+    
+    if (selectedReviewId == null || selectedStars == 0 || content === "") {
+        alert("별점과 내용을 모두 입력해주세요.");
+        return;
+    }
+    
+    const reviewData = {
+        reviewId: selectedReviewId,
+        rate: selectedStars * 2, // 10점 만점으로 저장
+        content: content
+    };
+    
+    try {
+        const response = await fetch("/users/mypage/review", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reviewData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.status === "success") {
+            alert("리뷰가 수정되었습니다.");
+            closeModal();
+            loadReviews(); // 리뷰 목록 새로고침
+        } else {
+            alert("수정 실패: " + (data.message || "알 수 없는 오류"));
+        }
+    } catch (error) {
+        console.error('리뷰 수정 실패:', error);
+        alert("오류 발생: " + error.message);
+    }
+}
+
+</script>
+</body>
+</html>

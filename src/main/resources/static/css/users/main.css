@@ -1,0 +1,403 @@
+/* 전체 레이아웃 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+.wrap {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0px;
+}
+
+/* 사이드바 */
+.sidebar {
+    width: 20%;
+    min-width: 150px;
+    border-right: 1px solid #ddd;
+    text-align: center;
+    list-style: none;
+}
+
+.profile-box {
+    margin: auto 30px 30px auto;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+}
+
+.profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.email {
+    font-size: 15px;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.tags {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: #e7f9f3;
+    color: #00c37d;
+    font-size: 13px;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: 500;
+}
+
+/* 사이드바 메뉴 */
+.sidebar-menu {
+    text-align: left;
+}
+
+.sidebar-menu h2 {
+    font-size: 20px;
+    margin: 10px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+}
+
+.sidebar-menu li {
+    font-size: 15px;
+    color: #AAAAAA;
+    line-height: 25px;
+    cursor: pointer;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: #aaa;
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+}
+
+.sidebar-menu a.active {
+    color: #00c37d;
+    font-weight: bold;
+}
+
+/* 메인 콘텐츠 */
+.main {
+    width: 850px;
+    margin: 0% 5%;
+}
+
+/* 캘린더 */
+.calendar {
+    margin-bottom: 30px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.calendar table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    vertical-align: top;
+    min-height: 80px;
+    position: relative;
+}
+
+.weekday {
+    background-color: #f8f9fa;
+    text-align: center;
+    font-weight: bold;
+    height: 50px !important;
+    min-height: 50px !important;
+    font-size: 14px;
+}
+
+.date {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    margin-top: 5px;
+}
+
+.task-cell {
+    background-color: #fff;
+    min-height: 80px;
+    padding: 5px;
+}
+
+.task {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 8px;
+    margin: 2px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    word-break: break-word;
+    display: block;
+}
+
+.task:nth-child(2n) {
+    background-color: #28a745;
+}
+
+.task:nth-child(3n) {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.calendar {
+    border: 1px solid #00c37d;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.calendar table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+    table-layout: fixed; /* 셀 너비 고정 */
+}
+
+.calendar th,
+.calendar td {
+    padding: 10px;
+    border: 1px solid #a7e6ce;
+    vertical-align: top;
+    width: 25%; /* 모든 칸 동일 너비 */
+    box-sizing: border-box;
+}
+
+.calendar td {
+    padding: 10px;
+    border: 1px solid #a7e6ce;
+    vertical-align: top;
+    height: 120px;
+    position: relative;
+}
+
+.calendar ul {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.calendar li {
+    margin-bottom: 5px;
+}
+
+.check {
+    color: #00c37d;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.calendar-more {
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+    margin-top: 60px;
+}
+
+.calendar-more a {
+    position: absolute;
+    right: 10px;
+    bottom: 3px;
+    text-decoration: none;
+    color: #aaa;
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+}
+
+.calendar-more a.active {
+    color: #00c37d;
+    font-weight: bold;
+}
+
+.calendar-more a:hover {
+    color: #00c37d;
+}
+
+/* 하단 강의 & 커뮤니티 */
+.bottom-section {
+    display: flex;
+    gap: 30px;
+}
+
+.box {
+    flex: 1;
+    height: 180px;
+    border: 1px solid #00c37d;
+    border-radius: 15px;
+    padding: 15px 20px;
+    font-size: 15px;
+    position: relative;
+}
+
+.box h4 {
+    margin: 0 0 20px 0;
+    font-size: 17px;
+}
+
+.lecture {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.lecture img {
+    width: 160px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #eee;
+}
+
+.lecture-info .title {
+    font-weight: 600;
+    margin: 0 auto;
+}
+
+.lecture-info .teacher {
+    font-size: 13px;
+    color: #666;
+}
+
+.lecture-info .time {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0 auto;
+}
+
+.community {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.community li {
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.community .commu-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    color: #333;
+    justify-content: space-between;
+}
+
+.community span {
+    font-size: 12px;
+    color: #888;
+}
+
+.more {
+    position: absolute;
+    right: 10px;
+    bottom: 3px;
+    font-size: 12px;
+    color: #555;
+    cursor: pointer;
+}
+
+.more a {
+    text-decoration: none;
+    color: #aaa;
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+}
+
+.more a.active {
+    color: #00c37d;
+    font-weight: bold;
+}
+
+.more a:hover {
+    color: #00c37d;
+}
+
+/* 기존 CSS에 추가 */
+.no-task {
+    color: #999;
+    font-style: italic;
+    font-size: 12px;
+    text-align: center;
+    padding: 5px;
+}
+
+/* 캘린더 일정 관련 스타일 (HTML의 <style> 태그에서 이동) */
+.schedule-item {
+    font-weight: bold;
+    margin: 2px 0;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.calendar-item {
+    color: #28a745;
+    background-color: #d4edda;
+}
+
+.planner-item {
+    color: #28a745;
+    background-color: #d4edda;
+}
+
+.planner-item.completed,
+.planner-summary.completed {
+    color: #6c757d;
+    background-color: #e2e3e5;
+    text-decoration: line-through;
+}
+
+.planner-summary {
+    color: #28a745;
+    font-weight: bold;
+    margin: 3px 0;
+    padding: 3px 8px;
+    background-color: #d4edda;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.check-mark {
+    color: #28a745;
+    font-weight: bold;
+    margin-left: 5px;
+}

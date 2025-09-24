@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강의 수정</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <!-- Quill.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.min.css" rel="stylesheet">
+    
+    <!-- 헤더 CSS -->
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <style>
+        /* 기본 스타일은 lectureCreator.html과 동일 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafb;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #34495e;
+            margin: 30px 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #e8f5e8;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="number"], input[type="url"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, input[type="url"]:focus, textarea:focus, select:focus {
+            border-color: #27ae60;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px 5px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219a52;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        /* 에디터 스타일 */
+        .editor-container {
+            margin: 20px 0;
+        }
+
+        .editor-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        #lectureIntroductionEditor {
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        /* 기타 스타일들 */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e8f4f8;
+        }
+
+        #result {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e8f4f8;
+        }
+
+        /* 로딩 스피너 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .back-button {
+            background-color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #545b62;
+        }
+
+        /* 썸네일 미리보기 */
+        #thumbnailPreview {
+            max-width: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 fragment 포함 -->
+<header th:replace="~{shared/header :: header}"></header>
+
+<!-- 뒤로가기 버튼 -->
+<button class="back-button" onclick="goBack()">← 뒤로가기</button>
+
+<h1>강의 수정하기</h1>
+
+<!-- 로딩 표시 -->
+<div id="loading" class="loading">
+    <p>강의 정보를 불러오는 중...</p>
+</div>
+
+<!-- 수정 폼 -->
+<div id="editForm" style="display: none;">
+    <!-- 기본 정보 -->
+    <div class="form-container">
+        <h2>기본 정보</h2>
+        <label>강의 제목*</label>
+        <input type="text" id="lectureName" placeholder="강의 제목을 입력하세요">
+
+        <label>강의 개요*</label>
+        <textarea id="lectureOutline" placeholder="강의 개요를 입력하세요"></textarea>
+
+        <!-- 스마트 에디터 적용 부분 -->
+        <div class="editor-container">
+            <label class="editor-label">강의 상세</label>
+            <div id="lectureIntroductionEditor"></div>
+        </div>
+
+        <label>썸네일 업로드</label>
+        <input type="file" id="thumbnailInput" accept="image/*">
+        <img id="thumbnailPreview" src="#" alt="썸네일 미리보기" style="display: none;">
+        <input type="hidden" id="currentThumbnailUrl">
+
+        <label>가격</label>
+        <input type="number" id="lecturePrice" value="0" placeholder="0">
+
+        <label>할인율</label>
+        <input type="number" id="discountRate" value="0" placeholder="0">
+
+        <label>난이도</label>
+        <select id="lectureDifficulty">
+            <option value="1">입문</option>
+            <option value="2">중급</option>
+            <option value="3">고급</option>
+        </select>
+    </div>
+
+    <!-- 수정 버튼 -->
+    <div class="form-container">
+        <h2>수정 완료</h2>
+        <button onclick="updateLecture()" style="width: 100%; padding: 15px; font-size: 16px; font-weight: 600;">강의 수정하기</button>
+    </div>
+</div>
+
+<!-- 결과 -->
+<div id="result"></div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!-- Quill.js JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.min.js"></script>
+<!-- 헤더 JavaScript -->
+<script th:src="@{/js/shared/header.js}" defer></script>
+
+<script th:inline="javascript">
+    // 🎯 Thymeleaf로 데이터 전달
+    const lectureId = /*[[${lectureId}]]*/ '';
+    const userId = /*[[${userId}]]*/ '';
+    
+    // 🎯 Quill 에디터 변수
+    let quillEditor;
+    let originalLectureData = null;
+    let uploadedThumbnailUrl = '';
+
+    /**
+     * 페이지 로드 시 초기화
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 강의 수정 페이지 초기화 시작');
+        console.log('📋 강의 ID:', lectureId);
+        console.log('👤 사용자 ID:', userId);
+        
+        // Quill 에디터 초기화
+        initializeQuillEditor();
+        
+        // 강의 데이터 로드
+        loadLectureData();
+    });
+
+    /**
+     * 📝 Quill 에디터 초기화
+     */
+    function initializeQuillEditor() {
+        quillEditor = new Quill('#lectureIntroductionEditor', {
+            theme: 'snow',
+            placeholder: '강의에 대한 상세한 설명을 작성해주세요...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            }
+        });
+        
+        console.log('✅ Quill 에디터 초기화 완료');
+    }
+
+    /**
+     * 📖 강의 데이터 로드
+     */
+    async function loadLectureData() {
+        try {
+            console.log('📖 강의 데이터 로드 시작:', lectureId);
+            
+            const response = await fetch(`/api/lms/edit/${lectureId}`);
+            
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('📡 서버 응답:', result);
+            
+            if (result.success) {
+                originalLectureData = result;
+                populateForm(result);
+                
+                // 로딩 숨기고 폼 표시
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('editForm').style.display = 'block';
+                
+                console.log('✅ 강의 데이터 로드 완료');
+            } else {
+                throw new Error(result.message || '강의 데이터 로드 실패');
+            }
+            
+        } catch (error) {
+            console.error('❌ 강의 데이터 로드 실패:', error);
+            document.getElementById('loading').innerHTML = `
+                <div class="error">
+                    <h3>❌ 오류</h3>
+                    <p>${error.message}</p>
+                    <button onclick="goBack()">돌아가기</button>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * 📝 폼에 기존 데이터 채우기
+     */
+    function populateForm(data) {
+        const lectureInfo = data.lectureInfo;
+        
+        if (lectureInfo) {
+            // 기본 정보 입력
+            document.getElementById('lectureName').value = lectureInfo.name || '';
+            document.getElementById('lectureOutline').value = lectureInfo.outline || '';
+            document.getElementById('lecturePrice').value = lectureInfo.price || 0;
+            document.getElementById('discountRate').value = lectureInfo.discountRate || 0;
+            document.getElementById('lectureDifficulty').value = lectureInfo.difficulty || 1;
+            
+            // 에디터에 내용 설정
+            if (lectureInfo.introduction) {
+                quillEditor.root.innerHTML = lectureInfo.introduction;
+            }
+            
+            // 썸네일 설정
+            if (lectureInfo.thumbnail) {
+                uploadedThumbnailUrl = lectureInfo.thumbnail;
+                document.getElementById('currentThumbnailUrl').value = lectureInfo.thumbnail;
+                
+                const preview = document.getElementById('thumbnailPreview');
+                preview.src = lectureInfo.thumbnail;
+                preview.style.display = 'block';
+            }
+            
+            console.log('✅ 폼 데이터 채우기 완료');
+        }
+    }
+
+    /**
+     * 💾 강의 수정 실행
+     */
+    async function updateLecture() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '수정 중...';
+
+        try {
+            // 수정된 데이터 수집
+            const editorHtml = quillEditor.root.innerHTML;
+            
+            const updateData = {
+                lectureInfo: {
+                    lectureId: lectureId,
+                    name: document.getElementById('lectureName').value,
+                    outline: document.getElementById('lectureOutline').value,
+                    introduction: editorHtml || '',
+                    thumbnail: uploadedThumbnailUrl || document.getElementById('currentThumbnailUrl').value,
+                    price: parseInt(document.getElementById('lecturePrice').value) || 0,
+                    discountRate: parseInt(document.getElementById('discountRate').value) || 0,
+                    difficulty: parseInt(document.getElementById('lectureDifficulty').value) || 1
+                }
+            };
+            
+            console.log('📤 수정 데이터:', updateData);
+            
+            // 서버에 수정 요청
+            const response = await fetch(`/api/lms/edit/${lectureId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                resultDiv.innerHTML = `
+                    <h3 class="success">✅ 성공!</h3>
+                    <p><strong>강의 ID:</strong> ${result.lectureId}</p>
+                    <p><strong>메시지:</strong> ${result.message}</p>
+                    <button onclick="goBack()">돌아가기</button>
+                `;
+                console.log('✅ 강의 수정 성공:', result);
+            } else {
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ 실패</h3>
+                    <p><strong>메시지:</strong> ${result.message}</p>
+                `;
+                console.error('❌ 강의 수정 실패:', result);
+            }
+            
+        } catch (error) {
+            resultDiv.innerHTML = `
+                <h3 class="error">🚨 오류</h3>
+                <p><strong>메시지:</strong> ${error.message}</p>
+                <p>콘솔을 확인하세요.</p>
+            `;
+            console.error('강의 수정 오류:', error);
+        }
+    }
+
+    /**
+     * 🔙 뒤로가기 함수
+     */
+    function goBack() {
+        if (confirm('수정 중인 내용이 저장되지 않을 수 있습니다. 정말 돌아가시겠습니까?')) {
+            window.history.back();
+        }
+    }
+
+    /**
+     * 📷 썸네일 업로드 처리
+     */
+    document.getElementById('thumbnailInput').addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // 미리보기
+        const preview = document.getElementById('thumbnailPreview');
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+
+        // 서버에 업로드
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            console.log('썸네일 업로드 중...', file.name);
+            
+            const response = await fetch('/api/lms/upload/thumbnail', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            console.log('업로드 응답:', result);
+
+            if (result.success) {
+                uploadedThumbnailUrl = result.url;
+                console.log('✅ 썸네일 업로드 성공:', uploadedThumbnailUrl);
+                showMessage('✅ 썸네일 업로드 완료!', 'success');
+            } else {
+                console.error('❌ 업로드 실패:', result);
+                showMessage('❌ 썸네일 업로드 실패: ' + result.message, 'error');
+                uploadedThumbnailUrl = '';
+            }
+        } catch (err) {
+            console.error('❌ 썸네일 업로드 오류:', err);
+            showMessage('❌ 썸네일 업로드 중 오류: ' + err.message, 'error');
+            uploadedThumbnailUrl = '';
+        }
+    });
+
+    /**
+     * 📢 메시지 표시 헬퍼 함수
+     */
+    function showMessage(message, type) {
+        const existingMsg = document.querySelector('.upload-message');
+        if (existingMsg) existingMsg.remove();
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'upload-message';
+        msgDiv.style.color = type === 'success' ? 'green' : 'red';
+        msgDiv.style.fontSize = '14px';
+        msgDiv.style.marginTop = '5px';
+        msgDiv.textContent = message;
+
+        document.getElementById('thumbnailPreview').after(msgDiv);
+
+        // 5초 후 메시지 제거
+        setTimeout(() => msgDiv.remove(), 5000);
+    }
+</script>
+</body>
+</html>

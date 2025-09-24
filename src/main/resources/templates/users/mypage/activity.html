@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>나의 활동</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/activity.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/review.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script th:src="@{/js/users/activity.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+
+    <!-- 사이드 메뉴바 -->
+    <aside class="sidebar-menu">
+        <h2>Home</h2>
+        <ul>
+            <li><a th:href="@{/mypage/main}">마이페이지</a></li>
+            <li><a th:href="@{/course/main}">메인</a></li>
+        </ul>
+        <h2>내 정보</h2>
+        <ul>
+            <li><a th:href="@{/mypage/account}">계정 관리</a></li>
+            <li><a th:href="@{/mypage/activity}" class="active">나의 활동</a></li>
+        </ul>
+        <h2>강의 정보</h2>
+        <ul>
+            <li><a th:href="@{/mypage/learning}">학습 관리</a></li>
+            <li><a th:href="@{/mypage/likes}">좋아요</a></li>
+        </ul>
+        <h2>지식 제공자</h2>
+        <ul>
+            <li><a th:href="@{/mypage/pro_req}">요청 하기</a></li>
+        </ul>
+    </aside>
+
+    <!-- 본문 -->
+    <main class="main-content">
+        <h2>나의 활동</h2>
+
+        <!-- 게시글 유형 (메인 탭) -->
+        <div class="menu">
+            <ul>
+                <li class="main-tab active" data-tab="free">자유</li>
+                <li class="main-tab" data-tab="study">스터디</li>
+                <li class="main-tab" data-tab="qa">질문&답변</li>
+                <li class="main-tab" data-tab="review">수강평</li>
+            </ul>
+        </div>
+
+        <!-- 커뮤니티 글 관련 필터 (자유, 스터디, 질문&답변 탭에서만 표시) -->
+        <div class="filter-buttons" id="communityFilters">
+            <button class="filter-option active" data-filter-type="content" data-value="written">작성한 글</button>
+            <button class="filter-option" data-filter-type="content" data-value="answered">답변한 글</button>
+            <button class="filter-option" data-filter-type="content" data-value="deleted">삭제된 글</button>
+            <button class="filter-option reported" data-filter-type="content" data-value="reported">신고한 글 🚨</button>
+        </div>
+
+        <!-- 로딩 상태 표시 -->
+        <div id="loading" style="display: none; text-align: center; padding: 20px;">
+            <p>데이터를 불러오는 중...</p>
+        </div>
+
+        <!-- 커뮤니티 게시글 리스트 -->
+        <div class="post-list" id="postList">
+            <p class="loading">데이터를 불러오는 중...</p>
+        </div>
+
+        <!-- 리뷰 섹션 -->
+        <div id="reviewSection" style="display: none;">
+            <!-- 리뷰 카드 목록 -->
+            <div id="review" class="review">
+                <div class="review-list" id="reviewList">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 리뷰가 없을 때 표시 -->
+            <div id="noReviews" style="display: none; text-align: center; padding: 50px;">
+                <p>작성한 리뷰가 없습니다.</p>
+            </div>
+
+            <!-- 리뷰 페이지네이션 -->
+            <div class="pagination" id="reviewPagination">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </div>
+
+        <!-- 리뷰 수정 모달 -->
+        <div id="review-modal" class="edit-modal" style="display:none;">
+            <div class="modal-content">
+                <div class="stars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <p class="modal-text">별점을 선택해주세요.</p>
+                <textarea id="review-text" placeholder="수강 후기를 작성해주세요."></textarea>
+                <div class="modal-actions">
+                    <button class="cancel" onclick="closeModal()">취소</button>
+                    <button class="save" onclick="saveReview()">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+
+    </main>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+</body>
+</html>

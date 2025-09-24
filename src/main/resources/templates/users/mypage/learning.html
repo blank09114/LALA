@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 강의</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/activity.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/learning.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+
+    <!--사이드 메뉴바-->
+    <div th:replace="~{users/mypage/sidebar :: sidebar(mypageUserData=${mypageUserData}, currentMenu='learning')}"></div>
+
+    <main class="main-content">
+
+        <h2>학습 관리</h2>
+
+        <div class="menu">
+            <ul>
+                <li class="active">내 강의</li>
+                <li><a th:href="@{/mypage/cart}">수강 바구니</a></li>
+                <li><a th:href="@{/mypage/cancel}">취소 강의</a></li>
+            </ul>
+        </div>
+
+        <!-- 작성/답변 버튼 -->
+        <div class="filter-buttons">
+            <button>학습 중</button>
+            <button>학습 완료</button>
+            <button>수강평 작성 가능</button>
+        </div>
+
+        <div class="lecture-list">
+            <!-- JS에서 필터에 따라 동적으로 강의 카드가 들어감 -->
+        </div>
+
+        <div id="review-modal" class="edit-modal" style="display:none;">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="stars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <p class="modal-text">별점을 선택해주세요.</p>
+                <textarea id="review-text"
+                          placeholder="좋은 수강평을 남겨주시면 지식 제공자와 이후 배우는 사람들에게 큰 도움이 됩니다! (5자 이상)">
+                </textarea>
+                <div class="modal-actions">
+                    <button class="save">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+            <button>&lt;</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>&gt;</button>
+        </div>
+
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/users/learning.js}" defer></script>
+</body>
+</html>

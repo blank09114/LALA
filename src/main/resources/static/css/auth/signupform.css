@@ -1,0 +1,282 @@
+    /* 전체 래퍼 */
+    .signup-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 80px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: bold;
+    }
+
+    /* 제목 */
+    .signup-title {
+      font-size: 32px;
+      margin-bottom: 60px;
+    }
+
+    /* 폼 전체 */
+    .signup-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 라벨 + 인풋 */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .form-group input {
+      height: 44px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-weight: normal;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .form-group input::placeholder {
+      font-weight: normal;
+    }
+
+    /* 인증코드 */
+    .code-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .code-wrapper input,
+    .send-btn {
+      height: 44px;
+      box-sizing: border-box;
+    }
+
+    .code-wrapper input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 6px 0 0 6px;
+    }
+
+    .send-btn {
+      padding: 0 16px;
+      background-color: #00C471;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+    }
+
+    /* 비밀번호 + 눈 아이콘 */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+    }
+
+    .eye-btn {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    /* 비밀번호 요구사항 */
+    .pw-rules {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pw-rules div {
+      display: flex;
+      align-items: center;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+
+    .pw-rules span {
+      color: #00B37E;
+      margin-right: 4px;
+    }
+
+    /*중복 and 인증코드 버튼*/
+
+    .light-button {
+  padding: 0 16px;
+  background-color: #00C471;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  height: 44px;
+  transition: background-color 0.2s;
+}
+
+.light-button:hover {
+  background-color: #00a860;
+}
+
+
+
+
+    /* 회원가입 버튼 */
+    .submit-btn {
+      font-weight: bold;
+      height: 56px;
+      width: 100%;
+      background-color: #00C471;
+      color: #fff;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #00C471;
+    }
+
+    /* 구분선 + 텍스트 */
+    .divider {
+      width: 100%;
+      text-align: center;
+      position: relative;
+      margin: 32px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: #ccc;
+    }
+
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    .divider span {
+      background: #fff;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #666;
+      font-weight: normal;
+    }
+
+    /* SNS 버튼 (로고만) */
+    .sns-section {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .sns-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .sns-btn.kakao {
+      background-color: #FEE500;
+    }
+
+    .sns-btn.google {
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .sns-btn img {
+      width: 24px;
+      height: 24px;
+    }
+
+
+    /* 관심분야 체크박스 그리드 */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    /* 개별 체크박스 아이템 */
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #fff;
+      transition: background-color 0.2s;
+    }
+
+    /* 체크박스와 레이블 간 간격 */
+    .checkbox-item input {
+      margin-right: 8px;
+    }
+
+    /* 호버 시 배경 변화 */
+    .checkbox-item:hover {
+      background-color: #f5f5f5;
+    }
+
+.error-message,
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+  font-weight: normal;
+}
+
+/* 이메일, 인증 코드 등 input 밑에 붙는 에러 텍스트 */
+.input-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+  padding-left: 4px;
+  display: block;
+}
+
+/* success 메시지 스타일도 같이 추가 */
+.success {
+  color: #00C471;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+  font-weight: normal;
+}

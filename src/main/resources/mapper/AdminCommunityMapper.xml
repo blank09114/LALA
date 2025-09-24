@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lala.Mapper.AdminCommunityMapper">
+
+    <resultMap id="UserCommunityResultMap" type="com.example.lala.DTO.Response.AdminCommunityList">
+        <result property="userId" column="user_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="writerNickname" column="writerNickname"/>
+        <result property="contentTitle" column="contentTitle"/>
+        <result property="accountType" column="accountType"/>
+        <result property="postType" column="postType"/>
+        <result property="writeDate" column="writeDate"/>
+        <result property="reportType" column="reportType"/>
+    </resultMap>
+
+    <select id="findUserCommunityFilters" resultMap="UserCommunityResultMap">
+        select
+        u.user_id,
+        p.post_id,
+        u.nickname as writerNickname,
+        p.title as contentTitle,
+        u.user_type,
+        ut.account_type_name as accountType,
+        p.post_type,
+        pt.name as postType,
+        p.write_date as writeDate,
+        case
+        when p.report > 0 then '신고됨'
+        when p.report = 0 then ''
+        End as reportType
+        from post p
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on p.writer_id = u.user_id
+        join user_type ut
+        on u.user_type = ut.no
+        where 1=1
+        <if test="postTypes != null and postTypes.size() > 0">
+            AND p.post_type IN
+            <foreach collection="postTypes" item  = "postT" open="(" separator="," close=")">
+                #{postT}
+            </foreach>
+        </if>
+
+        <if test="userTypes != null and userTypes.size() > 0">
+            AND  u.user_type IN
+            <foreach collection="userTypes" item="userT" open="(" separator="," close=")">
+                #{userT}
+            </foreach>
+        </if>
+
+        <if test="reports != null and reports.size() > 0">
+            AND  p.report IN
+            <foreach collection="reports" item="reportT" open="(" separator="," close=")">
+                #{reportT}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  p.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  p.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+
+        order by p.write_date desc
+        limit #{pageStart}, #{pageSize}
+
+    </select>
+
+
+    <select id="countCommunitysByFilters" resultType="int">
+        select count(*)
+        from post p
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on p.writer_id = u.user_id
+        join user_type ut
+        on u.user_type = ut.no
+        where 1=1
+        <if test="postTypes != null and postTypes.size() > 0">
+            AND p.post_type IN
+            <foreach collection="postTypes" item  = "postT" open="(" separator="," close=")">
+                #{postT}
+            </foreach>
+        </if>
+
+        <if test="userTypes != null and userTypes.size() > 0">
+            AND  u.user_type IN
+            <foreach collection="userTypes" item="userT" open="(" separator="," close=")">
+                #{userT}
+            </foreach>
+        </if>
+
+        <if test="reports != null and reports.size() > 0">
+            AND  p.report IN
+            <foreach collection="reports" item="reportT" open="(" separator="," close=")">
+                #{reportT}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  p.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  p.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+
+    </select>
+</mapper>

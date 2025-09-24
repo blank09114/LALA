@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/cart.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <script th:src="@{/js/cart/cartManager.js}"></script>
+    <script th:src="@{/js/users/cart.js}" defer></script>
+
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+    <!-- 사이드 메뉴바 -->
+    <div th:replace="~{users/mypage/sidebar :: sidebar(mypageUserData=${mypageUserData}, currentMenu='cart')}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <h2>학습 관리</h2>
+
+        <!--메뉴-->
+        <div class="menu">
+            <ul>
+                <li><a th:href="@{/mypage/learning}">내 강의</a></li>
+                <li class="active">수강 바구니</li>
+                <li><a th:href="@{/mypage/cancel}">취소 강의</a></li>
+            </ul>
+        </div>
+
+        <div class="basket-wrap">
+            <!-- 왼쪽 강의 리스트 -->
+            <section class="basket-left">
+                <div class="select-all">
+                    <label class="custom-checkbox-inline">
+                        <input type="checkbox" id="checkAll" />
+                        <span class="checkmark"></span>
+                    </label>
+                    <label for="checkAll" class="check-label">전체 선택</label>
+                </div>
+
+
+
+                <!-- 장바구니 강의 목록이 여기에 동적으로 생성됩니다 -->
+                <div id="cart-items-container">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </section>
+
+            <!-- 오른쪽 결제창 -->
+            <div class="basket-right">
+                <div class="buyer-title">구매자 정보</div>
+
+                <div class="buyer-box">
+                    <h3>구매자 정보</h3>
+                    <label>이름 <span class="required">*</span></label>
+                    <input type="text" placeholder="실명 입력">
+
+                    <label>이메일 <span class="required">*</span></label>
+                    <input type="email" placeholder="example@domain.com">
+
+                    <label>휴대폰 번호 <span class="required">*</span></label>
+                    <input type="text" placeholder="- 없이 숫자만 입력">
+
+                    <button class="verify-btn">인증 요청</button>
+                </div>
+
+                <div class="payment-box">
+                    <p>총 결제 금액</p>
+                    <h4 id="total-amount">₩0</h4>
+                    <div class="payment-details" id="payment-details">
+                        <!-- 결제 세부 정보 -->
+                    </div>
+                    <button class="pay-btn" id="checkout-btn">결제 요청</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination-container">
+            <!-- 페이지네이션이 동적으로 생성됩니다 -->
+        </div>
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

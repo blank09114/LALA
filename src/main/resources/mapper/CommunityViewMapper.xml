@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+
+<mapper namespace="com.example.lala.Mapper.CommunityViewMapper">
+
+    <resultMap id="CommunityAll" type="com.example.lala.DTO.Response.CommunityView">
+        <result property="postId" column="postId"/>
+        <result property="postType" column="postType"/>
+        <result property="postTitle" column="postTitle"/>
+        <result property="postContent" column="postContent"/>
+        <result property="writerNickname" column="writerNickname"/>
+        <result property="writeDate" column="writeDate"/>
+        <result property="postView" column="postView"/>
+        <result property="postLikeNum" column="postLikeNum"/>
+        <result property="postCommNum" column="postCommNum"/>
+    </resultMap>
+
+
+    <select id="findCommunityAll" resultMap="CommunityAll">
+        select p.post_id as postId,
+        CASE
+        WHEN pt.name = '공지' THEN '공지'
+        WHEN pt.name = '자유' THEN '자유'
+        WHEN pt.name = '스터디(모집중)' THEN '모집중'
+        WHEN pt.name = '스터디(모집완료)' THEN '모집완료'
+        WHEN pt.name = '질문답변(미해결)' THEN '미해결'
+        WHEN pt.name = '질문답변(해결)' THEN '해결'
+        ELSE pt.name
+        END as postType,
+        u.nickname as writerNickname,
+        p.writer_id,
+        p.title as postTitle,
+        p.content as postContent,
+        p.write_date as writeDate,
+        p.view as postView,
+        p.like_num as postLikeNum,
+        count(case when c.recomment_check = 0 then 1 end) as postCommNum
+        from post p
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on p.writer_id = u.user_id
+        left join comment c
+        on p.post_id = c.post_id
+        where 1=1
+        <if test="postType != null and postType.size() > 0">
+            AND p.post_type IN
+        <foreach collection="postType" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        </if>
+
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="content != null and content != ''">
+            AND p.title LIKE CONCAT('%', #{content}, '%')
+        </if>
+
+        <if test="writer != null and writer != ''">
+            AND p.writer_id LIKE CONCAT('%', #{writer}, '%')
+        </if>
+        group by p.post_id
+
+        <choose>
+            <when test="orderBy == 'latest'">
+                ORDER BY p.write_date DESC
+            </when>
+            <when test="orderBy == 'popular'">
+                ORDER BY p.view DESC
+            </when>
+            <when test="orderBy == 'likes'">
+                ORDER BY p.like_num DESC
+            </when>
+            <when test="orderBy == 'comments'">
+                ORDER BY postCommNum DESC
+            </when>
+            <otherwise>
+                ORDER BY p.write_date DESC <!-- 기본값 -->
+            </otherwise>
+        </choose>
+
+        limit #{pageStart}, #{pageSize}
+    </select>
+
+    <select id="countCommunityAll" resultType="int">
+        SELECT COUNT(DISTINCT p.post_id)
+        FROM post p
+        JOIN post_type pt ON p.post_type = pt.no
+        JOIN user u ON p.writer_id = u.user_id
+        LEFT JOIN comment c ON p.post_id = c.post_id
+        WHERE 1 = 1
+        <if test="postType != null and postType.size() > 0">
+            AND p.post_type IN
+            <foreach collection="postType" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            AND p.title LIKE CONCAT('%', #{content}, '%')
+        </if>
+        <if test="writer != null and writer != ''">
+            AND p.writer_id LIKE CONCAT('%', #{writer}, '%')
+        </if>
+    </select>
+
+
+
+
+
+
+
+
+
+
+    <select id="findPostDetail" resultMap="CommunityAll" parameterType="String">
+        select p.post_id as postId,
+        CASE
+        WHEN pt.name = '공지' THEN '공지'
+        WHEN pt.name = '자유' THEN '자유'
+        WHEN pt.name = '스터디(모집중)' THEN '스터디'
+        WHEN pt.name = '스터디(모집완료)' THEN '스터디'
+        WHEN pt.name = '질문답변(미해결)' THEN '질문답변'
+        WHEN pt.name = '질문답변(해결)' THEN '질문답변'
+        ELSE pt.name
+        END as postType,
+        CASE
+        WHEN pt.name = '공지' THEN '공지'
+        WHEN pt.name = '자유' THEN '자유'
+        WHEN pt.name = '스터디(모집중)' THEN '모집중'
+        WHEN pt.name = '스터디(모집완료)' THEN '모집완료'
+        WHEN pt.name = '질문답변(미해결)' THEN '미해결'
+        WHEN pt.name = '질문답변(해결)' THEN '해결'
+        ELSE pt.name
+        END as postTypeName,
+        u.nickname as writerNickname,
+        p.writer_id,
+        p.title as postTitle,
+        p.content as postContent,
+        p.write_date as writeDate,
+        p.view as postView,
+        p.like_num as postLikeNum,
+        count(case when c.recomment_check = 0 then 1 end) as postCommNum
+        from post p
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on p.writer_id = u.user_id
+        left join comment c
+        on p.post_id = c.post_id
+        where p.post_id = #{postId}
+        group by p.post_id
+    </select>
+
+
+
+
+    <resultMap id="communityComment" type="com.example.lala.DTO.Response.CommunityDetails">
+        <result property="postId" column="postId"/>
+        <result property="parentCommentId" column="parentCommentId"/>
+        <result property="postId" column="postId"/>
+        <result property="writerNickname" column="writerNickname"/>
+        <result property="content" column="content"/>
+        <result property="contentType" column="contentType"/>
+        <result property="writeDate" column="writeDate"/>
+        <result property="likeNum" column="likeNum"/>
+        <result property="commentNum" column="commentNum"/>
+
+        <result property="recommendCheck" column="recommendCheck"/>
+        <result property="deleteCheck" column="deleteCheck"/>
+        <result property="report" column="report"/>
+    </resultMap>
+
+
+
+    <select id="findCommentPostDetails" resultMap="communityComment">
+        select p.post_id as postId,
+        CASE
+        WHEN c.recomment_check = 1 THEN SUBSTRING(SUBSTRING_INDEX(c.content,'::',1), 2)
+        ELSE NULL
+        END AS parentCommentId,
+        c.comment_id as commentId,
+        u.nickname as writerNickname,
+        c.content as content,
+        c.write_date AS writeDate,
+        CASE WHEN c.recomment_check = 1 THEN true ELSE false END as recommendCheck,
+        CASE WHEN c.delete_check = 1 THEN true ELSE false END as deleteCheck,
+        CASE WHEN c.report = 1 THEN true ELSE false END as report,
+        c.like_num as likeNum,
+        c.recomment_check as recommendCheck,
+        c.delete_check as deleteCheck,
+        c.report as report
+        from post p
+        join comment c
+        on p.post_id = c.post_id
+        join user u
+        on c.writer_id = u.user_id
+        where p.post_id = #{postId}
+        order by c.write_date desc
+    </select>
+
+
+    <insert id="addPostUser">
+        insert into post (writer_id, post_type, write_date, title, content)
+        values (#{writerId}, #{postTypeNum}, now(), #{title}, #{content});
+    </insert>
+
+    <select id="isAdminOnlyPostType" resultType="boolean" parameterType="int">
+        SELECT #{postType} = 1
+    </select>
+
+
+</mapper>

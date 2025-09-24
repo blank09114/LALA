@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lala.Mapper.LectureMapper">
+    <select id="selectLastUpdate" resultType="com.example.lala.DTO.Response.MyLecture" parameterType="String">
+        SELECT l.lecture_id       id,
+               l.name             title,
+               u.nickname         provider,
+               l.thumbnail        thumbnail,
+               p.last_update_date last_update_date
+        FROM lecture_content_progress_rate p
+                 JOIN lecture l
+                      ON p.lecture_id = l.lecture_id
+                 JOIN user u
+                      ON l.uploader_id = u.user_id
+        WHERE student_id = #{userId}
+        ORDER BY p.last_update_date DESC LIMIT 1
+    </select>
+
+    <!-- 내가 최근에 들은 강의 -->
+    <!-- DTO가 바뀌어서 매퍼도 바뀌고 그 이후도 바뀜 -->
+    <select id="recentLecture" resultType="com.example.lala.DTO.Course.LastLecture" parameterType="String">
+        SELECT l.lecture_id lectureId,
+               l.name       title,
+               p.progress_rate as progressRate
+        FROM lecture_content_progress_rate p
+                 JOIN lecture l
+                      ON p.lecture_id = l.lecture_id
+                 JOIN user u
+                      ON l.uploader_id = u.user_id
+        WHERE student_id = #{userId}
+        ORDER BY p.last_update_date DESC LIMIT 1
+    </select>
+
+    <select id="selectLikeLecture" resultType="com.example.lala.DTO.Response.LikeLecture" parameterType="map">
+        SELECT
+        l.lecture_id as lectureId,
+        l.thumbnail,
+        l.name as title,
+        u.nickname as nickname,
+        l.introduction,
+        l.price,
+        l.discount_rate as discountRate,
+        COALESCE(r.review_count, 0) as reviewNum,
+        COALESCE(r.avg_rating, 0.0) as avgReviewRate,
+        COALESCE(e.student_count, 0) as studentNum,
+        l.difficulty,
+        l.upload_date as uploadDate
+        FROM lecture l
+        INNER JOIN lecture_bookmark b ON l.lecture_id = b.lecture_id
+        LEFT JOIN user u ON l.uploader_id = u.user_id
+        LEFT JOIN (
+        SELECT
+        lecture_id,
+        COUNT(*) as review_count,
+        AVG(CAST(review_rate AS DECIMAL(3,2))) as avg_rating
+        FROM review
+        GROUP BY lecture_id
+        ) r ON l.lecture_id = r.lecture_id
+        LEFT JOIN (
+        SELECT
+        lecture_id,
+        COUNT(*) as student_count
+        FROM user_lecture
+        GROUP BY lecture_id
+        ) e ON l.lecture_id = e.lecture_id
+        WHERE b.user_id = #{userId}
+        <choose>
+            <when test="free == true">
+                AND l.price = 0
+            </when>
+            <otherwise>
+                AND l.price &gt; 0
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="selectProviderLecture" resultType="boolean" parameterType="map">
+        select COALESCE(
+                       (select if(uploader_id = #{userId}, true, false)
+                        from lecture
+                        where lecture_id = #{lectureId}),
+                       false
+               ) as result
+    </select>
+
+    <!-- 강의 전체 조회 -->
+    <select id="allLectures" resultType="com.example.lala.DTO.Course.LectureSummary">
+        SELECT l.lecture_id                                   AS lectureId,
+               l.thumbnail                                    AS thumbnail,
+               l.name                                         AS title,
+               COALESCE(u.nickname, '알 수 없는 사용자')             AS nickname,
+               l.introduction                                 AS introduction,
+               l.price                                        AS price,
+               l.discount_rate                                AS discountRate,
+               COALESCE(review_data.reviewNum, 0)             AS reviewNum,
+               COALESCE(review_data.totalReviewRate, 0)       AS totalReviewRate,
+               COALESCE(review_data.avgReviewRate, 0.0)       AS avgReviewRate,
+               COALESCE(bookmark_data.bookmarkNum, 0)         AS bookmarkNum,
+               l.difficulty                                   AS difficulty,
+               COALESCE(category_data.categoryName, '미분류')    AS big,
+               COALESCE(category_data.interestedNames, '미분류') AS small
+        FROM lecture l
+                 LEFT JOIN user u ON l.uploader_id = u.user_id
+                 LEFT JOIN (SELECT lecture_id,
+                                   COUNT(review_id)           AS reviewNum,
+                                   SUM(review_rate)           AS totalReviewRate,
+                                   ROUND(AVG(review_rate), 2) AS avgReviewRate
+                            FROM review
+                            GROUP BY lecture_id) review_data ON l.lecture_id = review_data.lecture_id
+                 LEFT JOIN (SELECT lecture_id,
+                                   COUNT(DISTINCT user_id) AS bookmarkNum
+                            FROM lecture_bookmark
+                            GROUP BY lecture_id) bookmark_data ON l.lecture_id = bookmark_data.lecture_id
+                 LEFT JOIN (SELECT lf.lecture_id,
+                                   MIN(c.name)                                                  AS categoryName,
+                                   GROUP_CONCAT(DISTINCT i.name ORDER BY i.name SEPARATOR ', ') AS interestedNames
+                            FROM lecture_field lf
+                                     LEFT JOIN interested i ON i.interested_id = lf.interested_id
+                                     LEFT JOIN category c ON c.category_id = i.category_id
+                            GROUP BY lf.lecture_id) category_data ON l.lecture_id = category_data.lecture_id
+        ORDER BY l.lecture_id
+    </select>
+
+    <!-- 사용자의 관심분야를 갖는 강의 조회 -->
+    <select id="selectMyInterestLecture" resultType="com.example.lala.DTO.Course.LectureSummary" parameterType="String">
+        SELECT l.lecture_id                                AS lectureId,
+               l.thumbnail                                 AS thumbnail,
+               l.name                                      AS title,
+               u.nickname                                  AS nickname,
+               l.introduction                              AS introduction,
+               l.price                                     AS price,
+               l.discount_rate                             AS discountRate,
+               COALESCE(COUNT(r.review_id), 0)             AS reviewNum,
+               COALESCE(SUM(r.review_rate), 0)             AS totalReviewRate,
+               CASE
+                   WHEN COUNT(r.review_id) = 0 THEN 0
+                   ELSE SUM(r.review_rate) / COUNT(r.review_id)
+                   END                                     AS avgReviewRate,
+               COUNT(lb.user_id)                           AS bookmarkNum,
+               l.difficulty                                AS difficulty,
+               c.name                                      AS big,
+               GROUP_CONCAT(DISTINCT i.name SEPARATOR ',') AS small
+        FROM lecture l
+                 JOIN user u ON l.uploader_id = u.user_id
+                 LEFT JOIN lecture_bookmark lb ON lb.lecture_id = l.lecture_id
+                 LEFT JOIN review r ON r.lecture_id = l.lecture_id
+                 JOIN lecture_field lf ON l.lecture_id = lf.lecture_id
+                 JOIN interested i ON i.interested_id = lf.interested_id
+                 JOIN category c ON c.category_id = i.category_id
+                 JOIN user_interested AS ui ON ui.interested_id = i.interested_id
+        WHERE ui.user_id = #{userId}
+        GROUP BY l.lecture_id, c.name
+    </select>
+
+    <!-- 선택된 관심분야를 갖는 조회 -->
+    <select id="selectedInterestLecture" resultType="com.example.lala.DTO.Course.LectureSummary" parameterType="String">
+        SELECT l.lecture_id                                AS lectureId,
+               l.thumbnail                                 AS thumbnail,
+               l.name                                      AS title,
+               u.nickname                                  AS nickname,
+               l.introduction                              AS introduction,
+               l.price                                     AS price,
+               l.discount_rate                             AS discountRate,
+               COALESCE(COUNT(r.review_id), 0)             AS reviewNum,
+               COALESCE(SUM(r.review_rate), 0)             AS totalReviewRate,
+               CASE
+                   WHEN COUNT(r.review_id) = 0 THEN 0
+                   ELSE SUM(r.review_rate) / COUNT(r.review_id)
+                   END                                     AS avgReviewRate,
+               COUNT(lb.user_id)                           AS bookmarkNum,
+               l.difficulty                                AS difficulty,
+               c.name                                      AS big,
+               GROUP_CONCAT(distinct i.name SEPARATOR ',') AS small
+        FROM lecture l
+                 JOIN user u ON l.uploader_id = u.user_id
+                 LEFT JOIN lecture_bookmark lb ON lb.lecture_id = l.lecture_id
+                 LEFT JOIN review r ON r.lecture_id = l.lecture_id
+                 JOIN lecture_field AS lf ON l.lecture_id = lf.lecture_id
+                 JOIN interested AS i ON i.interested_id = lf.interested_id
+                 JOIN category AS c ON c.category_id = i.category_id
+        WHERE c.category_id = #{categoryId}
+        GROUP BY l.lecture_id
+    </select>
+
+    <select id="selectUserLearning" parameterType="map" resultType="com.example.lala.DTO.Response.MyLearning">
+        SELECT DISTINCT l.lecture_id lectureId,
+        l.thumbnail thumbnail,
+        l.name title,
+        u.nickname nickname,
+        l.introduction introduction,
+        p.progress_rate progressRate,
+        CASE WHEN r.review_id IS NOT NULL THEN true ELSE false END as hasReview
+        FROM user_lecture ul
+        JOIN lecture l ON ul.lecture_id = l.lecture_id
+        JOIN user u ON l.uploader_id = u.user_id
+        LEFT JOIN lecture_content_progress_rate p
+        ON p.student_id = ul.user_id
+        AND p.lecture_id = ul.lecture_id
+        LEFT JOIN review r
+        ON ul.lecture_id = r.lecture_id
+        AND ul.user_id = r.writer_id
+        WHERE ul.user_id = #{userId}
+        <if test="filterType == 0">
+            <!-- 학습 중: 진도율이 0보다 크고 100 미만 -->
+            AND (p.progress_rate BETWEEN 0 AND 100 OR p.progress_rate IS NULL)
+        </if>
+        <if test="filterType == 1">
+            <!-- 학습 완료: 진도율이 100 -->
+            AND p.progress_rate = 100
+        </if>
+        <if test="filterType == 2">
+            <!-- 수강평 작성 가능: 진도율이 30 이상이고 100 미만 -->
+            AND p.progress_rate BETWEEN 30 AND 100
+            AND r.review_rate IS NULL
+        </if>
+    </select>
+
+    <!-- 강의 상세 -->
+    <select id="lectureDetail" resultType="com.example.lala.DTO.Course.Lecture" parameterType="String">
+        SELECT l.lecture_id                                          AS lectureId,
+               l.uploader_id                                         AS providerId,
+               l.thumbnail                                           AS thumbnail,
+               l.name                                                AS title,
+               u.nickname                                            AS nickname,
+               l.outline                                             AS outline,
+               l.introduction                                        AS introduction,
+               l.price                                               AS price,
+               l.discount_rate                                       AS discountRate,
+               CAST(COALESCE(COUNT(r.review_id) / 6, 0) AS unsigned) AS reviewNum,
+               COALESCE(SUM(r.review_rate), 0)                       AS totalReviewRate,
+               CASE
+                   WHEN COUNT(r.review_id) = 0 THEN 0
+                   ELSE SUM(r.review_rate) / COUNT(r.review_id)
+                   END                                               AS avgReviewRate,
+               l.student_num                                         AS studentNum,
+               l.difficulty                                          AS difficulty,
+               CAST(COUNT(lb.lecture_id) / 8 AS UNSIGNED)            AS bookmarkNum,
+               c.name                                                AS big,
+               GROUP_CONCAT(DISTINCT i.name SEPARATOR ',')           AS small
+        FROM lecture l
+                 JOIN user u ON l.uploader_id = u.user_id
+                 LEFT JOIN lecture_bookmark lb ON lb.lecture_id = l.lecture_id
+                 LEFT JOIN review r ON r.lecture_id = l.lecture_id
+                 JOIN lecture_field lf ON l.lecture_id = lf.lecture_id
+                 JOIN interested i ON i.interested_id = lf.interested_id
+                 JOIN category c ON c.category_id = i.category_id
+        WHERE l.lecture_id = #{lectureId}
+        GROUP BY l.lecture_id, c.name
+    </select>
+
+    <!-- 강의에 컨텐츠가 몇개있는지 -->
+    <select id="contentNum" resultType="int">
+        SELECT COUNT(*)
+        FROM lecture_chapter AS lch
+                 JOIN lecture_content AS lco
+                      ON lch.lecture_chapter_id = lco.lecture_chapter_id
+        WHERE lch.lecture_id = #{lectureId}
+    </select>
+
+    <!-- 강의 상세 - 목차 -->
+    <select id="lectureChapter" resultType="com.example.lala.DTO.Course.Chapter" parameterType="String">
+        SELECT lecture_chapter_id AS chapterId,
+               lc.name,
+               order_num          AS orderNum
+        FROM lecture_chapter AS lc
+                 JOIN lecture AS l
+                      ON l.lecture_id = lc.lecture_id
+        WHERE l.lecture_id = #{lectureId}
+    </select>
+
+    <select id="selectCancelLectures" resultType="com.example.lala.DTO.Response.CancelLecture" parameterType="map">
+        SELECT l.lecture_id    AS lectureId,
+               l.thumbnail     AS thumbnail,
+               l.name          AS title,
+               u.nickname      AS nickname,
+               p.lecture_price AS price,
+               p.refund_date   AS refundDate,
+               l.difficulty    as difficulty
+        FROM user_lecture ul
+                 JOIN purchase p
+                      ON p.buyer_id = ul.user_id AND p.lecture_id = ul.lecture_id
+                 JOIN lecture l
+                      ON l.lecture_id = ul.lecture_id
+                 JOIN user u
+                      ON u.user_id = l.uploader_id
+        WHERE p.refund_check = true
+          AND ul.user_id = #{userId} LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectCancelLectureCount" resultType="int" parameterType="String">
+        SELECT COUNT(*)
+        FROM user_lecture ul
+                 JOIN purchase p
+                      ON p.buyer_id = ul.user_id AND p.lecture_id = ul.lecture_id
+        WHERE p.refund_check = true
+          and ul.user_id = #{userId}
+    </select>
+
+    <!-- 강의 상세 - 목차 - 추가자료 -->
+    <select id="chapterAddi" resultType="com.example.lala.DTO.Course.Addi" parameterType="String">
+        SELECT af.name, af.format
+        FROM lecture_material AS lm
+                 JOIN additional_file AS af
+                      ON lm.lecture_material_id = af.additional_file_id
+                 JOIN lecture_content AS lc
+                      ON lc.lecture_material_id = lm.lecture_material_id
+                 JOIN lecture_chapter AS lcha
+                      ON lcha.lecture_chapter_id = lc.lecture_chapter_id
+        WHERE lcha.lecture_chapter_id = #{lectureChapterId}
+    </select>
+
+    <!-- 강의 상세 - 목차 - 동영상 -->
+    <select id="chapterVideo" resultType="com.example.lala.DTO.Course.Video" parameterType="String">
+        SELECT lvm.name
+        FROM lecture_material AS lm
+                 join lecture_video_material AS lvm
+                      ON lm.lecture_material_id = lvm.lecture_material_id
+                 JOIN lecture_content AS lc
+                      ON lc.lecture_material_id = lm.lecture_material_id
+                 JOIN lecture_chapter AS lcha
+                      ON lcha.lecture_chapter_id = lc.lecture_chapter_id
+        WHERE lcha.lecture_chapter_id = #{lectureChapterId}
+    </select>
+
+    <!-- 강의 상세 - 목차 - 문제 -->
+    <select id="chapterQuestion" resultType="com.example.lala.DTO.Course.Question" parameterType="String">
+        SELECT q.question
+        FROM lecture_material AS lm
+                 JOIN lecture_question_material AS lqm
+                      ON lm.lecture_material_id = lqm.lecture_material_id
+                 JOIN question AS q
+                      ON q.question_id = lqm.question_id
+                 JOIN lecture_content AS lc
+                      ON lc.lecture_material_id = lm.lecture_material_id
+                 JOIN lecture_chapter AS lcha
+                      ON lcha.lecture_chapter_id = lc.lecture_chapter_id
+        WHERE lcha.lecture_chapter_id = #{lectureChapterId}
+    </select>
+
+    <!-- 북마크 등록 -->
+    <insert id="regBookmark" parameterType="com.example.lala.DTO.Course.Bookmark">
+        INSERT INTO lecture_bookmark (user_id, lecture_id)
+        VALUES (#{userId}, #{lectureId})
+    </insert>
+
+    <!-- 북마크 삭제 -->
+    <delete id="deleteBookmark" parameterType="map">
+        DELETE
+        FROM lecture_bookmark
+        WHERE user_id = #{userId}
+          AND lecture_id = #{lectureId}
+    </delete>
+
+    <!-- 북마크 존재 여부 확인 -->
+    <select id="existsBookmark" parameterType="map" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM lecture_bookmark
+                      WHERE user_id = #{userId}
+                        AND lecture_id = #{lectureId})
+    </select>
+
+    <!-- 리뷰 등록 -->
+    <insert id="regReview" parameterType="com.example.lala.DTO.Course.RegReview">
+        INSERT INTO review (lecture_id, writer_id, review_rate, content)
+        VALUES (#{lectureId}, #{writerId}, #{reviewRate}, #{content})
+    </insert>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="delReview" parameterType="map">
+        DELETE
+        FROM review
+        WHERE review_id = #{reviewId}
+          and writer_id = #{writerId}
+    </delete>
+
+    <!-- 리뷰 수정 (작성자 본인만 가능) -->
+    <update id="updateReview" parameterType="com.example.lala.DTO.Course.UpdateReview">
+        UPDATE review
+        SET review_rate = #{reviewRate},
+            content     = #{content},
+            edite_date  = NOW()
+        WHERE review_id = #{reviewId}
+          AND writer_id = #{writerId}
+    </update>
+
+    <!-- lms -->
+    <!-- 내가 최근에 들은 강의 정보, 진도율 -->
+    <select id="lmsLectureInfo" resultType="com.example.lala.DTO.Course.Lecture" parameterType="String">
+        <![CDATA[
+        SELECT l.lecture_id                                                      AS lectureId,
+               l.thumbnail                                                       AS thumbnail,
+               l.name                                                            AS title,
+               u.nickname                                                        AS nickname,
+               l.outline                                                         AS outline,
+               l.introduction                                                    AS introduction,
+               l.price                                                           AS price,
+               l.discount_rate                                                   AS discountRate,
+               CAST(COALESCE(COUNT(r.review_id) / 6, 0) AS UNSIGNED)             AS reviewNum,
+               COALESCE(SUM(r.review_rate), 0) / COALESCE(COUNT(r.review_id), 0) AS avgReviewRate,
+               l.student_num                                                     AS studentNum,
+               l.difficulty                                                      AS difficulty,
+               CAST(COUNT(lb.lecture_id) / 8 AS UNSIGNED)                        AS bookmarkNum,
+               lcpr.progress_rate
+        FROM lecture_bookmark lb
+                 RIGHT JOIN lecture l ON lb.lecture_id = l.lecture_id
+                 JOIN user u ON l.uploader_id = u.user_id
+                 LEFT JOIN review r ON r.lecture_id = l.lecture_id
+                 JOIN lecture_field lf ON lf.lecture_id = l.lecture_id
+                 JOIN interested i ON i.interested_id = lf.interested_id
+                 JOIN lecture_content_progress_rate lcpr ON lcpr.lecture_id = l.lecture_id
+        WHERE lcpr.student_id = #{userId}
+        GROUP BY l.lecture_id,
+                 l.thumbnail,
+                 l.name,
+                 u.nickname,
+                 l.outline,
+                 l.introduction,
+                 l.price,
+                 l.discount_rate,
+                 l.student_num,
+                 l.difficulty,
+                 lcpr.progress_rate
+        ]]>
+    </select>
+
+    <!-- 새로 추가: 필터링된 강의 조회 (더보기 방식) -->
+    <select id="getFilteredLectures" resultType="com.example.lala.DTO.Course.LectureSummary" parameterType="map">
+        SELECT l.lecture_id AS lectureId,
+        l.thumbnail AS thumbnail,
+        l.name AS title,
+        COALESCE(u.nickname, '알 수 없는 사용자') AS nickname,
+        l.introduction AS introduction,
+        l.price AS price,
+        l.discount_rate AS discountRate,
+        COALESCE(review_data.reviewNum, 0) AS reviewNum,
+        COALESCE(review_data.totalReviewRate, 0) AS totalReviewRate,
+        COALESCE(review_data.avgReviewRate, 0.0) AS avgReviewRate,
+        COALESCE(bookmark_data.bookmarkNum, 0) AS bookmarkNum,
+        l.difficulty AS difficulty,
+        COALESCE(category_data.categoryName, '미분류') AS big,
+        COALESCE(category_data.interestedNames, '미분류') AS small,
+        l.upload_date AS uploadDate
+        FROM lecture l
+        LEFT JOIN user u ON l.uploader_id = u.user_id
+        LEFT JOIN (
+        SELECT lecture_id,
+        COUNT(review_id) AS reviewNum,
+        SUM(review_rate) AS totalReviewRate,
+        ROUND(AVG(review_rate), 2) AS avgReviewRate
+        FROM review
+        GROUP BY lecture_id
+        ) review_data ON l.lecture_id = review_data.lecture_id
+        LEFT JOIN (
+        SELECT lecture_id,
+        COUNT(DISTINCT user_id) AS bookmarkNum
+        FROM lecture_bookmark
+        GROUP BY lecture_id
+        ) bookmark_data ON l.lecture_id = bookmark_data.lecture_id
+        LEFT JOIN (
+        SELECT lf.lecture_id,
+        MIN(c.name) AS categoryName,
+        GROUP_CONCAT(DISTINCT i.name ORDER BY i.name SEPARATOR ', ') AS interestedNames
+        FROM lecture_field lf
+        LEFT JOIN interested i ON i.interested_id = lf.interested_id
+        LEFT JOIN category c ON c.category_id = i.category_id
+        GROUP BY lf.lecture_id
+        ) category_data ON l.lecture_id = category_data.lecture_id
+
+        <!-- 동적 WHERE 조건들 -->
+        <where>
+            1=1
+
+            <!-- 카테고리 필터 -->
+            <if test="categoryId != null and categoryId != ''">
+                AND EXISTS (
+                SELECT 1 FROM lecture_field lf
+                JOIN interested i ON lf.interested_id = i.interested_id
+                WHERE lf.lecture_id = l.lecture_id
+                AND i.category_id = #{categoryId}
+                )
+            </if>
+
+            <!-- 세부 관심분야 필터 -->
+            <if test="interestedId != null and interestedId != ''">
+                AND EXISTS (
+                SELECT 1 FROM lecture_field lf
+                WHERE lf.lecture_id = l.lecture_id
+                AND lf.interested_id = #{interestedId}
+                )
+            </if>
+
+            <!-- 가격 타입 필터 -->
+            <if test="priceType != null and priceType != ''">
+                <choose>
+                    <when test="priceType == 'free'">
+                        AND l.price = 0
+                    </when>
+                    <when test="priceType == 'paid'">
+                        AND l.price &gt; 0
+                    </when>
+                    <when test="priceType == 'discount'">
+                        AND l.discount_rate &gt; 0
+                    </when>
+                </choose>
+            </if>
+
+            <!-- 난이도 필터 -->
+            <if test="difficulty != null and difficulty != ''">
+                AND l.difficulty = #{difficulty}
+            </if>
+
+            <!-- 최소 평점 필터 (옵션) -->
+            <if test="minRating != null">
+                <![CDATA[
+                AND COALESCE(review_data.avgReviewRate, 0) >= #{minRating}
+                ]]>
+            </if>
+
+            <!-- 키워드 검색 필터 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    l.name LIKE CONCAT('%', #{keyword}, '%')
+                    OR l.introduction LIKE CONCAT('%', #{keyword}, '%')
+                    OR COALESCE(u.nickname, '') LIKE CONCAT('%', #{keyword}, '%')
+                    OR EXISTS (
+                        SELECT 1 FROM lecture_field lf
+                        JOIN interested i ON lf.interested_id = i.interested_id
+                        WHERE lf.lecture_id = l.lecture_id
+                        AND i.name LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                )
+            </if>
+        </where>
+
+        <!-- 동적 ORDER BY -->
+        <choose>
+            <when test="orderBy == 'latest'">
+                ORDER BY l.upload_date DESC
+            </when>
+            <when test="orderBy == 'rating'">
+                ORDER BY COALESCE(review_data.avgReviewRate, 0) DESC, l.upload_date DESC
+            </when>
+            <when test="orderBy == 'bookmark'">
+                ORDER BY COALESCE(bookmark_data.bookmarkNum, 0) DESC, l.upload_date DESC
+            </when>
+            <when test="orderBy == 'price_low'">
+                ORDER BY l.price ASC, l.upload_date DESC
+            </when>
+            <when test="orderBy == 'price_high'">
+                ORDER BY l.price DESC, l.upload_date DESC
+            </when>
+            <otherwise>
+                ORDER BY l.upload_date DESC
+            </otherwise>
+        </choose>
+
+        <!-- 더보기 방식: offset과 limit 사용 -->
+        <if test="offset != null and offset &gt; 0">
+            LIMIT #{offset}, #{limit}
+        </if>
+        <if test="offset == null or offset == 0">
+            <if test="limit != null">
+                LIMIT #{limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectIPLecture" parameterType="map" resultType="com.example.lala.DTO.Response.IPLecture">
+        SELECT l.lecture_id                          AS lectureId,
+               l.thumbnail                           AS thumbnail,
+               l.NAME                                AS title,
+               l.price                               AS price,
+               l.discount_rate                       AS discountRate,
+               ROUND(r.reviewSum / ul.studentNum, 1) AS reviewAVG,
+               r.reviewSum                           AS reviewSum,
+               ul.studentNum                         AS studentNum
+        FROM lecture l
+                 left JOIN (SELECT lecture_id,
+                                   COUNT(*) AS studentNum
+                            FROM user_lecture
+                            GROUP BY lecture_id) ul
+                           ON l.lecture_id = ul.lecture_id
+                 left JOIN (SELECT lecture_id,
+                                   SUM(review_rate) AS reviewSum
+                            FROM review
+                            GROUP BY lecture_id) r
+                           ON l.lecture_id = r.lecture_id
+        WHERE l.uploader_id = #{userId}
+          and if(#{free}, l.price = 0, l.price &gt; 0)
+    </select>
+
+    <!-- 페이지네이션과 함께 강의 제공자의 강의 목록 조회 -->
+    <select id="selectIPLectureWithPagination" resultType="com.example.lala.DTO.Response.IPLecture" parameterType="map">
+        SELECT
+        l.lecture_id as lectureId,
+        l.name as title,
+        l.thumbnail,
+        l.price,
+        l.discount_rate as discountRate,
+        COALESCE(r.review_count, 0) as reviewSum,
+        COALESCE(r.avg_rating, 0.0) as reviewAVG,
+        COALESCE(e.student_count, 0) as studentNum,
+        l.upload_date as uploadDate
+        FROM lecture l
+        LEFT JOIN (
+        SELECT
+        lecture_id,
+        COUNT(*) as review_count,
+        AVG(CAST(review_rate AS DECIMAL(3,2))) as avg_rating
+        FROM review
+        GROUP BY lecture_id
+        ) r ON l.lecture_id = r.lecture_id
+        LEFT JOIN (
+        SELECT
+        lecture_id,
+        COUNT(*) as student_count
+        FROM user_lecture
+        GROUP BY lecture_id
+        ) e ON l.lecture_id = e.lecture_id
+        WHERE l.uploader_id = #{userId}
+        <choose>
+            <when test="free == true">
+                AND l.price = 0
+            </when>
+            <otherwise>
+                AND l.price &gt; 0
+            </otherwise>
+        </choose>
+        ORDER BY l.upload_date DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 강의 제공자의 전체 강의 수 조회 -->
+    <select id="selectIPLectureCount" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM lecture l
+        WHERE l.uploader_id = #{userId}
+        <choose>
+            <when test="free == true">
+                AND l.price = 0
+            </when>
+            <otherwise>
+                AND l.price &gt; 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="purchaseLecture" parameterType="map">
+        insert into purchase (lecture_id, buyer_id, lecture_price, discount_rate, purchase_price, purchase_type)
+        values (#{lectureId}, #{buyerId}, #{lecturePrice}, #{discountRate}, #{purchasePrice}, #{purchaseType})
+    </insert>
+
+    <!-- 강의 정보 조회 -->
+    <select id="selectLectureInfo" resultType="map" parameterType="String">
+        SELECT lecture_id as lectureId,
+               price,
+               discount_rate as discountRate,
+               name as title
+        FROM lecture
+        WHERE lecture_id = #{lectureId}
+    </select>
+
+    <!-- 이미 구매한 강의인지 확인 -->
+    <select id="checkAlreadyPurchased" resultType="boolean" parameterType="map">
+        SELECT EXISTS(
+            SELECT 1 FROM user_lecture 
+            WHERE user_id = #{userId} AND lecture_id = #{lectureId}
+        )
+    </select>
+
+    <!-- user_lecture 테이블에 수강 정보 추가 -->
+    <insert id="insertUserLecture" parameterType="map">
+        INSERT INTO user_lecture (user_id, lecture_id)
+        VALUES (#{userId}, #{lectureId})
+    </insert>
+</mapper>

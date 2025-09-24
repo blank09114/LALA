@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}"/>
+</head>
+<body>
+
+<header th:fragment="admin_header" class="admin_header">
+    <!-- 관리자 헤더 시작 -->
+    <div class="admin_header_left">
+        <a th:href="@{/admin/home}"> <img src="/img/LALA_log.png" alt="LALA 로고" class="admin_header_logo"></a>
+        <div class="admin_header_nav">관리자</div>
+    </div>
+
+
+
+    <div class="admin_header_right">
+        <div class="admin_header_right_btn">
+            <!--            <button onclick="admin_header_right_btn1()">회원관리</button>-->
+            <a th:href = "@{/admin/userlist}"> 회원 관리</a>
+        </div>
+        <div class="admin_header_right_btn">
+            <!--            <button onclick="admin_header_right_btn2()">강의관리</button>-->
+            <a th:href = "@{/admin/lecturelist}"> 강의 관리</a>
+        </div>
+        <div class="admin_header_right_btn">
+            <!--            <button onclick="admin_header_right_btn3()">공지사항</button>-->
+            <a th:href="@{/auth/community/board(category=notice)}">공지사항</a>
+        </div>
+        <div class="admin_header_right_btn">
+            <!--            <button onclick="admin_header_right_btn4()">커뮤니티</button>-->
+            <a th:href = "@{/admin/communitylist}"> 커뮤니티</a>
+        </div>
+
+    </div>
+
+    <!-- 관리자 나가기 버튼 -->
+    <div class="admin_header_right1">
+        <div class="admin_header_right1_btn">
+            <a th:href="@{/auth/logout}">관리자 나가기 </a>
+        </div>
+    </div>
+
+    </header>
+    <!-- 관리자 헤더 끝 -->
+<!-- 헤더 끝 -->
+</body>
+</html>

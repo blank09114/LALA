@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지식제공자 요청시 상세 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/admin/InstructorProfileCard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+    
+    <div class="container">
+    <!-- 좌측 회원 카드 -->
+    <div class="left-card">
+      <h2>회원정보</h2>
+      <img src="/img/profile.png" alt="프로필 사진" class="profile-img" />
+
+      <p><strong>이름</strong> 박시우</p>
+      <p><strong>닉네임</strong> WLXOWN</p>
+      <p><strong>계정(이메일)</strong><br />wlxown@naver.com</p>
+      <p><strong>가입일</strong> 2025.05.11</p>
+
+      <p>
+        <strong>회원유형</strong> 지식제공자 요청
+        <button>변경</button>
+      </p>
+      <p>
+        <strong>활동유형</strong> 활동중
+        <button>변경</button>
+      </p>
+    </div>
+
+    <!-- 우측 정보 영역 -->
+    <div class="right-info">
+      <section class="links">
+        <h2>외부 링크</h2>
+        <div class="box"></div>
+      </section>
+
+      <section class="intro">
+        <h2>소개</h2>
+        <div class="box"></div>
+      </section>
+
+      <section class="education">
+        <h2>학력 / 약력</h2>
+        <div class="box"></div>
+      </section>
+    </div>
+  </div>
+
+    <footer th:replace="~{shared/footer :: footer}"></footer>
+    <script th:src="@{/js/admin/admin_header.js}" defer></script>
+    <script th:src="@{/js/admin/InstructorProfileCard.js}" defer></script>
+</body>
+</html>

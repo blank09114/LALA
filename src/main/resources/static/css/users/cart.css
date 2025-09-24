@@ -1,0 +1,412 @@
+/* 전체 wrap */
+.wrap {
+  width: 100%;
+  max-width: 1300px;
+  min-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  font-family: 'Pretendard', sans-serif;
+  color: #000;
+}
+
+/* 사이드바 */
+.sidebar-menu {
+  width: 20%;
+  min-width: 150px;
+  padding: 40px 0px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+}
+
+.sidebar-menu h2 {
+  font-size: 20px;
+  margin: 10px;
+}
+
+.sidebar-menu ul {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  font-size: 15px;
+  color: #AAAAAA;
+  line-height: 25px;
+  cursor: pointer;
+}
+
+.sidebar-menu a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.sidebar-menu a.active {
+  color: #00c37d;
+  font-weight: bold;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  width: 950px;
+  padding: 40px 0px;
+  margin: 0% 10%;
+}
+
+.main-content h2 {
+  font-size: 23px;
+  margin-bottom: 20px;
+}
+
+.menu ul {
+  display: flex;
+  gap: 50px;
+  font-size: 18px;
+  font-weight: 500;
+  border-bottom: 1px solid #000;
+  padding-left: 2px;
+  padding-bottom: 10px;
+  list-style: none;
+}
+
+.menu li {
+  cursor: pointer;
+}
+
+.menu li.active {
+  color: #00c37d;
+  font-weight: bold;
+}
+
+.menu a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu a.active {
+  color: #00c37d;
+  font-weight: bold;
+}
+
+.content h3 {
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+}
+
+/* 강의 영역 */
+.basket-wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.basket-left {
+  width: 90%;
+}
+
+.lecture-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #aaa;
+  border-radius: 20px;
+  padding: 10px 20px 10px 50px;
+  margin-bottom: 20px;
+  background-color: #fff;
+}
+
+/* ✅ 전체 선택 체크박스 전용 스타일 */
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.select-all .check-label {
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.custom-checkbox-inline {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+
+.custom-checkbox-inline input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.custom-checkbox-inline .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 1.5px solid #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.custom-checkbox-inline input:checked + .checkmark::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid green;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ✅ 강의 카드 내부 체크박스 */
+.custom-checkbox {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.custom-checkbox input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid green;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 삭제 버튼 */
+.remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  font-size: 15px;
+  color: #444;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.remove-btn:hover {
+  color: red;
+}
+
+/* 강의 카드 내부 */
+.lecture-card .left-section {
+  width: 160px;
+  height: 100px;
+  flex-shrink: 0;
+  margin-right: 20px;
+}
+
+.lecture-card .left-section img {
+  width: 120px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 1px solid #ddd;
+}
+
+.lecture-card .center-section {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.center-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.center-section p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #888;
+}
+
+.level {
+  display: inline-block;
+  padding: 5px 15px;
+  background-color: #00c37d;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.lecture-card .divider {
+  width: 2px;
+  height: 100px;
+  background-color: #ccc;
+  margin-right: 20px;
+}
+
+.lecture-card .right-section {
+  width: 100px; /* ✅ 고정 너비로 통일 */
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.right-section .price {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+/* 구매자 정보 */
+.basket-right {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.buyer-title {
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.buyer-box {
+  width: 100%;
+  border: 1px solid #aaa;
+  border-radius: 15px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.buyer-box h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.buyer-box label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.buyer-box input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.verify-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  background-color: #00c37d;
+  color:#fff;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.payment-box {
+  width: 100%;
+  border: 1px solid #aaa;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.payment-box p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.payment-box h4 {
+  margin: 10px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.pay-btn {
+  width: 100%;
+  background-color: #00c37d;
+  color: #fff;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 60px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  background: white;
+  color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background: #00c37d;
+  color: white;
+  border-color: #00c37d;
+}

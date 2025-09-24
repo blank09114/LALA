@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+
+<header>
+    <a th:href="@{/auth/communityView}">커뮤니티</a>
+    <a th:href="@{auth/#}">강의</a>
+
+    <input type="search">
+
+    <a th:href="@{auth/#}">lms</a>
+    <a th:href="@{mypage/main}">마이페이지</a>
+    <p>이동우는 진짜 코딩의 신이다 이사람은 그냥 말이 안 됌 그냥 이사람은 무조건 개발자를 해야하는 사람이야
+    </p>
+</header>
+
+<h1>메인페이지</h1>
+<header>
+    <a th:href="@{/auth/communityView}">커뮤니티</a>
+</header>
+
+<div th:if="${user != null}">
+    <div th:if="${isOauth == false}">-->
+        <h1>당신은 <span style="color:blue;">일반 로그인</span>을 하셨습니다.</h1>
+        <p>안녕하세요, <strong th:text="${user.userNickname}"></strong> 님!</p> <!-- nickname 출력됨-->
+
+        <!--    <p>권한: <span th:text="${user.role}"></span></p>-->
+        <p>아이디 : <strong th:text="${user.uniqueUserId}"></strong> 님!</p>
+
+        <h3>카테고리 :</h3>
+        <ul th:each="category : ${userCategory}">
+            <li th:text="${category != null ? category : '카테고리 정보 없음'}"></li>
+        </ul>
+
+
+        <!--            카테고리 : <h1 th:text="${message}">결과 메시지</h1>-->
+
+        <a th:href="@{/auth/home/categoryAll}">카테고리</a>
+    </div>
+
+    <div th:if="${isOauth}">
+        <h1>당신은 <span style="color:green;">소셜 로그인</span>을 하셨습니다.</h1>
+        <p>닉네임: <span th:text="${user.userNickname}"></span></p>
+
+        <!--    <p>고유 ID: <span th:text="${name.providerId}"></span></p>-->
+        <p>이메일: <span th:text="${user.emailAddress}"></span></p>
+        <p>계정: <span th:text="${user.activityTypeId}"></span></p>
+
+        <h3>카테고리 :</h3>
+        <ul th:each="category : ${userCategory}">
+            <li th:text="${category}"></li>
+        </ul>
+
+        <!--    <p>권한: <span th:text="${user.role}"></span></p>-->
+        <img th:if="${user.emailAddress != null}" th:src="${user.emailAddress}" referrerpolicy="no-referrer"
+             alt="프로필 이미지" style="width: 100px; border-radius: 50%;">
+    </div>
+
+    <a th:href="@{mypage/main}">마이페이지</a>
+
+    <form th:action="@{/auth/logout}" method="post">
+        <button type="submit">로그아웃</button>
+        <div>
+            냥박사의 강의가 들어올 공간
+        </div>
+
+    </form>
+</div>
+
+<div th:if="${user == null}">
+    <p>로그인하면 더 많은 기능을 이용할 수 있어요!</p>
+    <form th:action="@{/auth/login}">
+        <button type="submit">로그인</button>
+    </form>
+</div>
+
+
+</body>
+</html>

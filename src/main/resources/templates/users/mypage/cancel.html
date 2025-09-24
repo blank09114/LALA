@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>취소된 강의 목록</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/activity.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/cancel.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+
+    <!-- 사이드 메뉴바 -->
+    <div th:replace="~{users/mypage/sidebar :: sidebar(mypageUserData=${mypageUserData}, currentMenu='cancel')}"></div>
+
+    <main class="main-content">
+        <h2>학습 관리</h2>
+
+        <div class="menu">
+            <ul>
+                <li><a th:href="@{/mypage/learning}">내 강의</a></li>
+                <li><a th:href="@{/mypage/cart}">수강 바구니</a></li>
+                <li class="active">취소 강의</li>
+            </ul>
+        </div>
+
+        <!-- 전체 수 표시 -->
+        <div class="top" id="totalCount" style="display: none;">
+            전체 <span class="green" id="totalNumber">0</span>
+        </div>
+
+        <!-- 리스트: API 응답으로 채워질 부분 -->
+        <div class="cancel-list" id="cancelList">
+            <!-- JS가 여기다가 동적으로 카드 추가함 -->
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <!-- JavaScript로 동적 생성 -->
+        </div>
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script>
+    let currentPage = 1;
+    const pageSize = 8;
+    let totalPages = 0;
+
+    function getDifficultyText(difficulty) {
+        switch(difficulty) {
+            case 0: return '입문자';
+            case 1: return '초급';
+            case 2: return '중급';
+            case 3: return '고급';
+            default: return difficulty;
+        }
+    }
+
+    function loadData(page = 1) {
+        const requestData = {
+            page: page,
+            size: pageSize
+        };
+
+        fetch('/users/mypage/CancelLecture', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API 응답:', data);
+            const container = document.getElementById('cancelList');
+            container.innerHTML = '';
+
+            if (data.content && data.content.length > 0) {
+                // 전체 개수 표시
+                document.getElementById('totalNumber').textContent = data.totalElements;
+                document.getElementById('totalCount').style.display = 'block';
+
+                // 카드 생성
+                data.content.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'cancel-card';
+    card.innerHTML = `
+        <img src="${item.thumbnail || '/images/logo.png'}" alt="강의 썸네일"/>
+        <div class="cancel-info" data-id="${item.lectureId}" onclick="goToDetail(this)">
+            <p class="title">${item.title}</p>
+            <span class="teacher">${item.nickname}</span><br>
+            <p class="level">${getDifficultyText(item.difficulty)}</p>
+        </div>
+        <div class="cancel-meta">
+            <small>${item.refundDate.slice(0, 10)}</small>
+            <strong>₩${item.price.toLocaleString()}</strong>
+        </div>
+    `;
+    container.appendChild(card);
+});
+
+
+                // 페이지네이션 업데이트
+                currentPage = data.currentPage;
+                totalPages = data.totalPages;
+                updatePagination();
+            } else {
+                container.innerHTML = '<p>취소된 강의가 없습니다.</p>';
+                document.getElementById('totalCount').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('cancelList').innerHTML = '에러 발생: ' + error.message;
+        });
+    }
+function goToDetail(element) {
+    const id = element.getAttribute("data-id");
+    if (!id) return;
+    window.location.href = "/course/detail/" + id;
+}
+    function updatePagination() {
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = '';
+
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+
+        // 이전 버튼
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '<';
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => {
+            if (currentPage > 1) {
+                loadData(currentPage - 1);
+            }
+        };
+        paginationContainer.appendChild(prevButton);
+
+        // 페이지 번호 버튼들
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.onclick = () => loadData(i);
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // 다음 버튼
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '>';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => {
+            if (currentPage < totalPages) {
+                loadData(currentPage + 1);
+            }
+        };
+        paginationContainer.appendChild(nextButton);
+    }
+
+    window.onload = function() {
+        loadData(1);
+    };
+</script>
+</body>
+</html>

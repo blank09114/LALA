@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 수정 테스트</title>
+</head>
+<body>
+
+<h2>리뷰 수정 폼</h2>
+<form id="reviewForm">
+    <label for="lectureId">리뷰 ID:</label><br>
+    <input type="text" id="lectureId" name="lectureId" placeholder="리뷰 ID 입력"><br><br>
+
+    <label for="writerId">작성자 ID:</label><br>
+    <input type="text" id="writerId" name="writerId" placeholder="작성자 ID 입력"><br><br>
+
+    <label for="reviewRate">평점 (1~5):</label><br>
+    <input type="number" id="reviewRate" name="reviewRate" min="1" max="5"><br><br>
+
+    <label for="content">리뷰 내용:</label><br>
+    <textarea id="content" name="content" rows="4" cols="40" placeholder="리뷰 내용을 입력하세요."></textarea><br><br>
+
+    <button type="submit">리뷰 수정</button>
+</form>
+
+<script>
+    // 리뷰 등록 처리
+    document.getElementById("reviewForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const reviewData = {
+            // 여기 reviewId는 클릭한 리뷰의 아디가 들어와야함
+            reviewId: document.getElementById("lectureId").value,
+            // 여기는 지금 로그인한 사람
+            writerId: document.getElementById("writerId").value,
+            reviewRate: parseInt(document.getElementById("reviewRate").value),
+            content: document.getElementById("content").value
+        };
+
+        fetch("/api/course/regUpdate", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(reviewData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("리뷰 수정 실패");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || "리뷰 수정 성공!");
+            console.log("서버 응답:", data);
+        })
+        .catch(error => {
+            alert("에러: " + error.message);
+            console.error("에러 상세:", error);
+        });
+    });
+</script>
+
+</body>
+</html>

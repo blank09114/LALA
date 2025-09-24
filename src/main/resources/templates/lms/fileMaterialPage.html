@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>강의 자료</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/materialPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/fileViewer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <script th:src="@{/js/lms/fileMaterialPage.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+    <!-- 로딩 스피너 -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>파일을 불러오는 중...</p>
+    </div>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container" id="mainContainer" style="display: none;">
+        
+        <!-- 상단 네비게이션 -->
+        <nav class="material-nav">
+            <button class="nav-back" onclick="goBack()">
+                ← 강의 목차로 돌아가기
+            </button>
+            <div class="nav-info">
+                <span class="chapter-info" id="chapterInfo">1장. 챕터명</span>
+                <h1 class="material-title" id="materialTitle">파일 제목</h1>
+            </div>
+        </nav>
+
+        <!-- 파일 뷰어 섹션 -->
+        <section class="file-section">
+            
+            <!-- 파일 정보 헤더 -->
+            <div class="file-header">
+                <div class="file-info">
+                    <div class="file-icon" id="fileIcon">📄</div>
+                    <div class="file-details">
+                        <h2 class="file-name" id="fileName">파일명.pdf</h2>
+                        <div class="file-meta">
+                            <span class="file-size" id="fileSize">2.3MB</span>
+                            <span class="file-type" id="fileType">PDF 문서</span>
+                            <span class="upload-date" id="uploadDate">업로드: 2024-01-15</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="download-btn" id="downloadBtn" onclick="downloadFile()">
+                        📥 다운로드
+                    </button>
+                    <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+                        ⛶ 전체화면
+                    </button>
+                </div>
+            </div>
+
+            <!-- 파일 뷰어 -->
+            <div class="file-viewer" id="fileViewer">
+                
+                <!-- PDF 뷰어 -->
+                <div class="pdf-viewer" id="pdfViewer" style="display: none;">
+                    <iframe id="pdfFrame" width="100%" height="600px" style="border: none; border-radius: 8px;"></iframe>
+                </div>
+
+                <!-- 이미지 뷰어 -->
+                <div class="image-viewer" id="imageViewer" style="display: none;">
+                    <img id="imagePreview" style="max-width: 100%; height: auto; border-radius: 8px;" alt="이미지 미리보기">
+                </div>
+
+                <!-- 텍스트 뷰어 -->
+                <div class="text-viewer" id="textViewer" style="display: none;">
+                    <pre id="textContent" style="white-space: pre-wrap; font-family: 'Courier New', monospace; padding: 20px; background: #f8f9fa; border-radius: 8px; overflow-x: auto;"></pre>
+                </div>
+
+                <!-- 기본 뷰어 (다운로드만 가능) -->
+                <div class="default-viewer" id="defaultViewer" style="display: none;">
+                    <div class="no-preview">
+                        <div class="no-preview-icon">📎</div>
+                        <h3>미리보기를 지원하지 않는 파일입니다</h3>
+                        <p>파일을 다운로드하여 확인해주세요.</p>
+                        <button class="download-large-btn" onclick="downloadFile()">
+                            📥 파일 다운로드
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 로딩 상태 -->
+                <div class="viewer-loading" id="viewerLoading">
+                    <div class="spinner"></div>
+                    <p>파일을 로딩하는 중...</p>
+                </div>
+            </div>
+
+            <!-- 파일 설명 -->
+            <div class="file-description" id="fileDescription">
+                <h4>파일 설명</h4>
+                <p>파일에 대한 상세 설명이 여기에 표시됩니다.</p>
+            </div>
+        </section>
+
+        <!-- 하단 컨텐츠 -->
+        <div class="bottom-content">
+            
+            <!-- 좌측: 목차 메뉴 -->
+            <aside class="chapter-sidebar">
+                <h3>강의 목차</h3>
+                <div class="chapter-list" id="chapterList">
+                    <!-- 목차가 동적으로 여기에 추가됩니다 -->
+                </div>
+            </aside>
+
+            <!-- 우측: Q&A 섹션 -->
+            <section class="qna-section">
+                <div class="qna-header">
+                    <h3>질문 및 답변</h3>
+                    <span class="qna-count" id="qnaCount">0개의 질문</span>
+                </div>
+                
+                <!-- 질문 작성 -->
+                <div class="question-form">
+                    <textarea 
+                        id="questionInput" 
+                        placeholder="이 자료에 대해 궁금한 점을 질문해보세요..."
+                        rows="3"
+                    ></textarea>
+                    <button class="submit-btn" onclick="submitQuestion()">질문 등록</button>
+                </div>
+                
+                <!-- 질문 목록 -->
+                <div class="questions-list" id="questionsList">
+                    <!-- 질문들이 동적으로 여기에 추가됩니다 -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 다운로드 완료 알림 모달 -->
+    <div class="modal" id="downloadModal" style="display: none;">
+        <div class="modal-content">
+            <h3>📥 다운로드 완료!</h3>
+            <p>파일 다운로드가 완료되었습니다.<br>진도율이 업데이트되었습니다.</p>
+            <button class="btn-confirm" onclick="closeDownloadModal()">확인</button>
+        </div>
+    </div>
+
+    <!-- 알림 토스트 -->
+    <div class="toast" id="toast" style="display: none;">
+        <span id="toastMessage"></span>
+    </div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

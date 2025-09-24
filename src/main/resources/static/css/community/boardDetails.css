@@ -1,0 +1,702 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* 왼쪽 사이드바 */
+        .sidebar {
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #f5f5f5;
+            color: #28a745;
+        }
+
+        .sidebar-menu a.active {
+            background-color: #e8f5e8;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* 메인 콘텐츠 영역 */
+        .main-content {
+            flex: 1;
+            background-color: #fff;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            color: #28a745;
+        }
+
+        .back-link::before {
+            content: "← ";
+        }
+
+        /* 게시글 상세 영역 */
+        .post-detail {
+            border: 1px solid #e5e5e5;
+            background-color: #fff;
+        }
+
+        .post-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .post-category {
+            display: inline-block;
+            background-color: #e8f5e8;
+            color: #28a745;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .post-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .post-meta {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .post-meta span {
+            margin-right: 10px;
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .post-stats span {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .btn.liked {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn.danger {
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        .btn.success {
+            color: #2ed573;
+            border-color: #2ed573;
+        }
+
+        .post-content {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            border-bottom: 1px solid #e5e5e5;
+            text-align: left;
+        }
+
+        /* 댓글 영역 */
+        .comments-section {
+            margin-top: 20px;
+            border: 1px solid #e5e5e5;
+            background-color: #fff;
+        }
+
+        .comments-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e5e5e5;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .comment-form {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .comment-form-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .comment-submit {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .comment-submit:hover {
+            background-color: #218838;
+        }
+
+        .comment-cancel {
+            padding: 8px 16px;
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .comments-list {
+            padding: 0;
+        }
+
+        /* 🔥 기존 CSS 클래스명과 일치하도록 수정 */
+        .comment-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .comment-content {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            text-align: left !important;
+        }
+        
+        /* 댓글 내용 강제 왼쪽 정렬 */
+        .comment-item .comment-content,
+        .reply-item .comment-content {
+            text-align: left !important;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .comment-action {
+            color: #666;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .comment-action:hover {
+            color: #28a745;
+        }
+
+        .comment-action.danger:hover {
+            color: #ff4757;
+        }
+
+        .reply-form {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .reply-form-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .reply-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .reply-submit, .reply-cancel {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .reply-submit {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .reply-cancel {
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        /* 🔥 대댓글 트리 구조 스타일 */
+        .replies {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px solid #f0f0f0;
+        }
+
+        .reply-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+            background-color: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .reply-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .edit-form {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-save, .edit-cancel {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .edit-save {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .edit-cancel {
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        /* 멘션 스타일 */
+        .mention {
+            color: #28a745;
+            font-weight: bold;
+            background-color: #e8f5e8;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 0;
+            border: 1px solid #ddd;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .close {
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e5e5e5;
+            text-align: right;
+        }
+
+        .modal-footer button {
+            padding: 8px 16px;
+            margin-left: 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .modal-footer button:first-child {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        .modal-footer button:last-child {
+            background-color: #ddd;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        /* 게시물 삭제 관련 CSS */
+        #deleteReasonModal .modal-content {
+            max-width: 500px;
+        }
+
+        #deleteReasonModal .modal-body {
+            padding: 25px;
+        }
+
+        #deleteReasonModal label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #deleteReasonModal textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            max-height: 120px;
+            font-family: inherit;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+
+        #deleteReasonModal textarea:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .delete-warning {
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            border-left: 4px solid #ff6b35;
+        }
+
+        .delete-warning p {
+            margin: 0 0 10px 0;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .delete-warning ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #856404;
+        }
+
+        .delete-warning li {
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        #deleteReasonModal .modal-footer {
+            padding: 20px 25px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e5e5e5;
+            text-align: right;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-delete {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-delete:hover:not(:disabled) {
+            background-color: #c82333;
+        }
+
+        .btn-delete:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+        .btn.danger:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-color: #dee2e6;
+        }
+
+        .post-content.deleted {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .post-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .post-actions {
+                margin-left: 0;
+            }
+
+            #deleteReasonModal .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                max-width: none;
+            }
+
+            #deleteReasonModal .modal-body {
+                padding: 20px;
+            }
+
+            #deleteReasonModal .modal-footer {
+                padding: 15px 20px;
+                flex-direction: column;
+            }
+
+            .btn-delete,
+            .btn-cancel {
+                width: 100%;
+                margin: 0;
+            }
+        }

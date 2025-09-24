@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 강좌 </title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/lmsMenu.css}" />
+    <link rel="stylesheet" th:href="@{/css/lms/lecturePlayer.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <script th:src="@{/js/lms/lmsMenu.js}" defer></script>
+</head>
+<body th:data-material-id="${materialId}" th:data-user-id="${userId}">
+<header th:replace="~{shared/header :: header}"></header>
+    <section>
+        <!-- 상단 제목 -->
+        <h1 class="sectionHeader"> 1. 강좌 제목 </h1>
+
+        <!-- 상단 컨텐츠 -->
+        <div class="topContent">
+            <!-- 비디오 -->
+            <div class="viewer">
+                <div id="videoBox">
+                    <video id="video"></video>
+                    <button id="playBtn" onclick="togglePlay()">▶</button>
+                    <div id="timeBar"><div id="playTimeBar"><div id="playHandle"></div></div></div>
+                    <div id="videoCtr">
+                        <div class="videoCtrMenu">
+                            <button id="play" onclick="togglePlay()">▶</button>
+                            <div id="timer">00:00 / 00:00</div>
+                        </div>
+                        <div class="videoCtrMenu">
+                            <div id="rateButtons">
+                                <button onclick="setPlaybackRate(1)">1.0x</button>
+                                <button onclick="setPlaybackRate(1.25)">1.25x</button>
+                                <button onclick="setPlaybackRate(1.5)">1.5x</button>
+                                <button onclick="setPlaybackRate(2)">2.0x</button>
+                            </div>
+                            <div id="fullscreen" onclick="toggleFullscreen()">⛶</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 메뉴 영역 -->
+            <div th:replace="~{lms/lmsMenu::lmsMenu}"></div>
+        </div>
+
+        <!-- 하단: 코멘트 & QnA -->
+        <div th:replace="~{lms/lectureBottom::bottomContent}"></div>
+    </section>
+    <footer th:replace="~{shared/footer :: footer}"></footer>
+
+    <!-- 비디오 재생 컨트롤 JS -->
+    <script th:src="@{/js/lms/lecturePlayer.js}" defer></script>
+
+    <!-- 모듈 스크립트 -->
+    <script type="module">
+        import { renderLectureTop, fetchAndRenderQnaList, submitQuestion } from '/js/lms/lmsCommonsData.js';
+
+        const materialId = document.body.dataset.materialId;
+
+        document.querySelector(".questionSubmit")?.addEventListener("click", () => {
+            submitQuestion({
+                inputSelector: "#questionWrite",
+                materialId,
+                onSuccess: () => fetchAndRenderQnaList(materialId)
+            });
+        });
+
+        // 강의 정보 요청 및 렌더
+        fetch(`/api/lms/myRecentLecture/chapters/materials/videoDetail/${materialId}`)
+            .then(res => res.json())
+            .then(data => {
+
+
+                console.log(data);
+                renderLectureTop(data); // 제목만 렌더
+                const video = document.querySelector("#video");
+                if (video && data.address) {
+                    video.src = data.address;
+                    video.load();
+                }
+
+                // comment는 하단 위치에서 처리
+                const commentElem = document.querySelector(".commentContent");
+                if (commentElem) {
+                    commentElem.textContent = data.comment || "지식 제공자의 한 마디가 없습니다.";
+                }
+            })
+            .catch(err => console.error("강의 정보 로딩 실패", err));
+
+        // QnA 리스트 렌더
+        fetchAndRenderQnaList(materialId);
+
+        // 질문 등록 버튼 바인딩
+        document.querySelector("#submitBtn")?.addEventListener("click", () => {
+            submitQuestion({
+                inputSelector: "#questionWrite",
+                materialId,
+                onSuccess: () => fetchAndRenderQnaList(materialId)
+            });
+        });
+
+        // 메뉴 바
+        import { renderLmsMenu } from '/js/lms/lmsCommonsData.js';
+        renderLmsMenu();
+
+        // 제목
+        fetch("/api/lms/myRecentLecture")
+          .then(res => res.json())
+          .then(data => {
+            const lecTitleElem = document.querySelector(".lecTitle");
+            if (lecTitleElem && data.lecture.title) {
+              lecTitleElem.textContent = truncate(data.lecture.title, 15);
+            }
+          })
+          .catch(err => console.error("강좌 제목 로딩 실패", err));
+
+        function truncate(text, maxLength) {
+            return (text && text.length > maxLength)
+                ? text.slice(0, maxLength) + "…"
+                : text;
+        }
+    </script>
+</body>
+</html>

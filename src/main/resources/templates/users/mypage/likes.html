@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>좋아요</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/likes.css}" )>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+    <!-- 사이드 메뉴바 -->
+    <div th:replace="~{users/mypage/sidebar :: sidebar(mypageUserData=${mypageUserData}, currentMenu='likes')}"></div>
+
+    <main class="main-content">
+        <h2>좋아요</h2>
+
+        <!-- 탭 메뉴 -->
+        <div class="menu tab-buttons">
+            <ul>
+                <li>
+                    <button id="free-lectures-btn" onclick="loadContent('lectures', true)" class="active">무료</button>
+                </li>
+                <li>
+                    <button id="paid-lectures-btn" onclick="loadContent('lectures', false)">유료</button>
+                </li>
+                <li>
+                    <button id="providers-btn" onclick="loadContent('providers')">지식 제공자</button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 전체 수 표시 -->
+        <div class="top">
+            전체 <span class="green" id="total-count">0</span>
+        </div>
+
+        <!-- 결과 표시 영역 -->
+        <div id="result" class="card-container"></div>
+
+        <!-- 페이지네이션 -->
+        <div id="pagination" class="pagination"></div>
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script>
+    let currentTab = 'lectures';
+    let currentIsFree = true;
+    let currentPage = 1;
+    let totalPages = 1;
+    let pageSize = 6; // 한 페이지당 아이템 수
+
+    document.addEventListener('DOMContentLoaded', function () {
+        loadContent('lectures', true);
+    });
+
+    // 난이도 레벨 변환 함수
+    function getDifficultyText(difficultyLevel) {
+        switch (difficultyLevel) {
+            case 0:
+                return '입문';
+            case 1:
+                return '초급';
+            case 2:
+                return '중급';
+            case 3:
+                return '고급';
+            default:
+                return '알 수 없음';
+        }
+    }
+
+    function loadContent(type, isFree = null) {
+        updateTabButtons(type, isFree);
+        currentTab = type;
+        if (isFree !== null) currentIsFree = isFree;
+        currentPage = 1; // 탭 변경 시 첫 페이지로 초기화
+
+        if (type === 'lectures') loadLectures(isFree, currentPage);
+        else if (type === 'providers') loadProviders(currentPage);
+    }
+
+    function updateTabButtons(type, isFree) {
+        document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
+
+        if (type === 'lectures') {
+            if (isFree) document.getElementById('free-lectures-btn').classList.add('active');
+            else document.getElementById('paid-lectures-btn').classList.add('active');
+        } else if (type === 'providers') {
+            document.getElementById('providers-btn').classList.add('active');
+        }
+    }
+
+    function loadLectures(isFree, page = 1) {
+        // 페이지 정보를 포함한 요청
+        fetch('/users/mypage/like-lecture', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                free: isFree,
+                page: page,
+                size: pageSize
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                // 새로운 API 응답 구조에 맞춰 데이터 추출
+                const lectures = data.content || [];
+                const totalElements = data.totalElements || 0;
+                totalPages = data.totalPages || Math.ceil(totalElements / pageSize);
+                currentPage = data.currentPage || page;
+
+                // 전체 개수 표시 업데이트
+                document.getElementById('total-count').textContent = totalElements;
+
+                displayLectures(lectures, isFree);
+                updatePagination();
+            })
+            .catch(err => {
+                console.error('강의 데이터 로딩 실패:', err);
+                document.getElementById('result').innerHTML = `<p>강의 데이터 로딩 실패: ${err.message}</p>`;
+            });
+    }
+
+    function loadProviders(page = 1) {
+        // 페이지 정보를 포함한 요청
+        fetch('/users/mypage/like-provider', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                page: page,
+                size: pageSize
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                // 새로운 API 응답 구조에 맞춰 데이터 추출
+                const providers = data.content || [];
+                const totalElements = data.totalElements || 0;
+                totalPages = data.totalPages || Math.ceil(totalElements / pageSize);
+                currentPage = data.currentPage || page;
+
+                // 전체 개수 표시 업데이트
+                document.getElementById('total-count').textContent = totalElements;
+
+                displayProviders(providers);
+                updatePagination();
+            })
+            .catch(err => {
+                console.error('지식제공자 데이터 로딩 실패:', err);
+                document.getElementById('result').innerHTML = `<p>지식제공자 데이터 로딩 실패: ${err.message}</p>`;
+            });
+    }
+
+    function displayLectures(lectures, isFree) {
+        console.log('서버 응답 강의 목록:', lectures);
+        const resultDiv = document.getElementById('result');
+
+        if (!lectures || lectures.length === 0) {
+            resultDiv.innerHTML = `<p>${isFree ? '무료' : '유료'} 찜한 강의가 없습니다.</p>`;
+            return;
+        }
+
+        let html = lectures.map(lecture => `
+        <div class="card" data-id="${lecture.lectureId}" onclick="goToDetail(this)">
+            <img src="${lecture.thumbnail || '/images/placeholder.png'}" alt="썸네일">
+            <div class="title">${lecture.title}</div>
+            <div class="teacher">${lecture.nickname}</div>
+            <div class="desc ${isFree ? '' : 'price-info'}">
+              ${isFree
+            ? lecture.introduction
+            : `
+                <div class="desc price-info">
+                    <div class="price-top">
+                        <span class="original-price">₩${lecture.price.toLocaleString()}</span>
+                        <span class="discount-rate">${lecture.discountRate}% 할인</span>
+                    </div>
+                    <div class="final-price">₩${(lecture.price * (1 - lecture.discountRate / 100)).toLocaleString()}</div>
+                </div>
+              `}
+            </div>
+            <div class="card-default">
+              <span class="rating">★${lecture.avgReviewRate} <span class="count">(${lecture.reviewNum})</span></span>
+              <span class="views">👤${lecture.studentNum}+</span>
+            </div>
+            <div class="card-hover">
+<span class="level">${getDifficultyText(lecture.difficulty)}</span>
+              <div class="hover-icons">
+                <i class="fa-solid fa-heart" onclick="unlikeLecture('${lecture.lectureId}')"></i>
+              </div>
+            </div>
+        </div>
+    `).join('');
+
+        resultDiv.innerHTML = html;
+    }
+function goToDetail(element) {
+    const id = element.getAttribute("data-id");
+    if (!id) return;
+    window.location.href = "/course/detail/" + id;
+}
+    function unlikeLecture(lectureId) {
+        if (!confirm('이 강의의 좋아요를 취소하시겠습니까?')) return;
+
+        fetch(`/users/mypage/unlike-lecture/${lectureId}`, {
+            method: 'DELETE'
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert('좋아요가 취소되었습니다.');
+                    loadLectures(currentIsFree, currentPage); // 다시 로드
+                } else {
+                    alert('취소에 실패했습니다.');
+                }
+            });
+    }
+
+    //아이콘 클릭
+    function toggleCartIcon() {
+        const cartIcon = document.getElementById("cart-icon");
+        cartIcon.classList.toggle("fa-cart-arrow-down");
+        cartIcon.classList.toggle("fa-cart-shopping");
+    }
+
+    function toggleHeartIcon() {
+        const heartIcon = document.getElementById("heart-icon");
+        heartIcon.classList.toggle("fa-regular");
+        heartIcon.classList.toggle("fa-solid");
+    }
+
+    function displayProviders(providers) {
+        const resultDiv = document.getElementById('result');
+        // 전체 개수는 API 응답에서 받아온 totalElements를 사용
+        // 현재 페이지의 데이터 개수가 아닌 전체 개수를 표시해야 함
+
+        if (!providers || providers.length === 0) {
+            resultDiv.innerHTML = '<p>찜한 지식제공자가 없습니다.</p>';
+            return;
+        }
+
+        let html = providers.map(provider => `
+            <div class="card">
+                <div class="card-top">
+                    <img class="provider-profile" src="${provider.profileName || '/img/profile.png'}" alt="profile">
+                    <div class="card-hover">
+                        <button class="remove-btn" onclick="unlikeProvider('${provider.providerId}', this)">x</button>
+                    </div>
+                    <div class="provider-info">
+                        ${provider.infoContent || '소개 정보 없음'}
+                    </div>
+                </div>
+                <div class="card-bottom">
+                    <div class="provider">${provider.nickname}</div>
+                    <div class="provider-stats">
+                        <span>⭐ ${provider.avgReviewRate}(${provider.reviewNum})</span>
+                        <span>❤️ ${provider.bookmarkNum}</span>
+                        <span>📘 ${provider.lectureNum}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        resultDiv.innerHTML = html;
+    }
+
+    function unlikeProvider(providerId, btn) {
+        fetch('/api/bookmark/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({providerId: providerId})
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('삭제 실패');
+                return res.json();
+            })
+            .then(data => {
+                if (!data.liked) {
+                    // 찜 해제된 경우만 DOM에서 제거
+                    const card = btn.closest('.card');
+                    if (card) card.remove();
+
+                    // 수 업데이트
+                    const countEl = document.getElementById('total-count');
+                    if (countEl) {
+                        const current = parseInt(countEl.textContent, 10);
+                        countEl.textContent = current > 0 ? current - 1 : 0;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('지식제공자 좋아요 취소 실패:', err);
+                alert('좋아요 취소 중 오류가 발생했습니다.');
+            });
+    }
+
+
+    // 페이지네이션 업데이트 함수
+    function updatePagination() {
+        const paginationDiv = document.getElementById('pagination');
+
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        // 이전 페이지 버튼
+        if (currentPage > 1) {
+            html += `<button onclick="goToPage(${currentPage - 1})">&lt;</button>`;
+        } else {
+            html += `<button disabled>&lt;</button>`;
+        }
+
+        // 페이지 번호 버튼들
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+            html += `<button onclick="goToPage(1)">1</button>`;
+            if (startPage > 2) {
+                html += `<span>...</span>`;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                html += `<button class="active">${i}</button>`;
+            } else {
+                html += `<button onclick="goToPage(${i})">${i}</button>`;
+            }
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                html += `<span>...</span>`;
+            }
+            html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+        }
+
+        // 다음 페이지 버튼
+        if (currentPage < totalPages) {
+            html += `<button onclick="goToPage(${currentPage + 1})">&gt;</button>`;
+        } else {
+            html += `<button disabled>&gt;</button>`;
+        }
+
+        paginationDiv.innerHTML = html;
+    }
+
+    // 페이지 이동 함수
+    function goToPage(page) {
+        if (page < 1 || page > totalPages) return;
+
+        currentPage = page;
+
+        if (currentTab === 'lectures') {
+            loadLectures(currentIsFree, page);
+        } else if (currentTab === 'providers') {
+            loadProviders(page);
+        }
+    }
+</script>
+</body>
+</html>

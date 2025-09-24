@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin/AdminMainPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+<!--<h1>관리자로 로그인 하면 오는 페이지</h1>-->
+
+<!--&lt;!&ndash;<a th:href = "@{/admin/home}"> home</a>&ndash;&gt;-->
+<!--&lt;!&ndash;<a th:href = "@{/admin/userlist}"> 전체 조회 페이지</a>&ndash;&gt;-->
+<!--&lt;!&ndash;<a th:href = "@{/admin/lecturelist}"> 강의 관리</a>&ndash;&gt;-->
+<!--&lt;!&ndash;<a th:href = "@{/admin/communitylist}"> 커뮤니티</a>&ndash;&gt;-->
+<!--&lt;!&ndash;<a th:href = "@{/admin/userlist}"> 공지사항</a>&ndash;&gt;-->
+
+
+<div class="MainPage_wrap">
+    <!-- 관리자 페이지입니다! -->
+    <div class="MainPage_title">
+        <h2>관리자 페이지입니다!</h2>
+    </div>
+
+    <!-- 관리자 요약 리포트 -->
+    <div class="AdminReport_wrap">
+        <h2>관리자 요약 리포트</h2>
+        <div class="AdminReport_date">기준일 : <span th:text="${currentDate}"></span></div>
+
+        <!-- 가입자수, 강의요청수, 지식제공자 신청수 등등 -->
+        <div class="AdminReport_cards" th:each="num : ${statits}">
+            <div class="report-card">
+                <span>가입자수</span>
+                <p><strong th:text="${num.userCountToday}"></strong></p>
+            </div>
+            <div class="report-card">
+                <span>강의 요청수</span>
+                <p><strong th:text="${num.lectureRequestCountToday}"></strong></p>
+            </div>
+            <div class="report-card">
+                <span>지식제공자 신청수</span>
+                <p><strong th:text="${num.providerApplyCountToday}"></strong></p>
+            </div>
+            <div class="report-card">
+                <span>게시물 작성수</span>
+                <p><strong th:text="${num.postCountToday}"></strong></p>
+            </div>
+            <div class="report-card">
+                <span>신고된 게시물수</span>
+                <p><strong th:text="${num.reportedPostCountToday}"></strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 그래프 영역 -->
+    <div class="AdminReport_graph">
+        <h2>시간대별 방문 그래프</h2>
+        <canvas id="visitChart" width="500" height="200"></canvas>
+    </div>
+
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<script th:src="@{/js/admin/AdminMainPage.js}" defer></script>
+<!--<script th:src="@{/js/admin/admin_header.js}" defer></script>-->
+
+
+</body>
+</html>

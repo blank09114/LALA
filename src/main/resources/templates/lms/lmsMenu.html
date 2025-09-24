@@ -1,0 +1,155 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="lmsMenu">
+    
+    <!-- <th:block th:replace="~{shared/header :: headerScript}"></th:block> -->
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <div class="menu">
+        <!-- 헤더 -->
+        <div class="menuHeader">
+            <h2 class="lecTitle"> 강의 제목 </h2>
+        </div>
+
+        <!-- 목차 목록 -->
+        <div class="partList">
+            <!-- 목차 -->
+            <div class="part">
+                <!-- 목차 헤더 -->
+                <button class="partHeader" onclick="toggleClassList(this)">
+                    <p class="partHeaderText"> 1. 목차 제목 </p>
+                    <p class="partHeaderText"> n차시/nn분 </p>
+                </button>
+
+                <!-- 강좌 목록 -->
+                <div class="classList" style="display: none;">
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/watch.png}">
+                            <p class="partText"> 1. 강좌 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/watch.png}">
+                            <p class="partText"> 2. 퀴즈 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/watch.png}">
+                            <p class="partText"> 자료 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 목차 -->
+            <div class="part">
+                <!-- 목차 헤더 -->
+                <button class="partHeader" onclick="toggleClassList(this)">
+                    <p class="partHeaderText"> 2. 목차 제목 </p>
+                    <p class="partHeaderText"> n차시/nn분 </p>
+                </button>
+
+                <!-- 강좌 목록 -->
+                <div class="classList" style="display: none;">
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/video.png}">
+                            <p class="partText"> 3. 강좌 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/quiz.png}">
+                            <p class="partText"> 4. 퀴즈 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/file.png}">
+                            <p class="partText"> 자료 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 목차 -->
+            <div class="part">
+                <!-- 목차 헤더 -->
+                <button class="partHeader" onclick="toggleClassList(this)">
+                    <p class="partHeaderText"> 3. 목차 제목 </p>
+                    <p class="partHeaderText"> n차시/nn분 </p>
+                </button>
+
+                <!-- 강좌 목록 -->
+                <div class="classList" style="display: none;">
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/video.png}">
+                            <p class="partText"> 5. 강좌 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/quiz.png}">
+                            <p class="partText"> 6. 퀴즈 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/file.png}">
+                            <p class="partText"> 자료 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 목차 -->
+            <div class="part">
+                <!-- 목차 헤더 -->
+                <button class="partHeader" onclick="toggleClassList(this)">
+                    <p class="partHeaderText"> 4. 목차 제목 </p>
+                    <p class="partHeaderText"> n차시/nn분 </p>
+                </button>
+
+                <!-- 강좌 목록 -->
+                <div class="classList" style="display: none;">
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/video.png}">
+                            <p class="partText"> 7. 강좌 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/quiz.png}">
+                            <p class="partText"> 8. 퀴즈 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                    <button class="class">
+                        <div class="classLeft">
+                            <img class="icon" th:src="@{/img/lms/file.png}">
+                            <p class="partText"> 자료 제목 </p>
+                        </div>
+                        <p class="partText"> nn:nn </p>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+</head>
+<body>
+
+<!--🎯 헤더 Fragment 정의-->
+<header th:fragment="header" class="header">
+    <div class="header_left">
+        <a th:href="@{/course/main}">
+            <img src="/img/LALA_log.png" alt="LALA 로고" class="header_logo">
+        </a>
+        <!--커뮤니티 컨트롤러는 어디에-->
+        <a th:href="@{/auth/community/board}">
+            <div class="header_nav">커뮤니티</div>
+        </a>
+        <div class="header_nav">
+            <a class="header_nav" th:href="@{/course/mainLectureList}">강의</a>
+        </div>
+    </div>
+
+    <!--검색하는곳-->
+    <div class="header_search">
+        <input type="text" id="searchInput" class="search_input" placeholder="듣고싶은 강의를 찾아보세요">
+        <button class="search_btn" onclick="performSearch()">
+            <img src="/img/search.png" alt="검색이미지">
+        </button>
+        <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+
+    <div class="header_actions">
+        <a th:href="@{/lms/main}">
+            <button class="play_btn"><img src="/img/play.png" alt="재생이미지"></button>
+        </a>
+        <a th:href="@{/mypage/main}">
+            <div class="profile_btn">
+                <img id="profileImg" th:src="${user != null and user.profileName != null} ? @{${user.profileName}} : @{/img/profileImg.png}" alt="프로필"/>
+            </div>
+        </a>
+    </div>
+</header>
+<!--헤더 끝-->
+
+<!-- 헤더 JavaScript도 fragment에 포함 -->
+<th:block th:fragment="headerScript">
+    <script th:src="@{/js/shared/header.js}" defer></script>
+</th:block>
+
+</body>
+</html>

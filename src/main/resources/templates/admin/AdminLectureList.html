@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 - 강의 요청 목록</title>
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin_lectureList.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+<div class="LectureList_wrap">
+    <div class="LectureList_manage">
+        <h2>강의 요청 목록</h2>
+        <form id="lectureSearchForm">
+            <div class="filter_section">
+                <div class="search_bar">
+                    <span class="section_label">요청 상태</span>
+                    <label><input type="checkbox" name="requestType" value="0"> 등록거부</label>
+                    <label><input type="checkbox" name="requestType" value="1"> 승인</label>
+                    <label><input type="checkbox" name="requestType" value="2"> 요청</label>
+                </div>
+                <div class="search_bar">
+                    <input type="date" name="startDate"> ~
+                    <input type="date" name="endDate">
+
+                </div>
+
+                <div class="search_bar">
+                    <input type="text" name="nickname" placeholder="요청자 닉네임">
+                    <button type="submit">검색</button>
+                    <button type="button" id="resetBtn">전체 조회</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="Lecture_result">
+        <table>
+            <thead>
+            <tr>
+
+                <th>요청자</th>
+                <th>강의 제목</th>
+                <th>요청타입</th>
+                <th>요청일자</th>
+                <th>상태</th>
+                <th>상세</th>
+            </tr>
+            </thead>
+            <tbody id="lectureTableBody">
+            <!-- JS로 데이터 삽입 -->
+            </tbody>
+        </table>
+        <div class="pagination"></div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/admin/admin_lectureList.js}" defer></script>
+</body>
+</html>

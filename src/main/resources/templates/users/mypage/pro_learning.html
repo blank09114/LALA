@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의 관리</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/pro_learning.css}">
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="wrap">
+    <!-- 사이드 메뉴바 -->
+    <div th:replace="~{users/mypage/sidebar :: sidebar(mypageUserData=${mypageUserData}, currentMenu='pro_learning')}"></div>
+
+    <main class="main-content">
+        <h2>강의 관리</h2>
+
+
+        <!-- 탭 메뉴 -->
+        <div class="tab-header">
+            <div class="menu tab-buttons">
+                <button id="free-lectures-btn" onclick="loadProLectures(true)" class="active">무료</button>
+                <button id="paid-lectures-btn" onclick="loadProLectures(false)">유료</button>
+            </div>
+            <a href="/lms/create" class="create-button">강의 등록하기</a>
+        </div>
+
+        <!-- 전체 수 표시 -->
+        <div class="top">
+            전체 <span class="green" id="total-count">0</span>
+        </div>
+
+        <!-- 결과 표시 영역 -->
+        <div id="result" class="card-container"></div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <!-- 페이지네이션 버튼들이 동적으로 생성됩니다 -->
+        </div>
+    </main>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script>
+    // 페이지네이션 관련 상수
+    const PAGINATION_CONFIG = {
+        DEFAULT_PAGE_SIZE: 6,
+        VISIBLE_PAGE_COUNT: 5
+    };
+
+    // 전역 변수
+    let currentIsFree = true;
+    let currentPage = 1;
+    let currentPageSize = PAGINATION_CONFIG.DEFAULT_PAGE_SIZE;
+    let totalLectures = 0;
+    let totalPages = 0;
+    let allLectures = []; // 전체 강의 데이터 캐시
+
+    document.addEventListener('DOMContentLoaded', function () {
+        loadProLectures(true); // 기본: 무료 강의
+    });
+
+    /**
+     * 강의 목록을 로드하는 함수
+     * @param {boolean} isFree - 무료/유료 구분
+     */
+    function loadProLectures(isFree, page = 1) {
+        updateTabButtons(isFree);
+        currentIsFree = isFree;
+        currentPage = page;
+
+        fetch(`/users/mypage/pro_lecture?free=${isFree}&page=${page}&size=${currentPageSize}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.json();
+        })
+        .then(response => {
+            if (response.success) {
+                allLectures = response.data || [];
+                totalLectures = response.totalElements || 0;
+                totalPages = response.totalPages || 1;
+                displayProLectures(allLectures);
+                renderPagination();
+            } else {
+                throw new Error(response.message || '강의 로딩 실패');
+            }
+        })
+        .catch(err => {
+            console.error('내 강의 불러오기 실패:', err);
+            document.getElementById('result').innerHTML = `<p>강의 로딩 실패: ${err.message}</p>`;
+            hidePagination();
+        });
+    }
+
+    /**
+     * 탭 버튼 활성화 상태 업데이트
+     * @param {boolean} isFree - 무료/유료 구분
+     */
+    function updateTabButtons(isFree) {
+        document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
+        if (isFree) {
+            document.getElementById('free-lectures-btn').classList.add('active');
+        } else {
+            document.getElementById('paid-lectures-btn').classList.add('active');
+        }
+    }
+
+    /**
+     * 현재 페이지의 강의 목록을 표시
+     */
+    function displayCurrentPageLectures() {
+        const startIndex = (currentPage - 1) * currentPageSize;
+        const endIndex = Math.min(startIndex + currentPageSize, totalLectures);
+        const currentPageLectures = allLectures.slice(startIndex, endIndex);
+        
+        displayProLectures(currentPageLectures);
+    }
+
+    /**
+     * 강의 목록을 화면에 표시하는 함수
+     * @param {Array} lectures - 표시할 강의 목록
+     */
+    function displayProLectures(lectures) {
+        const resultDiv = document.getElementById('result');
+        document.getElementById('total-count').textContent = totalLectures;
+
+        if (!lectures || lectures.length === 0) {
+            resultDiv.innerHTML = '<p>등록한 강의가 없습니다.</p>';
+            hidePagination();
+            return;
+        }
+
+        let html = lectures.map(lecture => {
+            // 할인된 가격 계산
+            const discountedPrice = lecture.price * (100 - lecture.discountRate) / 100;
+            
+            return `
+                <div class="card">
+                    <img src="${lecture.thumbnail || '/images/placeholder.png'}" alt="썸네일">
+                    <div class="title">${lecture.title}</div>
+                    <div class="desc price-info">
+                        ${lecture.discountRate > 0 ? 
+                            `<div class="price-top">
+                                <span class="original-price">₩${lecture.price?.toLocaleString() || '0'}</span>
+                                <span class="discount-rate">${lecture.discountRate}%</span>
+                            </div>
+                            <div class="final-price">₩${Math.round(discountedPrice)?.toLocaleString() || '0'}</div>` :
+                            `<div class="final-price">₩${lecture.price?.toLocaleString() || '0'}</div>`
+                        }
+                    </div>
+                    <div class="card-default">
+                        <span class="rating">★${lecture.reviewAVG || 0} <span class="count">(${lecture.reviewSum || 0})</span></span>
+                        <span class="views">👤${lecture.studentNum || 0}+</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        resultDiv.innerHTML = html;
+        showPagination();
+    }
+
+    /**
+     * 페이지네이션을 렌더링하는 함수
+     */
+    function renderPagination() {
+        const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer || totalPages <= 1) {
+            hidePagination();
+            return;
+        }
+
+        paginationContainer.innerHTML = '';
+
+        // 이전 페이지 버튼
+        const prevButton = createPaginationButton(
+            '‹',
+            () => goToPage(currentPage - 1),
+            currentPage <= 1
+        );
+        paginationContainer.appendChild(prevButton);
+
+        // 페이지 번호 버튼들
+        const { startPage, endPage } = calculatePageRange();
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = createPaginationButton(
+                i.toString(),
+                () => goToPage(i),
+                false,
+                i === currentPage
+            );
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // 다음 페이지 버튼
+        const nextButton = createPaginationButton(
+            '›',
+            () => goToPage(currentPage + 1),
+            currentPage >= totalPages
+        );
+        paginationContainer.appendChild(nextButton);
+
+        showPagination();
+    }
+
+    /**
+     * 페이지 범위 계산 (표시할 페이지 번호들)
+     * @returns {Object} startPage와 endPage를 포함한 객체
+     */
+    function calculatePageRange() {
+        const halfVisible = Math.floor(PAGINATION_CONFIG.VISIBLE_PAGE_COUNT / 2);
+        let startPage = Math.max(1, currentPage - halfVisible);
+        let endPage = Math.min(totalPages, startPage + PAGINATION_CONFIG.VISIBLE_PAGE_COUNT - 1);
+        
+        // 끝 페이지가 조정된 경우 시작 페이지도 조정
+        if (endPage - startPage + 1 < PAGINATION_CONFIG.VISIBLE_PAGE_COUNT) {
+            startPage = Math.max(1, endPage - PAGINATION_CONFIG.VISIBLE_PAGE_COUNT + 1);
+        }
+        
+        return { startPage, endPage };
+    }
+
+    /**
+     * 페이지네이션 버튼 생성
+     * @param {string} text - 버튼 텍스트
+     * @param {Function} clickHandler - 클릭 핸들러
+     * @param {boolean} disabled - 비활성화 여부
+     * @param {boolean} active - 활성 상태 여부
+     * @returns {HTMLButtonElement} 생성된 버튼
+     */
+    function createPaginationButton(text, clickHandler, disabled = false, active = false) {
+        const button = document.createElement('button');
+        button.innerHTML = text;
+        button.disabled = disabled;
+        
+        if (active) button.className = 'active';
+        if (clickHandler && !disabled) button.onclick = clickHandler;
+        
+        return button;
+    }
+
+    /**
+     * 특정 페이지로 이동
+     * @param {number} page - 이동할 페이지 번호
+     */
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) {
+            return;
+        }
+        loadProLectures(currentIsFree, page);
+    }
+
+    /**
+     * 페이지네이션 표시
+     */
+    function showPagination() {
+        const paginationContainer = document.getElementById('pagination');
+        if (paginationContainer) {
+            paginationContainer.style.display = 'flex';
+        }
+    }
+
+    /**
+     * 페이지네이션 숨김
+     */
+    function hidePagination() {
+        const paginationContainer = document.getElementById('pagination');
+        if (paginationContainer) {
+            paginationContainer.style.display = 'none';
+        }
+    }
+
+    /**
+     * 페이지 크기 변경 (필요 시 사용)
+     * @param {number} newPageSize - 새로운 페이지 크기
+     */
+    function changePageSize(newPageSize) {
+        if (newPageSize < 1 || newPageSize > 50) {
+            return;
+        }
+        
+        currentPageSize = newPageSize;
+        currentPage = 1; // 페이지 크기 변경 시 첫 페이지로 리셋
+        totalPages = Math.ceil(totalLectures / currentPageSize);
+        
+        displayCurrentPageLectures();
+        renderPagination();
+    }
+</script>
+</body>
+</html>

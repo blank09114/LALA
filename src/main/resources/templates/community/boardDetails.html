@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+
+        <link rel="stylesheet" th:href="@{/css/community/boardDetails.css}"/>
+        <link rel="stylesheet" th:href="@{/css/shared/header.css}" />
+        <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+
+<div class="container">
+    <!-- 왼쪽 사이드바 -->
+    <div class="sidebar">
+        <h3>커뮤니티</h3>
+        <ul class="sidebar-menu">
+            <li><a href="/auth/community/board?category=free" id="menu-free">자유 게시판</a></li>
+            <li><a href="/auth/community/board?category=study" id="menu-study">스터디 모집</a></li>
+            <li><a href="/auth/community/board?category=qna" id="menu-qna">질문 & 답변</a></li>
+            <li><a href="/auth/community/board?category=notice" id="menu-notice">공지 게시판</a></li>
+        </ul>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <a href="#" onclick="goBackToBoard()" class="back-link">돌아가기</a>
+
+        <!-- 게시글 상세 -->
+        <div class="post-detail">
+            <div id="postDetail" class="loading">불러오는 중입니다...</div>
+        </div>
+
+        <!-- 댓글 섹션 -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <span id="commentNum">댓글 0개</span>
+            </div>
+
+            <div class="comment-form">
+                <form id="comment-write">
+                    <div class="comment-form-group">
+                        <input type="text" id="commentInput" class="comment-input" placeholder="댓글을 작성해주세요">
+                        <button type="button" id="commentSubmitBtn" class="comment-submit">등록</button>
+                        <button type="button" class="comment-cancel">취소</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="comments-list">
+                <div id="commentview" class="loading">불러오는 중입니다.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 신고 모달 -->
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">신고</h3>
+            <span class="close" onclick="closeReportModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <label for="reportContent">신고 사유:</label>
+            <textarea id="reportContent" rows="4" placeholder="신고 사유를 입력해주세요"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="submitReport()">신고하기</button>
+            <button type="button" onclick="closeReportModal()">취소</button>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/community/boardDetails.js}" defer></script>
+</body>
+</html>

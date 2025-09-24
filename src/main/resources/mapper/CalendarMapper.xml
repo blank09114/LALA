@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.CalendarMapper">
+    <select id="selectByUserId" resultType="com.example.lala.DTO.Response.CalendarSchedule" parameterType="String">
+        SELECT cal_date as calendarDate,
+               content  as content
+        FROM calendar
+        WHERE user_id = #{userId}
+          AND cal_date BETWEEN
+            DATE_SUB(CURDATE(), INTERVAL (WEEKDAY(CURDATE())) DAY)
+            AND
+            DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
+    </select>
+
+    <select id="selectUserCal" resultType="com.example.lala.DTO.Response.CalendarSchedule" parameterType="map">
+        SELECT cal_date AS calendarDate,
+               content
+        FROM calendar
+        WHERE MONTH(cal_date) = #{month}
+          AND YEAR(cal_date) = #{year}
+          AND user_id = #{userId}
+    </select>
+
+    <insert id="insertUserCal" parameterType="map">
+        INSERT INTO calendar (user_id, cal_date, content)
+        VALUES (#{userId}, CONCAT(#{year}, '-', LPAD(#{month}, 2, '0'), '-', LPAD(#{day}, 2, '0')), #{content})
+    </insert>
+
+    <update id="updateEventByDateAndContent" parameterType="map">
+        UPDATE calendar
+        SET content = #{newContent}
+        WHERE user_id = #{userId}
+          AND cal_date = CONCAT(#{year}, '-', LPAD(#{month}, 2, '0'), '-', LPAD(#{day}, 2, '0'))
+          AND content = #{oldContent}
+    </update>
+
+    <delete id="deleteEventByDateAndContent" parameterType="map">
+        DELETE
+        FROM calendar
+        WHERE user_id = #{userId}
+          AND cal_date = CONCAT(#{year}, '-', LPAD(#{month}, 2, '0'), '-', LPAD(#{day}, 2, '0'))
+          AND content = #{content}
+    </delete>
+
+    <select id="selectByUserIdAndWeek" resultType="com.example.lala.DTO.Response.CalendarSchedule">
+        SELECT cal_date AS calendarDate,
+        content
+        FROM calendar
+        WHERE user_id = #{userId}
+        AND cal_date BETWEEN #{startDate} AND DATE_ADD(#{startDate}, INTERVAL 6 DAY)
+    </select>
+</mapper>

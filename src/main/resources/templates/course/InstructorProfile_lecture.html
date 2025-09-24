@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강사소개 강의</title>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/InstructorProfile_lecture.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}" />
+
+</head>
+<body>
+
+<!--헤더 시작-->
+<header class="header">
+    <div class="header_left">
+        <a th:href="@{/course/main}">
+            <img src="/img/LALA_log.png" alt="LALA 로고" class="header_logo">
+        </a>
+        <!--커뮤니티 컨트롤러는 어디에-->
+        <a th:href="@{/auth/community/board}">
+            <div class="header_nav">커뮤니티</div>
+        </a>
+        <div class="header_nav">
+            <a class="header_nav" th:href="@{/course/main}">강의</a>
+        </div>
+    </div>
+
+    <!--검색하는곳-->
+    <div class="header_search">
+        <input type="text" id="searchInput" class="search_input" placeholder="듣고싶은 강의를 찾아보세요">
+        <button class="search_btn" onclick="performSearch()">
+            <img src="/img/search.png" alt="검색이미지">
+        </button>
+        <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+
+    <div class="header_actions">
+        <a th:href="@{/course/letsgoLMS}">
+            <button class="play_btn"><img src="/img/play.png" alt="재생이미지"></button>
+        </a>
+        <a th:href="@{/mypage/main}">
+            <div class="profile_btn">프로필</div>
+        </a>
+    </div>
+</header>
+<!--헤더 끝-->
+
+<div class="InstructorProfile_wrap">
+
+    <div class="InstructorProfile_left">
+
+        <!-- 프로필 시작 -->
+        <div class="profile">
+            <div class="profile_img">
+                <img id="profileImage" src="/img/profileImg.png" alt="프로필 이미지">
+                <h3 id="nickname" th:text="${providerId}" >이게 나오면 안돼</h3>
+
+
+            </div>
+
+            <div class="profile_info">
+                <div class="user_cnt">
+                    <div class="title" >수강생</div>
+                    <div class="value"  id="studentNum" th:text="${providerId}">이게 나오면 안돼</div>
+                </div>
+                <div class="user_review">
+                    <div class="title">수강평수</div>
+                    <div class="value"  id="reviewNum" th:text="${providerId}">이게 나오면 안돼</div>
+                </div>
+                <div class="user_star">
+                    <div class="title">강의평점</div>
+                    <div class="title_star">
+                        <div>⭐</div>
+                        <div class="value"  id="reviewAvg" th:text="${providerId}">이게 나오면 안돼</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 찜하기 시작 -->
+            <div class="profile_fav">
+                <button id="favBtn" class="fav_button" onclick="JjimBtn('[[${provider.providerId}]]')">찜하기</button>
+            </div>
+
+            <!-- 토스트 알림용 div -->
+            <div id="toast" style="
+              visibility: hidden;
+              min-width: 250px;
+              background-color: #333;
+              color: #fff;
+              text-align: center;
+              border-radius: 4px;
+              padding: 12px;
+              position: fixed;
+              z-index: 999;
+              bottom: 30px;
+              left: 50%;
+              transform: translateX(-50%);
+              font-size: 14px;
+              transition: visibility 0s, opacity 0.5s linear;
+              opacity: 0;
+            "></div>
+            <!-- 찜하기 끝 -->
+
+
+
+            <div class="profile_site">
+                <img src="/img/tistoryImg.png" alt="tistory 이미지"><a href="https://www.tistory.com" id="externalLink1" th:text="${providerId}" >관련 링크 이동</a><br>
+                <img src="/img/blogImg.png" alt="블로그 이미지"><a href="https://www.naver.com" id="externalLink2" th:text="${providerId}">관련 링크 이동</a>
+            </div>
+        </div>
+        <!-- 프로필 끝 -->
+
+        <div class="introduction">
+            <h2>소개</h2>
+            <p id="infoContent" th:text="${providerId}">
+                안녕하세요<br>
+                수경닷컴 『너네가 코딩을 알아?』저자 박수경입니다.<br>
+        </div>
+
+        <!-- 카테고리 시작 -->
+        <div class="category">
+            <!--            <a href="InstructorProfile_lecture.html" class="menu active">강의</a>-->
+            <!--            <a href="InstructorProfile_review.html" class="menu">수강평</a>-->
+
+
+            <a th:href="@{/course/IPdetail/{providerId}(providerId=${providerId})}" class="menu active">강의</a>
+            <a th:href="@{/course/IPdetail/{providerId}/review(providerId=${providerId})}" class="menu">수강평</a>
+        </div>
+        <!-- 카테고리 끝 -->
+
+    </div>
+
+
+    <!-- 강의리스트 시작 -->
+    <div class="lectureWrap">
+
+
+        <div class="lecture-header-container">
+            <h2 class="lecture-title">강의</h2>
+            <span class="total-count" id="total-count">전체<span class="total-number">5억</span></span>
+        </div>
+
+        <div class="lecture-grid" id="lecture-card"></div>
+        <div class="pagination" id="pagination">
+            <button class="page-btn prev">&lt;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn next">&gt;</button>
+        </div>
+
+
+    </div>
+
+
+
+
+    <!-- 강의리스트 끝 -->
+
+</div>
+<div id="providerId" data-provider-id="[[${providerId}]]"></div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/course/InstructorProfile_lecture.js}" defer></script>
+<script th:inline="javascript">
+    // 컨트롤러에서 전달한 데이터를 전역 변수로 설정
+    //attribute에서 저장한 값을 js로 보낸다고 생각하면 되는거임
+    window.serverData = {
+        providerId: /*[[${providerId}]]*/ 'null'
+    };
+</script>
+
+</body>
+</html>

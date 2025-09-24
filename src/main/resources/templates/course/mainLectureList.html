@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 강의 리스트 </title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/lecture.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/lecList.css}"/>
+    <link rel="stylesheet" th:href="@{/css/course/mainLectureList.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+    <!-- 내브 -->
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-menu">
+                <li> <div class="img" th:style="|background-image: url('@{/img/course/all.png}')|"></div> 전체 </li>
+                <li data-category="1"> <div class="img" th:style="|background-image: url('@{/img/course/foreign.png}')|"></div> 외국어 </li>
+                <li data-category="2"> <div class="img" th:style="|background-image: url('@{/img/course/art.png}')|"></div> 예술 </li>
+                <li data-category="3"> <div class="img" th:style="|background-image: url('@{/img/course/it.png}')|"></div> 개발/IT </li>
+                <li data-category="4"> <div class="img" th:style="|background-image: url('@{/img/course/exercise.png}')|"></div> 운동 </li>
+                <li data-category="5"> <div class="img" th:style="|background-image: url('@{/img/course/favorit.png}')|"></div> 취미 </li>
+                <li data-category="6"> <div class="img" th:style="|background-image: url('@{/img/course/business.png}')|"></div> 비즈니스 </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 섹션 상단: 필터 + 강의 리스트 1 -->
+    <section>
+        <!-- 검색 결과 표시 -->
+        <div th:if="${searchKeyword}" class="search-result-header">
+            <h3>"<span th:text="${searchKeyword}"></span>" 검색 결과</h3>
+            <button onclick="clearSearch()" class="clear-search-btn">전체 강의 보기</button>
+        </div>
+        
+        <div class="filterMenu">
+            <a class="filterItem"> 무료 </a>
+            <a class="filterItem"> 유료 </a>
+            <a class="filterItem"> 할인 </a>
+            <select class="level">
+                <option value="default">난이도</option>
+                <option value="level1">입문</option>
+                <option value="level2">초급</option>
+                <option value="level3">중급</option>
+                <option value="level4">고급</option>
+            </select>
+        </div>
+
+        <div id="lectureTop"></div>
+    </section>
+
+    <!-- 지식 제공자 리스트 -->
+    <div class="provList">
+        <div class="provList-container">
+            <div class="provList-header">LALA 지식제공자</div>
+            <div class="provList-items" id="provListContainer"></div>
+            <button class="provListBtn" id="leftBtn" style="left: 10px;" onclick="scrLeft()"> < </button>
+            <button class="provListBtn" id="rightBtn" style="right: 10px;" onclick="scrRight()"> > </button>
+        </div>
+    </div>
+
+    <!-- 섹션 하단: 강의 리스트 2 -->
+    <section>
+        <div id="lectureBottom"></div>
+    </section>
+    <footer th:replace="~{shared/footer :: footer}"></footer>
+    <script th:src="@{/js/course/mainLectureList.js}"></script>
+</body>
+</html>

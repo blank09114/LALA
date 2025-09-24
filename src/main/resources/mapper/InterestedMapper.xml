@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lala.Mapper.InterestMapper">
+    <select id="selectUserInterested" resultType="com.example.lala.DTO.Response.UserInterest" parameterType="String">
+        SELECT c.name categoryName,
+               i.NAME interestedName
+        FROM user_interested ui
+                 JOIN interested i
+                      ON ui.interested_id = i.interested_id
+                 JOIN category c
+                      on c.category_id = i.category_id
+        where user_id = #{userId}
+    </select>
+</mapper>

@@ -1,0 +1,125 @@
+body { margin: 0; padding: 0; }
+section
+{
+    width: 1300px;
+    margin: 0 auto;
+}
+
+/* 강의 리스트 */
+.lecList
+{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+.lecListRow
+{
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+    box-sizing: border-box;
+
+    display: flex;
+    gap: 20px;
+}
+
+/* 강의 */
+.lecItem
+{
+    width: 25%;
+    height: auto;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    position: relative;
+
+    cursor: pointer;
+}
+.lecItem:hover { background-color: #f0f0f0; }
+.lecImg
+{
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    background-position: center;
+    background-size: cover;
+
+    border: 1px solid #CCCCCC;
+}
+.lecInfo
+{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box
+}
+.lecTitle
+{
+    width: 100%;
+    height: auto;
+    min-height: 30px;
+    margin: 5px 0 5px 0;
+    padding: 0;
+
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+}
+.lecContent
+{
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+    font-weight: bold;
+}
+.provider { color: #495057; }
+.regPrice
+{
+    color: #CCCCCC;
+    text-decoration: line-through;
+}
+.regPrice, .salePrice { font-weight: bold; }
+
+
+/* 장식 */
+.lecGrade, .hotLec, .newLec
+{
+    width: 60px;
+    height: 25px;
+    border-radius: 4px;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 25px;
+    color: white;
+}
+.hotLec, .newLec
+{
+    position: absolute;
+    top: -10px;
+    left: -10px;
+
+    display: none;
+}
+.lecGrade
+{
+    margin-top: 10px;
+    background-color: #00C471;
+}
+.hotLec { background-color: red; }
+.newLec { background-color: blue; }
+.now { display: block; }
+
+
+
+/* == 모바일 == */
+@media (max-width: 768px)
+{
+    section { width: 90%; }
+    .lecListRow { flex-direction: column; }
+    .lecItem { width: 100%; }
+}

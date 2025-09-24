@@ -1,0 +1,112 @@
+.UserList_wrap {
+  font-family: 'Arial', sans-serif;
+  margin: 0 auto;
+  width: 1300px;
+}
+
+.UserList_manage{
+  border: 2px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.UserList_manage h2{
+  background-color: #E1EFE4;
+  height: 50px;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.UserList_filters,
+.UserList_status {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.UserList_status button{
+  border: none;
+  background-color: #46B97C;
+  color: white;
+  width: 55px;
+  height: 25px;
+  border-radius: 5px;
+  font-weight: bold;
+
+}
+
+.user_type label,
+.user_status label {
+  margin-right: 20px;
+
+}
+
+.section_label {
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 17px;
+}
+
+.status_label {
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 17px;
+}
+
+.search_bar{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search_bar span{
+  font-weight: bold;
+  font-size: 17px;
+  padding: 10px;
+}
+
+.UserList_result {
+  margin-top: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.details-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 3px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: #00b37e;
+  color: white;
+  font-weight: bold;
+}

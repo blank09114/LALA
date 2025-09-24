@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지식제공자 요청 처리</title>
+    <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/lectureRequest.css}">
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+<!-- 메인 컨테이너 -->
+<div class="instructor-profile-container">
+    <!-- 페이지 헤더 -->
+    <div class="profile-header">
+        <h1>지식제공자 요청 처리</h1>
+        <p>관리자 - 지식제공자 요청 상세 정보 및 승인/거부 처리</p>
+    </div>
+
+    <!-- 메인 컨텐츠 (탭 메뉴 제거) -->
+    <div class="main-content">
+        <!-- 왼쪽: 회원정보 카드 -->
+        <div class="member-info-card">
+            <div class="member-info-header">
+                <h2 class="member-info-title">회원정보</h2>
+            </div>
+
+            <div class="profile-image-section">
+                <img src="/img/profile1.png" alt="회원 이미지" class="profile-avatar">
+            </div>
+
+            <ul class="info-list">
+                <li class="info-item">
+                    <span class="info-label">이메일</span>
+                    <span class="info-value" id="userEmail">로딩중...</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">닉네임</span>
+                    <span class="info-value" id="userNickname">로딩중...</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">가입일</span>
+                    <span class="info-value" id="userRegDate">로딩중...</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">회원유형</span>
+                    <span class="info-value" id="userAccountType">로딩중...</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">활동유형</span>
+                    <span class="info-value" id="userActivityType">로딩중...</span>
+                </li>
+            </ul>
+
+            <!-- 승인/거부 버튼 섹션 -->
+            <div class="action-buttons-section" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f0f0f0;">
+                <h3 style="font-size: 16px; margin-bottom: 15px; color: #333;">요청 처리</h3>
+                <div class="action-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="approveBtn" class="btn-action btn-approve" style="display: none;">
+                        ✅ 지식제공자 승인
+                    </button>
+                    <button id="rejectBtn" class="btn-action btn-reject" style="display: none;">
+                        ❌ 요청 거부
+                    </button>
+                    <button id="backBtn" class="btn-action btn-back">
+                        📋 목록으로 돌아가기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오른쪽: 지식제공자 요청 정보 -->
+        <div class="content-area">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>지식제공자 요청 정보를 불러오는 중...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!-- JavaScript -->
+<script th:src="@{/js/admin/lectureRequest.js}" defer></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>강의 구매 기능 테스트</title>
+</head>
+<body>
+    <h1>🛒 강의 구매 기능 테스트</h1>
+    
+    <!-- 1. 구매 가능 여부 체크 -->
+    <div>
+        <h2>1. 구매 가능 여부 체크</h2>
+        <input type="text" id="checkLectureId" placeholder="강의 ID (예: L021)" value="L021">
+        <button onclick="checkCanPurchase()">구매 가능 여부 확인</button>
+        <div id="checkResult"></div>
+    </div>
+    
+    <hr>
+    
+    <!-- 2. 강의 구매 -->
+    <div>
+        <h2>2. 강의 구매</h2>
+        <input type="text" id="purchaseLectureId" placeholder="강의 ID" value="L021"><br><br>
+        <select id="purchaseType">
+            <option value="kakaopay">카카오페이</option>
+            <option value="card">신용카드</option>
+            <option value="bank">계좌이체</option>
+        </select><br><br>
+        <textarea id="memo" placeholder="구매 메모 (선택사항)"></textarea><br><br>
+        <button onclick="purchaseLecture()">강의 구매하기</button>
+        <div id="purchaseResult"></div>
+    </div>
+    
+    <hr>
+    
+    <!-- 3. 구매 내역 조회 -->
+    <div>
+        <h2>3. 구매 내역 조회</h2>
+        <button onclick="getPurchaseHistory()">전체 구매 내역</button>
+        <button onclick="getRecentPurchases()">최근 구매 내역</button>
+        <div id="historyResult"></div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080';
+
+        // 1. 구매 가능 여부 체크
+        async function checkCanPurchase() {
+            const lectureId = document.getElementById('checkLectureId').value;
+            const resultDiv = document.getElementById('checkResult');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/course/can-purchase/${lectureId}`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">오류: ${error.message}</p>`;
+            }
+        }
+
+        // 2. 강의 구매
+        async function purchaseLecture() {
+            const lectureId = document.getElementById('purchaseLectureId').value;
+            const purchaseType = document.getElementById('purchaseType').value;
+            const memo = document.getElementById('memo').value;
+            const resultDiv = document.getElementById('purchaseResult');
+            
+            const requestData = {
+                lectureId: lectureId,
+                purchaseType: purchaseType,
+                memo: memo
+            };
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/course/purchase`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<p style="color: green;">✅ ${data.message}</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: red;">❌ ${data.message}</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">오류: ${error.message}</p>`;
+            }
+        }
+
+        // 3. 구매 내역 조회
+        async function getPurchaseHistory() {
+            const resultDiv = document.getElementById('historyResult');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/course/purchase/history`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<h3>전체 구매 내역</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">오류: ${error.message}</p>`;
+            }
+        }
+
+        // 4. 최근 구매 내역 조회
+        async function getRecentPurchases() {
+            const resultDiv = document.getElementById('historyResult');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/course/purchase/recent?limit=3`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<h3>최근 구매 내역</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">오류: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

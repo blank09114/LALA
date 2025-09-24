@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lala.Mapper.ReviewMapper">
+    <select id="selectMyReview" resultType="com.example.lala.DTO.Response.Review" parameterType="String">
+        SELECT r.review_id                           reviewId,
+               l.thumbnail                           thumbnail,
+               r.review_rate                         rate,
+               u.nickname                            nickname,
+               DATE_FORMAT(r.write_date, '%Y.%m.%d') writeDate,
+               l.name                                lectureTitle,
+               r.content                             content
+        FROM review r
+                 JOIN lecture l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user u
+                      ON u.user_id = r.writer_id
+        WHERE writer_id = #{userId}
+    </select>
+
+    <update id="updateReview" parameterType="map">
+        UPDATE review
+        SET review_rate = #{rate},
+            content     = #{content},
+            edite_date  = NOW()
+        WHERE review_id = #{reviewId}
+    </update>
+
+    <insert id="insertReview" parameterType="map">
+        INSERT INTO review (lecture_id, writer_id, review_rate, content)
+        VALUES (#{lectureId}, #{userId}, #{rate}, #{content})
+    </insert>
+
+    <select id="checkReview" parameterType="map" resultType="com.example.lala.DTO.Response.MyReview">
+        SELECT review_id as reviewId,
+               review_rate as rate,
+               content
+        FROM review
+        WHERE lecture_id = #{lectureId}
+        AND writer_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <!-- 유틸리티 매퍼 -->
+    <select id="findWriterByReviewId" resultType="String" parameterType="String">
+        SELECT writer_id
+        FROM review
+        WHERE review_id = #{reviewId}
+    </select>
+
+    <!-- 강의 리뷰 조회 -->
+    <select id="lectureReviews" resultType="com.example.lala.DTO.Course.Review" parameterType="String">
+        SELECT r.review_id   AS reviewId,
+               r.writer_id   AS writerId,
+               u.profilename,
+               u.nickname,
+               r.review_rate AS reviewRate,
+               r.write_date  AS writeDate,
+               r.content
+        FROM review AS r
+                 JOIN lecture AS l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user AS u
+                      ON u.user_id = r.writer_id
+        WHERE l.lecture_id = #{lectureId}
+    </select>
+
+    <!-- 강의 리뷰 조회(평점순(높은거부터)) -->
+    <select id="lectureReviewsOrderByRating" resultType="com.example.lala.DTO.Course.Review" parameterType="String">
+        SELECT r.review_id   AS reviewId,
+               r.writer_id   AS writerId,
+               u.profilename,
+               u.nickname,
+               r.review_rate AS reviewRate,
+               r.write_date  AS writeDate,
+               r.content
+        FROM review AS r
+                 JOIN lecture AS l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user AS u
+                      ON u.user_id = r.writer_id
+        WHERE l.lecture_id = #{lectureId}
+        ORDER BY r.review_rate DESC
+    </select>
+
+    <!-- 강의 리뷰 조회(평점순(낮은거부터)) -->
+    <select id="lectureReviewsOrderByRatingReverse" resultType="com.example.lala.DTO.Course.Review"
+            parameterType="String">
+        SELECT r.review_id   AS reviewId,
+               r.writer_id   AS writerId,
+               u.profilename,
+               u.nickname,
+               r.review_rate AS reviewRate,
+               r.write_date  AS writeDate,
+               r.content
+        FROM review AS r
+                 JOIN lecture AS l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user AS u
+                      ON u.user_id = r.writer_id
+        WHERE l.lecture_id = #{lectureId}
+        ORDER BY r.review_rate ASC
+    </select>
+
+    <!-- 강의 리뷰 조회(최신순) -->
+    <select id="lectureReviewsRecent" resultType="com.example.lala.DTO.Course.Review" parameterType="String">
+        SELECT r.review_id   AS reviewId,
+               r.writer_id   AS writerId,
+               u.profilename,
+               u.nickname,
+               r.review_rate AS reviewRate,
+               r.write_date  AS writeDate,
+               r.content
+        FROM review AS r
+                 JOIN lecture AS l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user AS u
+                      ON u.user_id = r.writer_id
+        WHERE l.lecture_id = #{lectureId}
+        ORDER BY r.write_date DESC
+    </select>
+
+    <!--  강사 리뷰 조회  -->
+    <select id="ipReviews" resultType="com.example.lala.DTO.Course.Review" parameterType="String">
+        SELECT r.review_id                                                       AS reviewId,
+               l.thumbnail,
+               COALESCE(SUM(r.review_rate), 0) / COALESCE(COUNT(r.review_id), 0) AS avgReviewRate,
+               r.writer_id                                                       AS writerId,
+               r.write_date                                                      AS writeDate,
+               r.content
+        FROM review AS r
+                 JOIN lecture AS l
+                      ON r.lecture_id = l.lecture_id
+                 JOIN user AS u
+                      ON u.user_id = l.uploader_id
+                 JOIN information_provider AS ip
+                      ON ip.information_provider_id = u.user_id
+        WHERE ip.information_provider_id = #{userId}
+        GROUP BY r.review_id,
+                 l.thumbnail,
+                 r.review_rate,
+                 r.writer_id,
+                 r.write_date,
+                 r.content
+    </select>
+
+</mapper>

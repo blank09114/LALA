@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.CommunityCommentMapper">
+
+    <!-- 댓글 결과 매핑 -->
+    <resultMap id="communityComment" type="com.example.lala.DTO.Response.CommunityDetails">
+        <result property="postId" column="postId"/>
+        <result property="commentId" column="commentId"/>
+        <result property="parentCommentId" column="parentCommentId"/>
+        <result property="writerNickname" column="writerNickname"/>
+        <result property="content" column="content"/>
+        <result property="writeDate" column="writeDate"/>
+        <result property="likeNum" column="likeNum"/>
+        <result property="recommendCheck" column="recommendCheck"/>
+        <result property="deleteCheck" column="deleteCheck"/>
+        <result property="report" column="report"/>
+    </resultMap>
+
+    <!-- 댓글 등록 -->
+    <insert id="createComment" parameterType="com.example.lala.DTO.Request.CommunityRequest">
+        INSERT INTO comment (post_id, writer_id, content, recomment_check)
+        VALUES (#{postId}, #{writerId}, #{content}, 0)
+    </insert>
+
+    <!-- 대댓글 등록 -->
+    <insert id="createReComment" parameterType="com.example.lala.DTO.Request.CommunityRequest">
+        INSERT INTO comment (post_id, writer_id, content, recomment_check)
+        VALUES (#{postId}, #{writerId}, #{content}, 1)
+    </insert>
+
+    <!-- 댓글 삭제 (논리적 삭제) -->
+    <update id="deleteComment" parameterType="String">
+        UPDATE comment
+        SET delete_check = 1
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 특정 게시물의 댓글 목록 조회 -->
+    <select id="findCommentsByPostId" parameterType="String" resultMap="communityComment">
+        SELECT c.comment_id as commentId,
+        c.post_id as postId,
+        CASE
+        WHEN c.recomment_check = 1 THEN SUBSTRING(SUBSTRING_INDEX(c.content,'::',1), 2)
+        ELSE NULL
+        END AS parentCommentId,
+        u.nickname as writerNickname,
+        c.content as content,
+        c.write_date AS writeDate,
+        c.like_num as likeNum,
+        CASE WHEN c.recomment_check = 1 THEN true ELSE false END as recommendCheck,
+        CASE WHEN c.delete_check = 1 THEN true ELSE false END as deleteCheck,
+        CASE WHEN c.report = 1 THEN true ELSE false END as report
+        FROM comment c
+        JOIN user u ON c.writer_id = u.user_id
+        WHERE c.post_id = #{postId}
+        AND c.delete_check = 0
+        ORDER BY c.write_date DESC
+    </select>
+
+    <!-- 특정 게시물의 댓글 수 조회 -->
+    <select id="countCommentsByPostId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE post_id = #{postId}
+        AND recomment_check = 0
+        AND delete_check = 0
+    </select>
+
+    <!-- 댓글 작성자 확인 -->
+    <select id="isCommentOwner" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM comment
+        WHERE comment_id = #{commentId} AND writer_id = #{userId}
+    </select>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment">
+        UPDATE comment
+        SET content = #{content}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 존재 여부 확인 -->
+    <select id="existsCommentId" parameterType="String" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM comment WHERE comment_id = #{commentId}
+    </select>
+
+    <!-- 댓글 신고 업데이트-->
+    <update id="incrementReportCommentCount" parameterType="String">
+        UPDATE comment
+        SET report = COALESCE(report, 0) + 1
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 현재 댓글  신고 수 조회 -->
+    <select id="getReportCommentCount" parameterType="String" resultType="int">
+        SELECT COALESCE(like_num, 0) FROM comment WHERE comment_id = #{commentId}
+    </select>
+
+
+
+</mapper>

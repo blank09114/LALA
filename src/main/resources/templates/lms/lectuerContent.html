@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title> 파일 </title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/lmsMenu.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <style>
+        /* 공통 서식 */
+        .viewer
+        {
+            padding: 10px;
+            border-radius: 12px;
+
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .downloadBtn
+        {
+            width: 150px;
+            height: 30px;
+            border-radius: 8px;
+
+            border: 1px solid #00C471;
+            background-color: #00C471;
+
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            text-decoration: none;
+        }
+        .downloadBtn:hover
+        {
+            background-color: white;
+            color: #00C471;
+        }
+
+        /* 뷰어 없음 */
+        .viewer.none
+        {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .intro
+        {
+            width: 100%;
+            height: 25px;
+            margin: 0;
+            padding: 0;
+
+            font-size: 16px;
+            text-align: center;
+            line-height: 25px;
+        }
+
+        .viewer.pdf { height: 800px; }
+    </style>
+    <script th:src="@{/js/lms/lmsMenu.js}" defer></script>
+    <script th:src="@{/js/lms/solvingQuestion.js}" defer></script>
+</head>
+<body th:data-material-id="${materialId}" th:data-user-id="${userId}">
+<header th:replace="~{shared/header :: header}"></header>
+<!-- 섹션 -->
+<section>
+    <!-- 섹션 헤더 -->
+    <h1 class="sectionHeader"> 파일 제목 </h1>
+
+    <!-- 상단 -->
+    <div class="topContent">
+        <!-- 파일 뷰어(기본) -->
+        <div class="viewer none" style="display: none;">
+            <p class="intro fileName">파일명.확장자명(용량)</p>
+            <p class="intro">뷰어를 제공하지 않는 확장자입니다.</p>
+            <a href="@파일 경로" download class="downloadBtn">다운로드</a>
+        </div>
+
+        <!-- 파일 뷰어(pdf) -->
+        <div class="viewer pdf"> <!-- PDF 뷰어 위치 --> </div>
+
+        <!-- 메뉴 -->
+        <div th:replace="~{lms/lmsMenu::lmsMenu}"></div>
+    </div>
+
+    <!-- 하단 -->
+    <div th:replace="~{lms/lectureBottom::bottomContent}"></div>
+</section>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<script type="module">
+    import {
+      renderLectureTop,
+        fetchAndRenderQnaList,
+        submitQuestion,
+        renderLmsMenu
+    } from '/js/lms/lmsCommonsData.js';
+
+    const materialId = document.body.dataset.materialId;
+
+    document.querySelector(".questionSubmit")?.addEventListener("click", () => {
+        submitQuestion({
+            inputSelector: "#questionWrite",
+            materialId,
+            onSuccess: () => fetchAndRenderQnaList(materialId)
+        });
+    });
+
+    fetch(`/api/lms/myRecentLecture/chapters/materials/addiDetail/${materialId}`)
+      .then(res => res.json())
+      .then(data => {
+        const title = data.name?.trim() || "제목 없음";
+        const fileName = data.name?.trim() || "이름 없음";
+        const extension = data.format?.toLowerCase() || "unknown";
+        const fileUrl = data.address || "#";
+
+        // 제목 삽입
+        const sectionHeader = document.querySelector(".sectionHeader");
+        if (sectionHeader) {
+          sectionHeader.textContent = title;
+        }
+
+        // 요소 선택
+        const viewerPdf = document.querySelector(".viewer.pdf");
+        const viewerNone = document.querySelector(".viewer.none");
+        const fileNameElem = document.querySelector(".fileName");
+        const downloadBtn = document.querySelector(".downloadBtn");
+
+        // 렌더링 분기
+        if (extension === "pdf") {
+          viewerPdf.style.display = "block";
+          viewerNone.style.display = "none";
+
+          viewerPdf.innerHTML = `
+            <iframe
+              src="${fileUrl}"
+              width="100%"
+              height="780px"
+              style="border: none; border-radius: 12px;"
+              title="PDF 미리보기">
+            </iframe>
+          `;
+        } else {
+          viewerPdf.style.display = "none";
+          viewerNone.style.display = "flex";
+
+          // ✅ 파일명.확장자명 표시
+          if (fileNameElem) {
+            fileNameElem.textContent = `${fileName}.${extension}`;
+          }
+
+          // ✅ 다운로드 버튼 설정
+          if (downloadBtn) {
+            downloadBtn.setAttribute("href", fileUrl);
+            downloadBtn.setAttribute("download", `${fileName}.${extension}`);
+          }
+        }
+
+        // 지식 제공자 한 마디 출력
+        const commentElem = document.querySelector(".commentContent");
+        if (commentElem) {
+          commentElem.textContent = data.comment?.trim() || "지식 제공자의 한 마디가 없습니다.";
+        }
+      })
+      .catch(err => {
+        console.error("📛 파일 자료 로딩 실패:", err);
+      });
+
+    // 질문
+    fetchAndRenderQnaList(materialId);
+
+    // 우측 메뉴 렌더링
+    renderLmsMenu();
+
+    // 제목
+    fetch("/api/lms/myRecentLecture")
+      .then(res => res.json())
+      .then(data => {
+        const lecTitleElem = document.querySelector(".lecTitle");
+        if (lecTitleElem && data.lecture.title) {
+          lecTitleElem.textContent = truncate(data.lecture.title, 15);
+        }
+      })
+      .catch(err => console.error("강좌 제목 로딩 실패", err));
+
+    function truncate(text, maxLength) {
+        return (text && text.length > maxLength)
+            ? text.slice(0, maxLength) + "…"
+            : text;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>강의 생성</title>
+
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/lms/lecturesRegister.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+
+    <script th:src="@{/js/lms/lecturesRegister.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<!-- 🔄 폼 액션을 JavaScript로 처리하도록 변경 -->
+<form id="lectureForm" onsubmit="return validateForm()" method="post">
+    <!-- 페이지 헤더 -->
+    <div class="pageHeader">
+        <img th:src="@{/img/lms/icon.png}"/> 강의 생성하기
+    </div>
+    <div class="pageSubHeader">새로운 강의를 만들어 보아요!</div>
+
+    <!-- 강의 정보 -->
+    <div class="contentWrap">
+        <h2 class="contentHeader">강의 정보</h2>
+
+        <!-- 강의 제목 -->
+        <div class="content">
+            <h3 class="title">강의 제목</h3>
+            <p class="subTitle">강의의 주제가 잘 보이게 최소 5자 이상 작성해주세요.</p>
+            <input type="text" id="lectureTitle" name="title" placeholder="강의 제목을 입력하세요" maxlength="100">
+        </div>
+
+        <!-- 강의 개요 -->
+        <div class="content">
+            <h3 class="title">강의 개요</h3>
+            <p class="subTitle">강의를 간략하게 설명해보세요.</p>
+            <input type="text" id="lectureOutline" name="outline" placeholder="강의 개요를 입력하세요" maxlength="200">
+        </div>
+
+        <!-- 강의 썸네일 -->
+        <div class="content">
+            <h3 class="title">썸네일</h3>
+            <p class="subTitle">강의를 대표할 이미지를 업로드해주세요. (JPG, PNG / 최대 5MB)</p>
+
+            <div class="file">
+                <div id="fileName" class="fileName">16:9 비율 권장</div>
+                <button type="button" class="fileBtn" onclick="document.getElementById('file').click()">
+                    파일 업로드
+                </button>
+                <input type="file" id="file" name="thumbnail" accept="image/jpeg,image/jpg,image/png"
+                       style="display: none;" onchange="updateFile(this)">
+            </div>
+
+            <!-- 📷 미리보기 영역 추가 -->
+            <div id="thumbnailPreview" style="display: none; margin-top: 10px;">
+                <p style="font-size: 14px; color: #666;">미리보기:</p>
+                <img id="previewImage" style="max-width: 200px; max-height: 120px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+        </div>
+
+        <!-- 🎯 가격 설정을 여기로 이동 -->
+        <div class="content">
+            <h3 class="title">정가(₩)</h3>
+            <p class="subTitle">입력하지 않으면 무료 강의로 분류됩니다.</p>
+            <input type="text" id="lecturePrice" name="price" placeholder="예: 50000"
+                   pattern="[0-9]*" title="숫자만 입력하세요">
+        </div>
+
+        <div class="content">
+            <h3 class="title">할인율(%)</h3>
+            <p class="subTitle">할인율을 설정하세요 (0-100)</p>
+            <input type="number" id="discountRate" name="discountRate"
+                   min="0" max="100" placeholder="예: 20" value="0">
+        </div>
+    </div>
+
+    <!-- 강의 분류 -->
+    <div class="contentWrap">
+        <h2 class="contentHeader">강의 분류</h2>
+
+        <!-- 강의 카테고리 -->
+        <div class="content">
+            <h3 class="title">카테고리</h3>
+            <p class="subTitle">강의의 주제에 맞는 카테고리를 선택해주세요.</p>
+
+            <!-- 🎯 대분류/소분류 선택 시스템 -->
+            <div class="cate">
+                <!-- 대분류 -->
+                <div class="majorCateList">
+                    <button type="button" class="majorCate" id="foreign">외국어</button>
+                    <button type="button" class="majorCate" id="art">예술</button>
+                    <button type="button" class="majorCate" id="it">개발/IT</button>
+                    <button type="button" class="majorCate" id="exercise">운동</button>
+                    <button type="button" class="majorCate" id="favorit">취미</button>
+                    <button type="button" class="majorCate" id="business">비즈니스</button>
+                </div>
+
+                <!-- 소분류 -->
+                <div class="subCateList">
+                    <!-- 외국어 -->
+                    <ul class="subCate" style="display: none;" id="foreignList">
+                        <li id="eng">영어 <div class="state">+</div></li>
+                        <li id="jap">일본어 <div class="state">+</div></li>
+                        <li id="chi">중국어 <div class="state">+</div></li>
+                        <li id="fre">프랑스어 <div class="state">+</div></li>
+                        <li id="foreignEct">기타 언어 <div class="state">+</div></li>
+                    </ul>
+
+                    <!-- 예술 -->
+                    <ul class="subCate" style="display: none;" id="artList">
+                        <li id="visual">미술 <div class="state">+</div></li>
+                        <li id="sound">음악 <div class="state">+</div></li>
+                        <li id="pic">사진 <div class="state">+</div></li>
+                        <li id="video">영상 <div class="state">+</div></li>
+                        <li id="artEct">기타 예술 <div class="state">+</div></li>
+                    </ul>
+
+                    <!-- 개발/IT -->
+                    <ul class="subCate" style="display: none;" id="itList">
+                        <li id="web">웹 개발 <div class="state">+</div></li>
+                        <li id="app">앱 개발 <div class="state">+</div></li>
+                        <li id="data">데이터 <div class="state">+</div></li>
+                        <li id="ai">인공지능 <div class="state">+</div></li>
+                        <li id="itEct">기타 개발/IT <div class="state">+</div></li>
+                    </ul>
+
+                    <!-- 운동 -->
+                    <ul class="subCate" style="display: none;" id="exerciseList">
+                        <li id="pil">요가/필라테스 <div class="state">+</div></li>
+                        <li id="reh">재활 <div class="state">+</div></li>
+                        <li id="pit">피트니스 <div class="state">+</div></li>
+                        <li id="spo">스포츠 <div class="state">+</div></li>
+                        <li id="exerciseEct">기타 운동 <div class="state">+</div></li>
+                    </ul>
+
+                    <!-- 취미 -->
+                    <ul class="subCate" style="display: none;" id="favoritList">
+                        <li id="cook">요리 <div class="state">+</div></li>
+                        <li id="disert">디저트 <div class="state">+</div></li>
+                        <li id="beauty">뷰티 <div class="state">+</div></li>
+                        <li id="crafts">공예 <div class="state">+</div></li>
+                        <li id="favoritEct">기타 취미 <div class="state">+</div></li>
+                    </ul>
+
+                    <!-- 비즈니스 -->
+                    <ul class="subCate" style="display: none;" id="businessList">
+                        <li id="startup">창업 <div class="state">+</div></li>
+                        <li id="management">경영 <div class="state">+</div></li>
+                        <li id="finance">재무/회계 <div class="state">+</div></li>
+                        <li id="marketing">마케팅 <div class="state">+</div></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 선택된 카테고리 표시 -->
+            <h3 class="title" style="color: #858585; font-size: 16px; border-bottom: 1px solid #858585; margin-top: 20px;">
+                선택된 카테고리
+            </h3>
+            <div class="selectedCateList">
+                <!-- 선택된 카테고리가 JavaScript로 동적 생성됩니다 -->
+            </div>
+
+            <!-- 숨겨진 input 필드 (실제 전송용) -->
+            <input type="hidden" id="interestedId" name="interestedId" required>
+        </div>
+
+        <!-- 강의 난이도 -->
+        <div class="content">
+            <h3 class="title">강의 난이도</h3>
+            <p class="subTitle">강의에 맞는 난이도를 선택해주세요.</p>
+            <select id="lectureDifficulty" name="difficulty" required>
+                <option value="">난이도를 선택하세요</option>
+                <option value="0">초급</option>
+                <option value="1">중급</option>
+                <option value="2">고급</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 강의 소개글 -->
+    <div class="contentWrap">
+        <h2 class="contentHeader">소개글 작성</h2>
+        <div class="content">
+            <p class="subTitle">강의에 대한 자세한 소개를 작성해주세요.</p>
+            <textarea name="introduction" id="smartEditor" rows="10" cols="100"
+                      style="width: 100%; min-height: 300px;" placeholder="강의 소개글을 작성해주세요."></textarea>
+        </div>
+    </div>
+
+    <!-- 🎯 목차 섹션 추가 -->
+    <div class="contentWrap">
+        <h2 class="contentHeader">목차 관리</h2>
+        <div class="content">
+            <p class="subTitle">강의 목차를 추가하고 각 목차별 자료를 등록하세요.</p>
+            <button type="button" onclick="addChapter()" class="btn-primary">목차 추가</button>
+            <div id="chaptersList"></div>
+        </div>
+    </div>
+
+    <!-- 등록 버튼 -->
+    <div class="btnBox">
+        <button type="submit" class="submitBtn">강의 등록하기</button>
+    </div>
+</form>
+
+<!-- 로딩 모달 -->
+<div id="loadingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                   background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
+                        border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+        <p>강의를 등록하고 있습니다...</p>
+    </div>
+</div>
+
+<!-- 결과 표시 영역 -->
+<div id="result" style="margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; display: none;"></div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+
+<!-- 스마트에디터 JS 로딩 -->
+<script src="/smarteditor/js/HuskyEZCreator.js"></script>
+
+<!-- 스마트에디터 초기화 -->
+<script type="text/javascript">
+    let oEditor = [];
+
+    // 페이지 로드 후 스마트에디터 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditor,
+            elPlaceHolder: "smartEditor",
+            sSkinURI: "/smarteditor/SmartEditor2Skin.html",
+            fCreator: "createSEditor2"
+        });
+    });
+</script>
+
+<!-- 스타일 추가 -->
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #thumbnailPreview {
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        border: 1px dashed #ccc;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px 0;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+
+    .chapter-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 15px 0;
+        background: #f9f9f9;
+    }
+
+    .material-item {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px 0;
+        background: white;
+    }
+
+    .material-specific {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f0f8ff;
+        border-radius: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        margin: 2px;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+</style>
+</body>
+</html>

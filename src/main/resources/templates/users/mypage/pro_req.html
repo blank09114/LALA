@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>지식 제공자 신청하기</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link th:href="@{/css/users/pro_req.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+<div class="container">
+    <div class="subtitle">🌿 LALA 지식 제공자 신청하기</div>
+    <h1>지식 제공자 요청하기</h1>
+    <p>우리들의 지식 제공자가 되어주세요!</p>
+
+    <form id="proReqForm">
+        <label>이름</label>
+        <input type="text" name="name" placeholder="이름을 입력해 주세요!" required>
+
+        <label>닉네임</label>
+        <input type="text" name="nickname" placeholder="지식 제공자로서의 활동명을 입력해 주세요!" required>
+
+        <label>소개</label>
+        <textarea name="intro" placeholder="수강생들에게 본인을 소개해 주세요!" required></textarea>
+
+        <label>외부링크</label>
+        <textarea name="externallink" placeholder="수강생들에게 보여 줄 본인의 실력을 올려주세요!(ex 블로그 등)"></textarea>
+
+        <label>학력/약력</label>
+        <input type="text" id="historyInput" placeholder="본인의 실력을 입증할 학력 또는 약력을 입력해 주세요!(수강생들에게는 노출되지 않습니다.)" />
+        <div id="historyList" class="file-list" style="display: none;"></div>
+
+        <button type="submit">요청 하기</button>
+    </form>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script>
+    const formElement = document.getElementById('proReqForm');
+    const historyInput = document.getElementById('historyInput');
+    const historyList = document.getElementById('historyList');
+
+    let fileIndex = 0;
+    let historyData = [];
+
+    historyInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addHistoryItem();
+      }
+    });
+
+    function addHistoryItem() {
+      const value = historyInput.value.trim();
+      if (!value) return;
+
+      if (historyList.style.display === 'none') {
+        historyList.style.display = 'block';
+      }
+
+      const currentIndex = fileIndex++;
+
+      const itemContainer = document.createElement('div');
+      itemContainer.className = 'history-item-container';
+      itemContainer.setAttribute('data-index', currentIndex);
+
+      itemContainer.innerHTML = `
+        <div class="history-text">${value}</div>
+        <div class="file-upload-section">
+          <label class="upload-btn">
+            <i class="fa-solid fa-arrow-up-from-bracket"> 첨부파일</i>
+            <input type="file" name="file${currentIndex}" data-history-index="${currentIndex}">
+          </label>
+          <div class="file-preview-container"></div>
+        </div>
+        <button type="button" class="remove-history-btn" onclick="removeHistoryItem(${currentIndex})">✕</button>
+      `;
+
+      historyList.appendChild(itemContainer);
+
+      historyData.push({
+        index: currentIndex,
+        text: value,
+        file: null
+      });
+
+      const fileInput = itemContainer.querySelector('input[type="file"]');
+      fileInput.addEventListener('change', function(e) {
+        handleFileChange(e, currentIndex);
+      });
+
+      historyInput.value = '';
+    }
+
+    function handleFileChange(e, historyIndex) {
+      const file = e.target.files[0];
+      const historyItem = historyData.find(item => item.index === historyIndex);
+      if (!historyItem) return;
+
+      historyItem.file = file;
+      updateFilePreview(historyIndex, file);
+
+      // ✅ 첨부파일 버튼 숨기기
+      const uploadLabel = document.querySelector(`[data-index="${historyIndex}"] .upload-btn`);
+      if (uploadLabel) {
+        uploadLabel.style.display = 'none';
+      }
+    }
+
+    function updateFilePreview(historyIndex, file) {
+      const container = document.querySelector(`[data-index="${historyIndex}"] .file-preview-container`);
+      if (!file) {
+        container.innerHTML = '';
+        return;
+      }
+
+      const fileSize = formatFileSize(file.size);
+
+      container.innerHTML = `
+        <div class="file-preview">
+          <div class="file-icon"><i class="fa-regular fa-file"></i></div>
+          <div class="file-info">
+            <div class="file-name">${file.name}</div>
+            <div class="file-size">${fileSize}</div>
+          </div>
+          <button type="button" class="remove-file-btn" onclick="removeFile(${historyIndex})" title="파일 삭제">✕</button>
+        </div>
+      `;
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function removeFile(historyIndex) {
+      const historyItem = historyData.find(item => item.index === historyIndex);
+      if (!historyItem) return;
+
+      historyItem.file = null;
+
+      const fileInput = document.querySelector(`input[data-history-index="${historyIndex}"]`);
+      if (fileInput) {
+        fileInput.value = '';
+      }
+
+      updateFilePreview(historyIndex, null);
+
+      // ✅ 첨부파일 버튼 다시 보이게
+      const uploadLabel = document.querySelector(`[data-index="${historyIndex}"] .upload-btn`);
+      if (uploadLabel) {
+        uploadLabel.style.display = 'inline-flex';
+      }
+    }
+
+    function removeHistoryItem(historyIndex) {
+      if (!confirm('이 학력/약력 항목을 삭제하시겠습니까?')) return;
+
+      const itemContainer = document.querySelector(`[data-index="${historyIndex}"]`);
+      if (itemContainer) {
+        itemContainer.remove();
+      }
+
+      historyData = historyData.filter(item => item.index !== historyIndex);
+
+      if (historyData.length === 0) {
+        historyList.style.display = 'none';
+      }
+    }
+
+    formElement.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = collectFormData();
+
+      if (!validateRequired(formData)) {
+        return;
+      }
+
+      submitForm(formData);
+    });
+
+    function collectFormData() {
+      const formData = new FormData();
+      formData.append('name', document.querySelector('input[name="name"]').value.trim());
+      formData.append('nickname', document.querySelector('input[name="nickname"]').value.trim());
+      formData.append('intro', document.querySelector('textarea[name="intro"]').value.trim());
+      formData.append('externallink', document.querySelector('textarea[name="externallink"]').value.trim());
+
+      if (historyData.length > 0) {
+        historyData.forEach(item => {
+          formData.append('historyTexts', item.text);
+          if (item.file && item.file.size > 0) {
+            formData.append('historyFiles', item.file);
+          }
+        });
+      }
+
+      return formData;
+    }
+
+    function validateRequired(formData) {
+      const name = formData.get('name');
+      const nickname = formData.get('nickname');
+      const intro = formData.get('intro');
+
+      if (!name || !nickname || !intro) {
+        alert('이름, 닉네임, 소개는 필수 입력 항목입니다.');
+        return false;
+      }
+      return true;
+    }
+
+    function submitForm(formData) {
+      fetch('/users/mypage/pro-req-with-history', {
+        method: 'POST',
+        body: formData
+      })
+      .then(handleResponse)
+      .then(handleSuccess)
+      .catch(handleError);
+    }
+
+    function handleResponse(response) {
+      if (response.ok) {
+        return response.json();
+      }
+      return response.json().then(data => {
+        throw new Error(data.message || '신청에 실패했습니다.');
+      });
+    }
+
+    function handleSuccess(data) {
+      if (data.success) {
+        alert('신청이 완료되었습니다!');
+        resetForm();
+      } else {
+        throw new Error(data.message || '신청에 실패했습니다.');
+      }
+    }
+
+    function handleError(error) {
+      console.error('Error:', error);
+      alert('에러가 발생했습니다: ' + error.message);
+    }
+
+    function resetForm() {
+      formElement.reset();
+      historyList.style.display = 'none';
+      historyList.innerHTML = '';
+      historyData = [];
+      fileIndex = 0;
+    }
+</script>
+
+</body>
+</html>

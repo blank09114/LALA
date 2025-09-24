@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 - 커뮤니티 게시물 관리</title>
+  <link rel="stylesheet" th:href="@{/css/shared/admin_header.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin/admin_communityList.css}">
+  <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+
+<header th:replace="~{shared/admin_header :: admin_header}"></header>
+
+
+<div class="Community_wrap">
+  <div class="Community_manage">
+    <h2>커뮤니티 게시물 관리</h2>
+
+    <!-- 🔹 form으로 전체 필터 감싸기 -->
+    <form id="searchPostForm">
+      <div class="filter_section">
+        <div class="filter_left">
+          <div class="search_bar">
+            <label class="section_label">게시글 타입</label>
+            <select name="postTypes" id="postTypes">
+              <option value="">전체</option>
+              <option value="1">공지</option>
+              <option value="2">자유</option>
+              <option value="3">스터디(모집중)</option>
+              <option value="4">스터디(모집완료)</option>
+              <option value="5">질문&답변(미해결)</option>
+              <option value="6">질문&답변(해결)</option>
+            </select>
+          </div>
+          <div class="search_bar">
+            <label class="section_label">회원 유형</label>
+            <select name="userTypes" id="userTypes">
+              <option value="">전체</option>
+              <option value="0">일반회원</option>
+              <option value="1">지식제공자</option>
+              <option value="3">관리자</option>
+            </select>
+          </div>
+          <!-- 🔽 신고 여부를 여기로 옮김 -->
+          <div class="search_bar">
+            <label class="section_label">신고 여부</label>
+            <select name="reports" id="reports">
+              <option value="">전체</option>
+              <option value="0">없음</option>
+              <option value="1">신고됨</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter_right">
+          <div class="search_bar">
+            <label class="section_label">닉네임</label>
+            <input type="text" name="nickname" placeholder="닉네임 입력">
+          </div>
+          <div class="search_bar">
+            <label class="section_label">작성일자</label>
+            <input type="date" name="startDate">
+            <span>~</span>
+            <input type="date" name="endDate">
+          </div>
+          <div class="button_wrap">
+            <button type="submit" id="searchBtn">검색</button>
+            <button type="button" id="resetBtn">초기화</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- 🔹 테이블 영역 -->
+    <table>
+      <thead>
+      <tr>
+        <th>닉네임</th>
+        <th>게시글 제목</th>
+        <th>회원 유형</th>
+        <th>게시글 유형</th>
+        <th>작성일자</th>
+        <th>신고 여부</th>
+        <th>상세</th>
+      </tr>
+      </thead>
+      <tbody id="postTableBody">
+      <!-- AJAX 데이터 들어올 자리 -->
+      </tbody>
+    </table>
+
+    <!-- 🔹 페이징 -->
+    <div class="pagination"></div>
+  </div>
+</div>
+
+<footer th:replace="~{shared/footer :: footer}"></footer>
+<script th:src="@{/js/admin/admin_communityList.js}" defer></script>
+</body>
+</html>

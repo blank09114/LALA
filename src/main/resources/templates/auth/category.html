@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" th:href="@{/css/auth/selectCategoryForm.css}">
+
+    <style>
+        /* 주석 처리된 스타일 제거 */
+    </style>
+
+</head>
+<body>
+<section class="interest-section">
+    <header class="interest-header">
+        <img src="/img/LALA_log.png" alt="LALA 로고" class="logo">
+        <h1>관심분야를 선택해주세요!</h1>
+        <p>선택된 태그를 바탕으로 강의를 추천해드립니다.</p>
+        <p style="color:#ccc; font-size:12px; margin-bottom: 50px;">(최소 1개, 최대 5개 선택 가능)</p>
+    </header>
+
+
+    <div class="carousel-wrapper">
+        <button class="arrow left" aria-label="이전">‹</button>
+        <div  class="carousel">
+            <ul class = "carousel-track" >
+                <li class="tag category"
+                    th:each="category : ${categories}"
+                    th:text="${category.categoryName}"
+                    th:attr="data-id=${category.interestedCategoryId}">관심사명</li>
+            </ul>
+        </div>
+        <button class="arrow right" aria-label="다음">›</button>
+    </div>
+
+
+    <form id="choiesCategorys">
+        <ul id="selectCategorys" class="selectCate"></ul>
+        <button class="complete-btn" type="button" id="submitCategoryBtn">등록완료</button>
+    </form>
+</section>
+
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+     const categoryEls = document.querySelectorAll(".category");
+     const selectContainer = document.getElementById("selectCategorys");
+     const submitBtn = document.getElementById("submitCategoryBtn");
+
+     // 서버에서 전달받은 기존 선택된 카테고리 ID들
+     const existingSelectedIds = /*[[${selectedCategoryIds}]]*/ [];
+     const selectedIds = new Set(existingSelectedIds);
+
+     // 페이지 로드 시 기존 선택된 카테고리들을 표시
+     function initializeSelectedCategories() {
+         if (existingSelectedIds.length > 0) {
+             existingSelectedIds.forEach(categoryId => {
+                 const categoryEl = document.querySelector(`.category[data-id="${categoryId}"]`);
+                 if (categoryEl) {
+                     const tagName = categoryEl.textContent.trim();
+                     
+                     // 카테고리 태그에 선택 표시
+                     categoryEl.classList.add('selected');
+                     categoryEl.style.backgroundColor = '#00B37E';
+                     categoryEl.style.color = '#fff';
+
+                     // 선택된 목록에 추가
+                     const selected = document.createElement("li");
+                     selected.className = "select-category";
+                     selected.dataset.id = categoryId;
+                     selected.innerHTML = `
+                         <span class="category-name">${tagName}</span>
+                         <button type="button" class="delete-btn" title="삭제">×</button>
+                     `;
+
+                     // 삭제 버튼 이벤트
+                     const deleteBtn = selected.querySelector('.delete-btn');
+                     deleteBtn.addEventListener('click', function(e) {
+                         e.stopPropagation();
+                         toggleCategory(categoryId, tagName, false);
+                     });
+
+                     selectContainer.appendChild(selected);
+                 }
+             });
+         }
+     }
+
+     // 카테고리 선택/해제 함수
+     function toggleCategory(interestedId, tagName, shouldSelect = null) {
+         const isCurrentlySelected = selectedIds.has(interestedId);
+         const shouldSelectCategory = shouldSelect !== null ? shouldSelect : !isCurrentlySelected;
+
+         if (shouldSelectCategory && !isCurrentlySelected) {
+             // 최대 5개 제한 체크
+             if (selectedIds.size >= 5) {
+                 alert("최대 5개까지만 선택 가능합니다.");
+                 return;
+             }
+
+             // 선택 추가
+             selectedIds.add(interestedId);
+
+             // 카테고리 태그에 선택 표시
+             document.querySelectorAll(`.category[data-id="${interestedId}"]`).forEach(el => {
+                 el.classList.add('selected');
+                 el.style.backgroundColor = '#00B37E';
+                 el.style.color = '#fff';
+             });
+
+             // 이미 선택된 목록에 있는지 확인
+             const existingItem = selectContainer.querySelector(`[data-id="${interestedId}"]`);
+             if (!existingItem) {
+                 // 선택된 목록에 추가 (삭제 버튼 포함)
+                 const selected = document.createElement("li");
+                 selected.className = "select-category";
+                 selected.dataset.id = interestedId;
+                 selected.innerHTML = `
+                     <span class="category-name">${tagName}</span>
+                     <button type="button" class="delete-btn" title="삭제">×</button>
+                 `;
+
+                 // 삭제 버튼 이벤트
+                 const deleteBtn = selected.querySelector('.delete-btn');
+                 deleteBtn.addEventListener('click', function(e) {
+                     e.stopPropagation(); // 버블링 방지
+                     toggleCategory(interestedId, tagName, false);
+                 });
+
+                 selectContainer.appendChild(selected);
+             }
+
+         } else if (!shouldSelectCategory && isCurrentlySelected) {
+             // 선택 해제
+             selectedIds.delete(interestedId);
+
+             // 카테고리 태그에서 선택 표시 제거
+             document.querySelectorAll(`.category[data-id="${interestedId}"]`).forEach(el => {
+                 el.classList.remove('selected');
+                 el.style.backgroundColor = '';
+                 el.style.color = '';
+             });
+
+             // 선택된 목록에서 제거
+             const itemToRemove = selectContainer.querySelector(`[data-id="${interestedId}"]`);
+             if (itemToRemove) {
+                 itemToRemove.remove();
+             }
+         }
+
+         console.log("현재 선택된 카테고리:", Array.from(selectedIds));
+     }
+
+     // 카테고리 클릭 이벤트
+     categoryEls.forEach(el => {
+         el.addEventListener("click", function () {
+             const tagName = el.textContent.trim();
+             const interestedId = el.dataset.id;
+
+             if (!interestedId) {
+                 console.error("data-id가 없습니다:", el);
+                 return;
+             }
+
+             toggleCategory(interestedId, tagName);
+         });
+     });
+
+     // 제출 버튼 이벤트
+     submitBtn.addEventListener("click", function () {
+         if (selectedIds.size === 0) {
+             alert("최소 1개 이상의 카테고리를 선택해주세요.");
+             return;
+         }
+
+         const ids = Array.from(selectedIds);
+         console.log("전송할 카테고리 ID:", ids);
+
+         fetch("/auth/category/save", {
+             method: "POST",
+             headers: {
+                 "Content-Type": "application/json"
+             },
+             body: JSON.stringify({ interestedId: ids }),
+             credentials: "include"
+         })
+         .then(res => {
+             if (res.ok) {
+                 // 마이페이지에서 온 경우 마이페이지로 돌아가기
+                 const isFromMyPage = /*[[${fromMyPage}]]*/ false;
+                 if (isFromMyPage) {
+                     window.location.href = "/mypage/account";
+                 } else {
+                     window.location.href = "/course/main";
+                 }
+             } else {
+                 alert("등록에 실패했습니다.");
+             }
+         })
+         .catch(err => {
+             console.error("에러 발생", err);
+             alert("서버 통신 중 문제가 발생했습니다.");
+         });
+     });
+
+     // 페이지 로드 시 기존 선택된 카테고리들 초기화
+     initializeSelectedCategories();
+ });
+</script>
+
+</body>
+
+</html>

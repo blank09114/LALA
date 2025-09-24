@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 설정</title>
+    <th:block th:replace="~{shared/header :: headerScript}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/shared/header.css}"/>
+    <link rel="stylesheet" th:href="@{/css/users/selectCategoryForm.css}"/>
+    <link rel="stylesheet" th:href="@{/css/shared/footer.css}"/>
+</head>
+<body>
+<header th:replace="~{shared/header :: header}"></header>
+
+<!-- 유저 정보 -->
+<div>
+    <h3>유저 정보</h3>
+    <div th:if="${User}">
+        <p>유저 타입: <span th:text="${User.accountType}">user_type</span></p>
+        <p>프로필 이미지: <span th:text="${User.profileName}">profileName</span></p>
+        <p>닉네임: <span th:text="${User.userNickname}">userNickname</span></p>
+        <p>이메일: <span th:text="${User.emailAddress}">emailAddress</span></p>
+        <p>비밀번호 업데이트: <span th:text="${User.passwordUpdate}">password_update</span></p>
+    </div>
+    <div th:unless="${User}">
+        <p>유저 정보가 없습니다.</p>
+    </div>
+</div>
+
+<!-- 관심분야 -->
+<div>
+    <h3>관심분야</h3>
+    <div th:if="${Interest} and ${not #lists.isEmpty(Interest)}">
+        <div th:each="item, iterStat : ${Interest}">
+            <p>[<span th:text="${iterStat.count}">번호</span>] 카테고리: <span th:text="${item.categoryName}">categoryName</span>,
+                관심분야: <span th:text="${item.interestedName}">interestedName</span></p>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(Interest)}">
+        <p>관심분야가 없습니다.</p>
+    </div>
+</div>
+
+<!-- 캘린더 -->
+<div>
+    <h3>이주의 캘린더</h3>
+    <div th:if="${Calendar} and ${not #lists.isEmpty(Calendar)}">
+        <div th:each="Calendar, calendar : ${Calendar}">
+            <p>[<span th:text="${calendar.count}">번호</span>] 날짜: <span th:text="${calendar.calendarDate}">cal_date</span>, 내용:
+                <span th:text="${calendar.content}">content</span></p>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(Calendar)}">
+        <p>이번주 캘린더 일정이 없습니다.</p>
+    </div>
+</div>
+
+<!-- 플래너 -->
+<div>
+    <h3>이주의 플래너</h3>
+    <div th:if="${Planner} and ${not #lists.isEmpty(Planner)}">
+        <!-- 현재 (잘못된 코드) -->
+        <!-- 수정된 코드 -->
+        <div th:each="planner, iterStat : ${Planner}">
+            <p>[<span th:text="${iterStat.count}">번호</span>] 시작일: <span th:text="${planner.startDate}">start_date</span>,
+                종료일: <span th:text="${planner.endDate}">end_date</span>, 내용: <span th:text="${planner.content}">content</span>,
+                완료여부: <span th:text="${planner.isCompleted}">checked</span></p>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(Planner)}">
+        <p>이번주 플래너가 없습니다.</p>
+    </div>
+</div>
+
+<!-- 최근 학습 강의 -->
+<div>
+    <h3>최근 학습 강의</h3>
+    <div th:if="${Lecture}">
+        <p>강의ID: <span th:text="${Lecture.id}">lecture_id</span></p>
+        <p>강의명: <span th:text="${Lecture.title}">title</span></p>
+        <p>강사: <span th:text="${Lecture.provider}">provider</span></p>
+        <p>썸네일: <span th:text="${Lecture.thumbnail}">thumbnail</span></p>
+        <p>최근 학습일: <span th:text="${Lecture.last_update_date}">last_update_date</span></p>
+    </div>
+    <div th:unless="${Lecture}">
+        <p>최근 학습 강의가 없습니다.</p>
+    </div>
+</div>
+
+<!-- 최근 커뮤니티 활동 -->
+<div>
+    <h3>최근 커뮤니티 활동</h3>
+    <div th:if="${Community} and ${not #lists.isEmpty(Community)}">
+        <div th:each="comm, iterStat : ${Community}">
+            <p>[<span th:text="${iterStat.count}">번호</span>]</p>
+            <p>게시글ID: <span th:text="${comm.postId}">post_id</span></p>
+            <p>게시글 타입: <span th:text="${comm.postType}">post_type</span></p>
+            <p>제목: <span th:text="${comm.title}">title</span></p>
+            <p>내용: <span th:text="${comm.content}">content</span></p>
+            <p>작성일: <span th:text="${comm.date}">write_date</span></p>
+            <p>작성자: <span th:text="${comm.nickname}">nickname</span></p>
+            <p>좋아요: <span th:text="${comm.likeCount}">like_count</span></p>
+            <p>조회수: <span th:text="${comm.viewCount}">view_count</span></p>
+            <p>댓글수: <span th:text="${comm.commentCount}">comment_count</span></p>
+            <p>삭제여부: <span th:text="${comm.deleted}">deleted</span></p>
+            <hr>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(Community)}">
+        <p>최근 커뮤니티 활동이 없습니다.</p>
+    </div>
+</div>
+<footer th:replace="~{shared/footer :: footer}"></footer>
+</body>
+</html>

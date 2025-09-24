@@ -1,0 +1,841 @@
+/* 전체 서식 */
+body
+{
+    margin: 0;
+    padding: 0;
+}
+p, h2
+{
+    width: 100%;
+    height: auto;
+
+    margin: 0;
+    padding: 0;   
+}
+nav
+{
+    width: 100%;
+    height: auto;
+
+}
+select
+{
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 12px;
+
+    outline: none;
+    border: 1px solid #858585;
+    background-color: white;
+
+    font-size: 16px;
+    line-height: 30px;
+
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23858585' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+select:hover, select:focus { border: 1px solid #00C471; }
+
+
+
+/* 섹션 */
+section
+{
+    width: 1300px;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.section-container { width: 800px; }
+.section-content
+{
+    margin-top: 10px;
+    padding: 10px;
+
+    position: relative;
+}
+.section-header
+{
+    width: 100%;
+    height: 40px;
+
+    font-size: 24px;
+    line-height: 40px;
+}
+
+
+
+/* 강의 정보 */
+.lectureInfo
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background-color: black;
+}
+.nav-container
+{
+    width: 1300px;
+    height: 250px;
+    padding: 25px 0;
+    box-sizing: border-box;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 좌측 메뉴 */
+.leftMenu
+{
+    width: 900px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    color: white;
+}
+
+/* 강의 정보 */
+.cate, .lecTitle, .lecContent { margin-bottom: 5px; }
+.cate, .lecContent
+{
+    font-size: 16px;
+    color: #C9C9C9;
+}
+.lecTitle { font-size: 30px; }
+
+/* 썸네일 */
+.thumbnail
+{
+    width: 355px;
+    height: 100%;
+    border-radius: 8px;
+
+    background-color: #DDE1E4;
+    box-shadow: 0 0 20px 10px rgba(221, 225, 228, 0.3);
+}
+
+/* 페이지 핸들러 */
+.pageHandlerWarp
+{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    border-bottom: 1px solid #757575;
+    background-color: rgb(255, 255, 255);
+}
+.pageHandler
+{
+    width: 1300px;
+    height: 40px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+
+    display: flex;
+
+    list-style: none;
+}
+.pageHandler li
+{
+    width: 150px;
+    height: 100%;
+    box-sizing: border-box;
+
+    font-size: 20px;
+    text-align: center;
+    line-height: 40px;
+    color: #757575;
+
+    cursor: pointer;
+    
+    transition: border-bottom 0.1s ease;
+}
+.pageHandler li:hover, .now
+{
+    border-bottom: 2px solid black;
+    color: black !important;
+}
+
+
+
+/* 소개글 */
+.intro-content
+{
+    width: 100%;
+    height: auto;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+
+
+/* 목차 */
+.toggleBtn
+{
+    width: 150px;
+    height: 30px;
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    border: 1px solid #cccccc;
+    background: none;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+
+    cursor: pointer;
+}
+.toggleBtn:hover { background-color: #f9f9f9; }
+.partList
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    padding-top: 10px;
+    box-sizing: border-box;
+
+    border-top: 1px solid #cccccc;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.part
+{
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.part:hover { border: 1px solid #00C471; }
+
+/* 목차 정보 */
+.partInfo
+{
+    width: 100%;
+    height: 50px;
+}
+.partTitleWrap
+{
+    width: 100%;
+    height: 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.partTitle
+{
+    width: auto;
+    height: 100%;
+
+    font-size: 20px;
+    line-height: 30px;
+}
+.partToggleBtn
+{
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    line-height: 30px;
+    
+    cursor: pointer;
+}
+.partToggleBtn:hover { color: #00C471; }
+.partIntro
+{
+    width: 100%;
+    height: 20px;
+
+    font-size: 16px;
+    line-height: 20px;
+    color: #6B6B6B;
+}
+
+/* 강좌 */
+.classList
+{
+    width: 95%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.class
+{
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    padding: 0 20px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+    background: none;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+}
+.class:hover { background-color: #f9f9f9; }
+.wrap
+{
+    display: flex;
+    gap: 20px;
+}
+.icon
+{
+    width: 30px;
+    height: 30px;
+}
+.wrap p
+{
+    width: auto;
+    height: 100%;
+
+    font-size: 20px;
+    line-height: 30px;
+}
+#time { color: #707070; }
+
+
+
+/* 리뷰 */
+.moreBtn
+{
+    width: 100%;
+    height: 35px;
+    margin: 0 auto;
+    margin-top: 10px;
+    border-radius: 8px;
+
+    border: 1px solid #cccccc;
+    background-color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 35px;
+
+    cursor: pointer;
+}
+.moreBtn:hover { background-color: #f0f0f0; }
+#sort
+{
+    width: 120px;
+
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* 리뷰 정보 */
+.reviewInfo
+{
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+#ratingScore, #ratingScoreImg
+{
+    width: 100%;
+    height: 40px;
+
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+}
+#ratingCount
+{
+    width: 100%;
+    height: 25px;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 25px;
+    color: #858585;
+}
+
+/* 리뷰 등록 */
+.myReview
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.myReviewContentHeader
+{
+    width: 100%;
+    height: 35px;
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+
+    font-size: 20px;
+    line-height: 35px;
+}
+textarea
+{
+    width: 99.4%;
+    height: 80px;
+    border-radius: 4px;
+
+    outline: none;
+    border: 1px solid #858585;
+}
+textarea:hover, textarea:focus { border: 1px solid #00C471; }
+.reviewSubmitBtn
+{
+    width: 100%;
+    height: 30px;
+    border-radius: 8px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+
+    cursor: pointer;
+}
+.reviewSubmitBtn:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+#ratingSelect
+{
+    width: 100%;
+    margin-bottom: 5px;
+}
+.editBtn
+{
+    width: 50px;
+    height: 30px;
+    border-radius: 4px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+
+    cursor: pointer;
+}
+.editBtn:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+
+/* 리뷰 목록 */
+.reviewList
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    box-sizing: border-box;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.review
+{
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    position: relative;
+
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+/* 상단 */
+.reviewTop
+{
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.profileImg
+{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+
+    background-color: #cccccc;
+}
+.userInfo
+{
+    width: auto;
+    height: 45px;
+
+    display: flex;
+    flex-direction: column;
+}
+.nickname
+{
+    width: auto;
+    height: 20px;
+    margin-bottom: 5px;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+}
+.scoreWrap
+{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.star { height: 20px; }
+.score
+{
+    width: auto;
+    height: 20px;
+
+    font-size: 16px;
+    line-height: 20px;
+    color: #858585;
+}
+
+/* 리뷰 내용 */
+.reviewContent
+{
+    width: 100%;
+    height: auto;
+
+    position: relative;
+
+    font-size: 16px;
+    line-height: 1.5;
+}
+.reviewBtns
+{
+    padding-right: 5px;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    gap: 5px;
+}
+.reviewBtn{
+    weight: auto;
+    height: 30px;
+
+    font-size: 16px;
+    line-height: 30px;
+
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+
+
+
+/* 구매 정보 */
+.sellBox
+{
+    width: 400px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    position: sticky;
+    top: 60px;
+
+    border: 1px solid #cccccc;
+}
+.menu
+{
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 상단 메뉴 */
+.menu.top
+{
+    flex-direction: column;
+    gap: 10px;
+}
+.priceWrap { width: 100%; }
+.price
+{
+    width: 100%;
+    height: 40px;
+
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 40px;
+}
+.saleInfo
+{
+    width: 100%;
+    height: 30px;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+}
+.courseBtn
+{
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 20px;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+
+    cursor: pointer;
+}
+.courseBtn:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+.scrap
+{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+
+    display: flex;
+    gap: 10px;
+}
+.scrapBtn
+{
+    width: 50%;
+    height: 40px;
+    border-radius: 8px;
+
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    text-align: center;
+    line-height: 40px;
+
+    cursor: pointer;
+}
+.scrapBtn:hover { background-color: #f0f0f0; }
+
+/* 하단 메뉴 */
+.menu.bottom
+{
+    border-radius: 0 0 12px 12px;
+    background-color: #f8f9fa;
+}
+.item
+{
+    width: 30%;
+    height: auto;
+
+    line-height: 25px;
+    color: #858585;
+}
+.item.content
+{
+    width: 70%;
+    color: black;
+}
+.item a
+{
+    text-decoration : underline;
+    color: black;
+}
+
+
+/* 모달 */
+.hidden
+{
+    display: none;
+    opacity: 0;
+}
+.show
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    
+    z-index: 999;
+}
+
+/* 토스트 스타일 */
+#toast
+{
+    padding: 6px 12px;
+    border-radius: 4px;
+
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: #333;
+    color: white;
+
+    font-size: 16px;
+    line-height: 25px;
+}
+.toastIcon
+{
+    width: 25px;
+    height: 25px;
+}
+
+
+/* 삭제 모달 */
+#modalOverlay
+{
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    justify-content: center;
+    align-items: center;
+}
+#modal
+{
+    min-width: 200px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    
+    background-color: white;
+    text-align: center;
+}
+.modalText
+{
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.modalBtns
+{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+/* 버튼 스타일 */
+.modalBtn
+{
+    width: 60px;
+    height: 25px;
+    border-radius: 4px;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 25px;
+
+    cursor: pointer;
+}
+.modalBtn.ok
+{
+    border: 1px solid red;
+    background-color: red;
+    color: white;
+}
+.modalBtn.ok:hover
+{
+    background-color: white;
+    color: red;
+}
+.modalBtn.no
+{
+    border: 1px solid #cccccc;
+    background-color: #cccccc;
+}
+.modalBtn.no:hover { background-color: white; }

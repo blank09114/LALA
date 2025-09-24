@@ -1,0 +1,375 @@
+/* 섹션 */
+section
+{
+    width: 1300px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.sectionHeader
+{
+    width: 100%;
+    height: 50px;
+    margin: 5px 0;
+    padding: 0;
+
+    font-size: 30px;
+    line-height: 50px;
+}
+.topContent
+{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: space-between;
+}
+.viewer
+{
+    width: 980px;
+    aspect-ratio: 16/9;
+    box-sizing: border-box;
+}
+
+
+
+/* 메뉴 */
+.menu
+{
+    width: 300px;
+    height: 600px;
+    padding: 10px;
+    box-sizing: border-box;
+
+    overflow-y: auto;
+}
+.menuHeader, .lecTitle, .progressBox, .progressTitle, progress { width: 100%; }
+
+/* 메뉴 헤더 */
+.lecTitle
+{
+    height: 30px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 20px;
+    line-height: 30px;
+}
+.progressTitle
+{
+    height: 30px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+}
+.progressIcon
+{
+    width: 20px;
+    height: 20px;
+}
+.progressText
+{
+    height: 20px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 14px;
+    line-height: 20px;
+}
+.progress
+{
+    width: 100%;
+    height: 16px;
+    border-radius: 4px;
+
+    background-color: #dddddd;
+}
+.progressBar
+{
+    height: 100%;
+    border-radius: 4px;
+
+    background-color: #00C471;
+}
+
+
+/* 목차 */
+.partList, .part, .partHeader, .class
+{
+    width: 100%;
+    box-sizing: border-box;
+}
+.partList
+{
+    height: auto;
+    margin-top: 5px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.part
+{
+    height: auto;
+    border-radius: 8px;
+
+    border: 1px solid #AFAFAF;
+    background-color: #eeeeee;
+}
+
+/* 목차 헤더 */
+.partHeader, .class
+{
+    height: 40px;
+    padding: 5px 10px;
+    border-radius: 8px;
+
+    border: none;
+    background: none;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+}
+.partHeader:hover { background-color: #F1F3F5; }
+.partHeaderText, .partText
+{
+    width: auto;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+/* 강좌 */
+.class
+{
+    border-radius: 0;
+
+    border-top: 1px solid #AFAFAF;
+    background-color: white;
+}
+.class:hover { background-color: #F1F3F5; }
+.part .class:last-child { border-radius: 0 0 8px 8px; }
+.classLeft
+{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.icon
+{
+    width: 20px;
+    height: 20px;
+}
+.partText
+{
+    font-size: 14px;
+    font-weight: normal;
+}
+
+
+
+/* 하단 메뉴 */
+.bottomContent
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    padding-right: 320px;
+    box-sizing: border-box;
+}
+.bottomContentTitle
+{
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+
+
+/* 지식 제공자 코멘트 */
+.commentWrap
+{
+    width: 100%;
+    height: auto;
+}
+.commentContent
+{
+    width: 100%;
+    height: auto;
+    min-height: 100px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+
+    font-size: 16px;
+    font-weight: normal;
+}
+
+
+
+/* 질문 */
+.qnaWrap
+{
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#qnaCount { color: #00C471; }
+
+
+
+/* 질문 작성 */
+.questionWrite
+{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+.questionWriteInput
+{
+    width: 99.4%;
+    height: 80px;
+    border-radius: 4px;
+
+    outline: none;
+    border: 1px solid #858585;
+}
+.questionWriteInput:hover, .questionWriteInput:focus { border: 1px solid #00C471; }
+.questionSubmit
+{
+    width: 80px;
+    height: 30px;
+    border-radius: 8px;
+
+    border: 1px solid #00C471;
+    background-color: #00C471;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+
+    cursor: pointer;
+}
+.questionSubmit:hover
+{
+    background-color: white;
+    color: #00C471;
+}
+
+
+
+/* 질문 리스트 */
+.qnaList
+{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* 질문 */
+.qnaItem
+{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+
+    border: 1px solid #cccccc;
+}
+
+/* 질문 헤더 */
+.qnaItemHeader
+{
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    position: relative;
+}
+.profile
+{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    box-sizing: border-box;
+
+    background-color: #cccccc;
+}
+.info
+{
+    width: auto;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+
+    font-size: 16px;
+    line-height: 20px;
+}
+.btnWrap
+{
+    display: flex;
+    gap: 10px;
+
+    position: absolute;
+    right: 10px;
+}
+.qnaBtn
+{
+    width: 25px;
+    height: 25px;
+
+    border: none;
+    background: none;
+
+    font-size: 16px;
+    text-align: center;
+    line-height: 25px;
+
+    cursor: pointer;
+}
+
+/* 질문 내용 */
+.qnaItemContent
+{
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0 5px 5px 5px;
+    box-sizing: border-box;
+}
+
+/* 답변 리스트 */
+.answer { background-color: #cccccc; }
+.answerProf { background-color: white; }

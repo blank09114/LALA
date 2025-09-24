@@ -1,0 +1,403 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+
+.InstructorProfile_wrap {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.InstructorProfile_left {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 100%;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* 프로필 시작 */
+.profile {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.profile_img img {
+    width: 100px;
+    border-radius: 50%;
+}
+
+.profile_img h3 {
+    margin: 10px 0 20px;
+}
+
+.profile_info {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.profile_info .title {
+    font-size: 14px;
+    color: #555;
+}
+
+.title_star {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.profile_info .value {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.profile_fav .fav_button {
+    width: 100%;
+    padding: 10px 0;
+    font-weight: bold;
+    border: 2px solid #00c471;
+    background-color: white;
+    color: #00c471;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.profile_site {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.profile_site img {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.profile_site a {
+    text-decoration: none;
+    color: black;
+    line-height: 2.2;
+}
+
+.profile_site a:hover {
+    text-decoration: underline;
+}
+
+/* 프로필 끝 */
+
+
+/* 소개 시작 */
+.introduction {
+    padding: 30px;
+    border-bottom: 1px solid #ccc;
+}
+
+.introduction h2 {
+    margin-bottom: 15px;
+}
+
+.introduction p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* 소개 끝 */
+
+
+/* 카테고리 시작 */
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    /* height: 100%; */
+    gap: 20px;
+    padding-left: 70px;
+    margin: 50px 0px;
+}
+
+.menu {
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    text-decoration: none;
+    margin: 10px 0px;
+}
+
+.menu.active {
+    color: grey;
+    font-weight: bold;
+}
+
+/* 카테고리 끝 */
+
+/* 강의리스트 시작 */
+.course {
+    width: 70%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 40px;
+    /* border:1px solid black; */
+}
+
+
+/* 강의 수강평 시작 */
+
+.course {
+    width: 70%;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+
+.review-header-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.review-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+.total-count {
+    font-size: 18px;
+    color: #555;
+}
+
+.total-count .total-number {
+    color: #00c471;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.review1 {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 16px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+
+.review1 .thumbnail {
+    flex: 0 0 140px;
+}
+
+.review1 .thumbnail img {
+    width: 100%;
+    object-fit: cover;
+}
+
+
+.review1 > div:nth-child(2) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.review1 > div:nth-child(2) > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.review1 .star {
+    font-size: 16px;
+    color: #f5a623;
+}
+
+.star {
+    white-space: nowrap;
+    font-size: 16px; /* 원하면 크기 조절 */
+}
+
+
+.review1 .nickname1 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+
+.review1 .writeDate {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+}
+
+
+.review1 .title {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+}
+
+
+.review2 {
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 0px 16px 16px 16px;
+    background-color: #fff;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+
+.review2 .content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+    white-space: pre-wrap;
+}
+
+/* 강의 수강평 끝 */
+
+
+/* 페이징 시작 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 8px;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.page-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.page-btn.active {
+    background-color: #00c471;
+    color: #fff;
+    border-color: #00c471;
+}
+
+.page-btn.prev, .page-btn.next {
+    font-size: 18px;
+    padding: 0;
+}
+
+/* 페이징 끝 */
+
+/* 반응형 시작 */
+
+@media screen and (max-width: 1024px) {
+
+}
+
+@media screen and (max-width: 768px) {
+  .category {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+    align-items:center;
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .category .menu {
+      margin: 0;
+  }
+
+  /* 기존 반응형 내용 유지 */
+  .InstructorProfile_wrap {
+    flex-direction: column;
+  }
+
+  .InstructorProfile_left,
+  .course {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .InstructorProfile_left * {
+    font-size: clamp(10px, 3vw, 16px);
+  }
+
+  .review1 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review1 .thumbnail img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+
+  .review1 > div {
+    width: 100%;
+  }
+}
+
+
+
+@media screen and (max-width: 500px) {
+    body {
+        font-size: 12px;
+    }
+
+    .profile_img img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+/* 반응형 끝 */

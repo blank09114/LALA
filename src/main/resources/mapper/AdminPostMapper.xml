@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lala.Mapper.AdminPostMapper">
+
+    <!-- 내가 작성한 게시물 / 댓글 / 대댓글 / 강의평-->
+    <select id="findUserActivities" resultType="com.example.lala.DTO.Response.AdminUserActivity">
+        (
+        select p.post_id as contentId,
+        'post' as contentType,
+        pt.name as contentName,
+        p.title as contentTitle,
+        p.content as contentText,
+        p.write_date as writeDate,
+        u.nickname as writerNickname,
+        (p.report > 0) as isReported,
+        false as isReportedByMe
+        from post p
+        join post_type pt on p.post_type = pt.no
+        join user u on p.writer_id = u.user_id
+        where p.writer_id = #{userId}
+        and p.report = 0
+        <if test="title != null and title != ''">
+            and p.title like concat('%', #{title}, '%')
+        </if>
+        <if test="startDate != null">
+            and p.write_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and p.write_date &lt;= #{endDate}
+        </if>
+        )
+        union all
+        (
+        select c.comment_id as contentId,
+        case when c.recomment_check = 0 then 'comment' else 'reply' end as contentType,
+        pt.name as contentName,
+        p.title as contentTitle,
+        c.content as contentText,
+        c.write_date as writeDate,
+        u.nickname as writerNickname,
+        (c.report > 0) as isReported,
+        false as isReportedByMe
+        from comment c
+        join post p on c.post_id = p.post_id
+        join post_type pt on p.post_type = pt.no
+        join user u on c.writer_id = u.user_id
+        where c.writer_id = #{userId}
+        and c.report = 0
+        <if test="title != null and title != ''">
+            and p.title like concat('%', #{title}, '%')
+        </if>
+        <if test="startDate != null">
+            and c.write_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and c.write_date &lt;= #{endDate}
+        </if>
+        )
+        <choose>
+            <when test="userType eq 1">
+            union all
+            (
+            select l.lecture_id as contentId,
+            'lectureRequests' as contentType,
+            null as contentName,
+            l.name as contentTitle,
+            null as contentText,
+            l.upload_date as writeDate,
+            u.nickname as writerNickname,
+            false as isReported,
+            false as isReportedByMe
+            from lecture l
+            join lecture_status ls on l.lecture_status = ls.no
+            join user u on l.uploader_id = u.user_id
+            where l.uploader_id = #{userId}
+            and l.lecture_status = 2
+            <if test="title != null and title != ''">
+                and l.name like concat('%', #{title}, '%')
+            </if>
+            <if test="startDate != null">
+                and l.upload_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                and l.upload_date &lt;= #{endDate}
+            </if>
+            )
+        </when>
+        <otherwise>
+            union all
+            (
+            select rv.review_id as contentId,
+            'review' as contentType,
+            null as contentName,
+            l.name as contentTitle,
+            rv.content as contentText,
+            rv.write_date as writeDate,
+            u.nickname as writerNickname,
+            (rv.report > 0) as isReported,
+            false as isReportedByMe
+            from review rv
+            join lecture l on rv.lecture_id = l.lecture_id
+            join user u on rv.writer_id = u.user_id
+            where rv.writer_id = #{userId}
+            and rv.report = 0
+            <if test="title != null and title != ''">
+                and l.name like concat('%', #{title}, '%')
+            </if>
+            <if test="startDate != null">
+                and rv.write_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                and rv.write_date &lt;= #{endDate}
+            </if>
+            )
+        </otherwise>
+        </choose>
+    </select>
+
+    <select id="findReportedByMe" resultType="com.example.lala.DTO.Response.AdminUserActivity">
+        (
+        select p.post_id as contentId,
+        'post' as contentType,
+        pt.name as contentName,
+        p.title as contentTitle,
+        pr.content as contentText,
+        p.write_date as writeDate,
+        u.nickname as writerNickname,
+        True as isReportedByMe,
+        false as isReported
+        from post_report pr
+        join post p
+        on pr.post_id = p.post_id
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on pr.report_user_id = u.user_id
+        where pr.report_user_id = #{userId}
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  p.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  p.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+        union all
+        (
+        select c.comment_id as contentId,
+        case
+        when c.recomment_check = 0 then 'comment'
+        when c.recomment_check = 1 then 'reply'
+        End as contentType,
+        pt.name as contentName,
+        p.title as contentTitle,
+        cr.content as contentText,
+        c.write_date as writeDate,
+        u.nickname as writerNickname,
+        True as isReportedByMe,
+        false as isReported
+        from comment c
+        join comment_report cr
+        on c.comment_id = cr.comment_id
+        join post p
+        on p.post_id = c.post_id
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on c.writer_id = u.user_id
+        where c.writer_id = #{userId}
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND   c.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND   c.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+        union all
+        (
+        select rv.review_id as contentId,
+        'review' as contentType,
+        null as contentName,
+        rv.content as contentTitle,
+        rp.content as contentText,
+        rv.write_date as writeDate,
+        u.nickname as writerNickname,
+        true as isReportedByMe,
+        false as isReported
+        from lecture l
+        join review rv
+        on l.lecture_id = rv.lecture_id
+        join review_report rp
+        on rv.review_id = rp.review_id
+        join user u
+        on rp.report_user_id = u.user_id
+        where rp.report_user_id = #{userId}
+        <if test="title != null and title != ''">
+            AND rv.content LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND   rv.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND   rv.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+    </select>
+
+    <!-- 신고 당한 경우 -->
+    <select id="findReportedToMe"  resultType="com.example.lala.DTO.Response.AdminUserActivity">
+
+        (SELECT p.post_id AS contentId,
+        'post' AS contentType,
+        pt.name AS contentName,
+        p.title AS contentTitle,
+        p.content AS contentText,
+        p.write_date AS writeDate,
+        u.nickname AS writerNickname,
+        true AS isReported,
+        false AS isReportedByMe
+        FROM post p
+        JOIN post_type pt ON p.post_type = pt.no
+        JOIN user u ON p.writer_id = u.user_id
+        WHERE p.writer_id = #{userId}
+        AND EXISTS (SELECT 1 FROM post_report pr WHERE pr.post_id = p.post_id)
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND   p.write_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND    p.write_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+
+        union all
+        (
+        select c.comment_id AS contentId,
+        case
+        when c.recomment_check = 0 then 'comment'
+        when c.recomment_check = 1 then 'reply'
+        End as contentType,
+        pt.name AS contentName,
+        p.title AS contentTitle,
+        c.content AS contentText,
+        c.write_date AS writeDate,
+        u.nickname AS writerNickname,
+        true AS isReported,
+        false AS isReportedByMe
+        from comment c
+        join post p
+        on c.post_id = p.post_id
+        join post_type pt
+        on p.post_type = pt.no
+        join user u
+        on c.writer_id = u.user_id
+        join comment_report cr
+        on c.comment_id = cr.comment_id
+        where c.writer_id = #{userId}
+        and exists (select 1 from comment_report cr where cr.comment_id = c.comment_id)
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND   c.write_date  &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND   c.write_date  &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+        union all
+        (select r.review_id AS contentId,
+        'review' AS contentType,
+        null AS contentName,
+        l.name AS contentTitle,
+        r.content AS contentText,
+        r.write_date AS writeDate,
+        u.nickname AS writerNickname,
+        true AS isReported,
+        false AS isReportedByMe
+        from review r
+        join lecture l
+        on l.lecture_id = r.lecture_id
+        join review_report rp
+        on r.review_id = rp.review_id
+        join user u
+        on r.writer_id = u.user_id
+        where r.writer_id = #{userId}
+        and exists (select 1 from review_report rp where rp.review_id = r.review_id)
+        <if test="title != null and title != ''">
+            AND l.name LIKE CONCAT('%', #{title}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  r.write_date  &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  r.write_date  &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        )
+    </select>
+
+
+    <!-- 신고자 닉네임 / 신고내용 / 신고날짜-->
+    <select id="findReportsByPostId" resultType="com.example.lala.DTO.Response.ReportDetail">
+        SELECT u.nickname AS reportNickname,
+        pr.content AS reason,
+        pr.report_date as reportDate
+        FROM post_report pr
+        JOIN user u ON pr.report_user_id = u.user_id
+        WHERE pr.post_id = #{postId}
+    </select>
+
+    <select id="findReportsByCommentId" resultType="com.example.lala.DTO.Response.ReportDetail">
+        SELECT u.nickname AS reportNickname,
+        cr.content AS reason,
+        cr.report_date AS reportDate
+        FROM comment_report cr
+        JOIN user u ON cr.report_user_id = u.user_id
+        WHERE cr.comment_id = #{commentId}
+    </select>
+
+    <select id="findReportsByReviewId" resultType="com.example.lala.DTO.Response.ReportDetail">
+        SELECT u.nickname AS reportNickname,
+        rp.content AS reason,
+        rp.report_date AS reportDate
+        FROM review_report rp
+        JOIN user u ON rp.report_user_id = u.user_id
+        WHERE rp.review_id = #{reviewId}
+    </select>
+</mapper>

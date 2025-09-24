@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lala.Mapper.AdminLectureMapper">
+
+    <resultMap id="UserLectureResultMap" type="com.example.lala.DTO.Response.AdminLecuterList">
+        <result property="userId" column="user_id"/>
+        <result property="lectureId" column="lecture_id"/>
+        <result property="lectureNickname" column="lectureNickname"/>
+        <result property="requestType" column="requestType"/>
+        <result property="contentName" column="contentName"/>
+        <result property="uploadDate" column="uploadDate"/>
+        <result property="statusName" column="statusName"/>
+
+    </resultMap>
+
+    <select id="findUserLectureFilters" resultMap="UserLectureResultMap">
+        select u.user_id,
+        l.lecture_id,
+        u.nickname as lectureNickname,
+        ls.status_name as requestType,
+        l.name as contentName,
+        l.upload_date as uploadDate,
+        l.lecture_status,
+        ls.status_name as statusName
+        from lecture l
+        join lecture_status ls
+        on l.lecture_status = ls.no
+        join user u
+        on l.uploader_id = u.user_id
+        where 1=1
+        <if test="requestType != null and requestType.size() > 0">
+            AND l.lecture_status IN
+            <foreach collection="requestType" item="reqType" open="(" separator="," close=")">
+                #{reqType}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  l.upload_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  l.upload_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+        order by l.upload_date desc
+        limit #{pageStart}, #{pageSize}
+    </select>
+
+    <select id="countLecturesByFilters" resultType="int">
+        select count(*)
+        from lecture l
+        join lecture_status ls
+        on l.lecture_status = ls.no
+        join user u
+        on l.uploader_id = u.user_id
+        where 1=1
+        <if test="requestType != null and requestType.size() > 0">
+            AND l.lecture_status IN
+            <foreach collection="requestType" item="reqType" open="(" separator="," close=")">
+                #{reqType}
+            </foreach>
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+
+        <if test="startDate != null">
+            AND  l.upload_date &gt;= #{startDate} <!-- &gt; = > -->
+        </if>
+        <if test="endDate != null">
+            AND  l.upload_date &lt;= #{endDate} <!-- &lt; = < -->
+        </if>
+    </select>
+</mapper>
